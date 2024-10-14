@@ -17,8 +17,8 @@ class KenclengFactory extends Factory
     public function definition(): array
     {
         return [
-            'no_kencleng' => fake()->randomNumber(8),
-            'qr_image' => '/storage/gambar/kencleng/' . fake()->randomNumber(2) . '.png',
+            'no_kencleng'   => fake()->randomNumber(8),
+            'qr_image'      => '/storage/gambar/kencleng/' . fake()->randomNumber(2) . '.png',
         ];
     }
 }
