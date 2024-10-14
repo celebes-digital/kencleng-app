@@ -13,10 +13,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use Endroid\QrCode\QrCode as EndroidQrCode;
-use Filament\Actions\Action;
-use Filament\Tables\Actions\ImportAction;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\Action;
+use Illuminate\Support\Facades\Storage;
 
 class KenclengResource extends Resource
 {
@@ -61,7 +60,14 @@ class KenclengResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Action::make('download')
+                    ->button()
+                    ->action(fn (Kencleng $kencleng) => Storage::download('/' . $kencleng->qr_image, 'qr-code.png'))
+                    ->successNotification(
+                        Notification::make()
+                            ->title('QR Berhasil Diunduh')
+                            ->body('QR Code telah berhasil diunduh.'),
+                    ),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

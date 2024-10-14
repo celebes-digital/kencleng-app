@@ -133,6 +133,7 @@ class ProfileResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('no_wa')
+                    ->label('No WA')
                     ->searchable(),
                 Tables\Columns\ImageColumn::make('poto')
                     ->toggleable(isToggledHiddenByDefault: true),

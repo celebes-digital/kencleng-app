@@ -41,9 +41,9 @@ class ListKenclengs extends ListRecords
                         ->setMargin(10);
                     $result = $writer->write($qrCode);
 
-                    // Save QR code to storage
-                    $filePath = $no_kencleng . '.png';
-                    Storage::put($filePath, $result->getString());
+                    // Save QR code to public storage
+                    $filePath = 'public/qr-code/' . $no_kencleng . '.png';
+                    Storage::disk('public')->put($filePath, $result->getString());
 
                     // Save file path to the database
                     $kencleng->qr_image = $filePath;
@@ -84,8 +84,8 @@ class ListKenclengs extends ListRecords
                         $result = $writer->write($qrCode);
 
                         // Save QR code to storage
-                        $filePath = $no_kencleng . '.png';
-                        Storage::put($filePath, $result->getString());
+                    $filePath = 'public/qr-code/' . $no_kencleng . '.png';
+                    Storage::disk('public')->put($filePath, $result->getString());
 
                         // Save file path to the database
                         $kencleng->qr_image = $filePath;
