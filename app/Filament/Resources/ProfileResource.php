@@ -25,46 +25,80 @@ class ProfileResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nama')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\DatePicker::make('tgl_lahir')
-                    ->required(),
-                Forms\Components\TextInput::make('kelamin')
-                    ->required(),
-                Forms\Components\TextInput::make('pekerjaan')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('alamat')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('kelurahan')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('kecamatan')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('kabupaten')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('provinsi')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('no_hp')
-                    ->required()
-                    ->maxLength(15),
-                Forms\Components\TextInput::make('no_wa')
-                    ->required()
-                    ->maxLength(15),
-                Forms\Components\TextInput::make('poto')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('poto_ktp')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('group')
-                    ->required()
-                    ->maxLength(100),
+                Forms\Components\Section::make('Informasi Pribadi')
+                    ->schema([
+                        Forms\Components\TextInput::make('nama')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\DatePicker::make('tgl_lahir')
+                            ->required(),
+                        Forms\Components\Select::make('kelamin')
+                            ->options([
+                                'L' => 'Laki-laki',
+                                'P' => 'Perempuan',
+                            ])
+                            ->required(),
+                    ])
+                    ->columns(3),
+                Forms\Components\Section::make('Kontak')
+                    ->schema([
+                        Forms\Components\TextInput::make('no_hp')
+                            ->label('Nomor HP')
+                            ->required()
+                            ->tel()
+                            ->maxLength(15),
+                        Forms\Components\TextInput::make('no_wa')
+                            ->required()
+                            ->maxLength(15),
+                    ])
+                    ->columns(2),
+                Forms\Components\Section::make('Alamat')
+                    ->schema([
+                        Forms\Components\TextInput::make('alamat')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('kelurahan')
+                            ->required()
+                            ->maxLength(100),
+                        Forms\Components\TextInput::make('kecamatan')
+                            ->required()
+                            ->maxLength(100),
+                        Forms\Components\TextInput::make('kabupaten')
+                            ->required()
+                            ->maxLength(100),
+                        Forms\Components\TextInput::make('provinsi')
+                            ->required()
+                            ->maxLength(100),
+                    ])
+                    ->columns(2),
+                Forms\Components\Section::make('Pekerjaan')
+                    ->schema([
+                        Forms\Components\TextInput::make('pekerjaan')
+                            ->required()
+                            ->maxLength(100),
+                    ])
+                    ->columns(1),
+                Forms\Components\Section::make('Dokumen')
+                    ->schema([
+                        Forms\Components\FileUpload::make('poto')
+                            ->image()
+                            ->required(),
+                        Forms\Components\FileUpload::make('poto_ktp')
+                            ->image()
+                            ->required(),
+                    ])
+                    ->columns(2),
+                Forms\Components\Section::make('Grup')
+                    ->schema([
+                        Forms\Components\Select::make('group')
+                            ->options([
+                                'admin' => 'Admin',
+                                'donatur' => 'Donatur',
+                                'kolektor' => 'Kolektor',
+                            ])
+                            ->required(),
+                    ])
+                    ->columns(1),
             ]);
     }
 

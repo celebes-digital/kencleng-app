@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\DistribusiKenclengResource\Pages;
 use App\Filament\Resources\DistribusiKenclengResource\RelationManagers;
 use App\Models\DistribusiKencleng;
+use App\Models\Kencleng;
+use App\Models\Profile;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,26 +19,30 @@ class DistribusiKenclengResource extends Resource
 {
     protected static ?string $model = DistribusiKencleng::class;
 
-    protected static ?string $modelLabel = 'Distribusi Kencleng';
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-path';
-    protected static ?int $navigationSort = 3;
+    protected static ?string $modelLabel        = 'Distribusi Kencleng';
+    protected static ?string $navigationIcon    = 'heroicon-o-arrow-path';
+    protected static ?int $navigationSort       = 3;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('kencleng_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('donator_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('kolektor_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('distributor_id')
-                    ->required()
-                    ->numeric(),
+                Forms\Components\Select::make('kencleng_id')
+                    ->label('No. Kencleng')
+                    ->options(Kencleng::all()->pluck('no_kencleng', 'id'))
+                    ->required(),
+                Forms\Components\Select::make('donator_id')
+                    ->label('Donator')
+                    ->options(Profile::where('group', 'donatur')->pluck('nama', 'id'))
+                    ->required(),
+                Forms\Components\Select::make('kolektor_id')
+                    ->label('Kolektor')
+                    ->options(Profile::where('group', 'kolektor')->pluck('nama', 'id'))
+                    ->required(),
+                Forms\Components\Select::make('distributor_id')
+                    ->label('Distributor')
+                    ->options(Profile::where('group', 'distributor')->pluck('nama', 'id'))
+                    ->required(),
                 Forms\Components\TextInput::make('geo_lat')
                     ->required()
                     ->numeric(),
