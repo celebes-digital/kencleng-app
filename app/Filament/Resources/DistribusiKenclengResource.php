@@ -31,7 +31,7 @@ class DistribusiKenclengResource extends Resource
                     ->label('No. Kencleng')
                     ->options(Kencleng::all()->pluck('no_kencleng', 'id'))
                     ->required(),
-                Forms\Components\Select::make('donator_id')
+                Forms\Components\Select::make('donatur_id')
                     ->label('Donator')
                     ->options(Profile::where('group', 'donatur')->pluck('nama', 'id'))
                     ->required(),
@@ -50,6 +50,7 @@ class DistribusiKenclengResource extends Resource
                     ->required()
                     ->numeric(),
                 Forms\Components\DatePicker::make('tgl_distribusi')
+                    ->native(false)
                     ->required(),
                 Forms\Components\DatePicker::make('tgl_pengambilan')
                     ->required(),
@@ -60,17 +61,17 @@ class DistribusiKenclengResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('kencleng_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('kencleng.no_kencleng')
+                    ->label('No. Kencleng')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('donator_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('donatur.nama')
+                    ->label('Donatur')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('kolektor_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('kolektor.nama')
+                    ->label('Kolektor')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('distributor_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('distributor.nama')
+                    ->label('Distributor')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('geo_lat')
                     ->numeric()

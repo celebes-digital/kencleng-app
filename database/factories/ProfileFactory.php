@@ -20,6 +20,7 @@ class ProfileFactory extends Factory
             'nama'      => fake()->name(),
             'tgl_lahir' => fake()->date(),
             'kelamin'   => fake()->randomElement(['L', 'P']),
+            'nik'       => fake()->numerify('##############'),
             'pekerjaan' => fake()->randomElement(['Frontend Dev', 'Backend Dev', 'OB', 'Pelajar', 'Gojek', 'Admin', 'President', 'Ibu rumah tangga', 'Pegawai Sipil']),
             'alamat'    => fake()->randomElement(['Jl. Pendidikan', 'Jl. Andi Djemma', 'Jl. Antang', 'Jl. Katangka']) . fake()->randomElement(['B5 No.8', 'no 9', 'Blok Y1 no.43', 'blog 09']),
             'kelurahan' => fake()->randomElement(['Bringkanaya', 'Mamajang', 'Gunung Sari', 'Rappocini', 'Makassar', 'Gowa', 'Bantaeng', 'Malino', 'Papua Jaya', 'Ngaglik', 'Wonosari', 'Solo']),

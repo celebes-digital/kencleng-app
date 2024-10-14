@@ -12,6 +12,7 @@ class Profile extends Model
     protected $fillable = [
         'nama',
         'tgl_lahir',
+        'nik',
         'kelamin',
         'pekerjaan',
         'alamat',

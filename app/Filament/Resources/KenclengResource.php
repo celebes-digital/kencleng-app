@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\KenclengResource\Pages;
 use App\Filament\Resources\KenclengResource\RelationManagers;
 use App\Models\Kencleng;
+use App\Models\Profile;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,6 +13,10 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Endroid\QrCode\QrCode as EndroidQrCode;
+use Filament\Actions\Action;
+use Filament\Tables\Actions\ImportAction;
 
 class KenclengResource extends Resource
 {
@@ -40,7 +45,9 @@ class KenclengResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('no_kencleng')
                     ->searchable(),
-                Tables\Columns\ImageColumn::make('qr_image'),
+                Tables\Columns\ImageColumn::make('qr_image')
+                    ->label('QR Code')
+                    ->size(50, 50),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -55,6 +62,7 @@ class KenclengResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

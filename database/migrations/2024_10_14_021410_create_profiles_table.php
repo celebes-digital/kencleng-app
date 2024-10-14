@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama', 255);
             $table->date('tgl_lahir');
+            $table->char('nik', 16);
             $table->enum('kelamin', ['L', 'P']);
             $table->string('pekerjaan', 100);
             $table->string('alamat', 255);

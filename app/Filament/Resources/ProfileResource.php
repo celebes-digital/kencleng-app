@@ -6,6 +6,7 @@ use App\Filament\Resources\ProfileResource\Pages;
 use App\Filament\Resources\ProfileResource\RelationManagers;
 use App\Models\Profile;
 use Filament\Forms;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -27,21 +28,39 @@ class ProfileResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Informasi Pribadi')
                     ->schema([
+                        Forms\Components\Select::make('group')
+                            ->placeholder('Pilih group')
+                            ->options([
+                                'admin' => 'Admin',
+                                'donatur' => 'Donatur',
+                                'kolektor' => 'Kolektor',
+                            ])
+                            ->required(),
                         Forms\Components\TextInput::make('nama')
                             ->required()
                             ->maxLength(255),
+                        Forms\Components\TextInput::make('Nik')
+                            ->required()
+                            ->length(16),
                         Forms\Components\DatePicker::make('tgl_lahir')
                             ->required(),
                         Forms\Components\Select::make('kelamin')
+                            ->label('Jenis Kelamin')
+                            ->placeholder('Pilih jenis kelamin')
                             ->options([
                                 'L' => 'Laki-laki',
                                 'P' => 'Perempuan',
                             ])
                             ->required(),
+                        Forms\Components\TextInput::make('pekerjaan')
+                            ->required()
+                            ->maxLength(100),
                     ])
                     ->columns(3),
-                Forms\Components\Section::make('Kontak')
+                Forms\Components\Section::make('Detail Informasi')
                     ->schema([
+                        Fieldset::make('Kontak')
+                            ->schema([
                         Forms\Components\TextInput::make('no_hp')
                             ->label('Nomor HP')
                             ->required()
@@ -50,55 +69,38 @@ class ProfileResource extends Resource
                         Forms\Components\TextInput::make('no_wa')
                             ->required()
                             ->maxLength(15),
-                    ])
-                    ->columns(2),
-                Forms\Components\Section::make('Alamat')
-                    ->schema([
-                        Forms\Components\TextInput::make('alamat')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('kelurahan')
-                            ->required()
-                            ->maxLength(100),
-                        Forms\Components\TextInput::make('kecamatan')
-                            ->required()
-                            ->maxLength(100),
-                        Forms\Components\TextInput::make('kabupaten')
-                            ->required()
-                            ->maxLength(100),
-                        Forms\Components\TextInput::make('provinsi')
-                            ->required()
-                            ->maxLength(100),
-                    ])
-                    ->columns(2),
-                Forms\Components\Section::make('Pekerjaan')
-                    ->schema([
-                        Forms\Components\TextInput::make('pekerjaan')
-                            ->required()
-                            ->maxLength(100),
-                    ])
-                    ->columns(1),
-                Forms\Components\Section::make('Dokumen')
-                    ->schema([
-                        Forms\Components\FileUpload::make('poto')
-                            ->image()
-                            ->required(),
-                        Forms\Components\FileUpload::make('poto_ktp')
-                            ->image()
-                            ->required(),
-                    ])
-                    ->columns(2),
-                Forms\Components\Section::make('Grup')
-                    ->schema([
-                        Forms\Components\Select::make('group')
-                            ->options([
-                                'admin' => 'Admin',
-                                'donatur' => 'Donatur',
-                                'kolektor' => 'Kolektor',
+                            ]),
+                        Fieldset::make('Alamat')
+                            ->schema([
+                                Forms\Components\TextInput::make('alamat')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('kelurahan')
+                                    ->required()
+                                    ->maxLength(100),
+                                Forms\Components\TextInput::make('kecamatan')
+                                    ->required()
+                                    ->maxLength(100),
+                                Forms\Components\TextInput::make('kabupaten')
+                                    ->required()
+                                    ->maxLength(100),
+                                Forms\Components\TextInput::make('provinsi')
+                                    ->required()
+                                    ->maxLength(100),
                             ])
-                            ->required(),
+                            ->columns(3),
+                        Fieldset::make('Dokumen')
+                            ->schema([
+                                Forms\Components\FileUpload::make('poto')
+                                    ->image()
+                                    ->required(),
+                                Forms\Components\FileUpload::make('poto_ktp')
+                                    ->image()
+                                    ->required(),
+                            ])
+                            ->columns(2),
                     ])
-                    ->columns(1),
+                    ->columns(2),
             ]);
     }
 
@@ -109,30 +111,41 @@ class ProfileResource extends Resource
                 Tables\Columns\TextColumn::make('nama')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('tgl_lahir')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('kelamin'),
+                Tables\Columns\TextColumn::make('kelamin')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('pekerjaan')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('alamat')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('kelurahan')
-                    ->searchable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('kecamatan')
-                    ->searchable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('kabupaten')
-                    ->searchable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('provinsi')
-                    ->searchable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('no_hp')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('no_wa')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('poto')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('poto_ktp')
-                    ->searchable(),
+                Tables\Columns\ImageColumn::make('poto')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\ImageColumn::make('poto ktp')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('group')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'admin' => 'gray',
+                        'donatur' => 'success',
+                        'kolektor' => 'warning',
+                        'distributor' => 'danger',
+                    })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -143,11 +156,13 @@ class ProfileResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('nama')
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->color('warning'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
