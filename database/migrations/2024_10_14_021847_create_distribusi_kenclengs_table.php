@@ -22,7 +22,7 @@ return new class extends Migration
             $table->date('tgl_distribusi');
             $table->date('tgl_pengambilan');
 
-            $table->foreign('donator_id')->references('id')->on('profiles')->onDelete('cascade');
+            $table->foreign('donatur_id')->references('id')->on('profiles')->onDelete('cascade');
             $table->foreign('kolektor_id')->references('id')->on('profiles')->onDelete('cascade');
             $table->foreign('distributor_id')->references('id')->on('profiles')->onDelete('cascade');
             $table->timestamps();
