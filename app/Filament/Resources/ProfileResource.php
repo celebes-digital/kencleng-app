@@ -7,6 +7,7 @@ use App\Filament\Resources\ProfileResource\RelationManagers;
 use App\Models\Profile;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -26,8 +27,8 @@ class ProfileResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Informasi Pribadi')
-                    ->schema([
+                        Fieldset::make('Data Pribadi')
+                        ->schema([
                         Forms\Components\Select::make('group')
                             ->placeholder('Pilih group')
                             ->options([
@@ -39,10 +40,16 @@ class ProfileResource extends Resource
                         Forms\Components\TextInput::make('nama')
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('Nik')
+                        Forms\Components\TextInput::make('nik')
+                            ->label('NIK')
                             ->required()
                             ->length(16),
                         Forms\Components\DatePicker::make('tgl_lahir')
+                            ->label('Tanggal Lahir')
+                            ->native(false)
+                            ->displayFormat('d/m/Y')
+                            ->closeOnDateSelection()
+                            ->placeholder('Pilih tanggal lahir')
                             ->required(),
                         Forms\Components\Select::make('kelamin')
                             ->label('Jenis Kelamin')
@@ -54,22 +61,25 @@ class ProfileResource extends Resource
                             ->required(),
                         Forms\Components\TextInput::make('pekerjaan')
                             ->required()
-                            ->maxLength(100),
-                    ])
+                            ->maxLength(100)
+            ])
                     ->columns(3),
-                Forms\Components\Section::make('Detail Informasi')
-                    ->schema([
                         Fieldset::make('Kontak')
                             ->schema([
-                        Forms\Components\TextInput::make('no_hp')
-                            ->label('Nomor HP')
-                            ->required()
-                            ->tel()
-                            ->maxLength(15),
-                        Forms\Components\TextInput::make('no_wa')
-                            ->required()
-                            ->maxLength(15),
-                            ]),
+                                Forms\Components\TextInput::make('email')
+                                    ->email()
+                                    ->required()
+                                    ->maxLength(100),
+                                Forms\Components\TextInput::make('no_hp')
+                                    ->label('Nomor HP')
+                                    ->required()
+                                    ->tel()
+                                    ->maxLength(15),
+                                Forms\Components\TextInput::make('no_wa')
+                                    ->required()
+                                    ->maxLength(15),
+                                    ])
+                                    ->columns(3),
                         Fieldset::make('Alamat')
                             ->schema([
                                 Forms\Components\TextInput::make('alamat')
@@ -98,8 +108,6 @@ class ProfileResource extends Resource
                                     ->image()
                                     ->required(),
                             ])
-                            ->columns(2),
-                    ])
                     ->columns(2),
             ]);
     }
