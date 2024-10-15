@@ -13,7 +13,7 @@ Route::view('/', 'welcome');
 //     ->middleware(['auth'])
 //     ->name('profile');
 
-Route::get('dashbord/qr-pdf', [DownloadQRCodePdf::class, 'download'])
+Route::get('dashbord/qr-pdf/{id}', [DownloadQRCodePdf::class, 'download'])
     ->middleware(['auth'])
     ->name('qr-pdf');
 
