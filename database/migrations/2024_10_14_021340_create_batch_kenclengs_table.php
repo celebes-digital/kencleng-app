@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kenclengs', function (Blueprint $table) {
+        Schema::create('batch_kenclengs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('batch_kencleng_id')->constrained('batch_kenclengs');
-            $table->char('no_kencleng', 10);
-            $table->string('qr_image', 100);
+            $table->string('nama_batch');
+            $table->integer('jumlah');
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kenclengs');
+        Schema::dropIfExists('batch_kenclengs');
     }
 };

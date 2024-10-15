@@ -9,11 +9,10 @@ use Illuminate\Http\Request;
 class DownloadQRCodePdf extends Controller
 {
     
-    public function download()
+    public function download(string $id)
     {
-        $data = Kencleng::all()->toArray();
+        $data = Kencleng::where('batch_kencleng_id', $id)->get()->toArray();
 
-        // dd($data);
 
         $pdf = Pdf::loadView('pdf', ['data' => $data])->setPaper('a4');
         return $pdf->download('qrcode.pdf');
