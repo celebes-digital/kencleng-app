@@ -7,6 +7,7 @@ use App\Filament\Resources\BatchKenclengResource\RelationManagers;
 use App\Models\BatchKencleng;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,22 +16,29 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class BatchKenclengResource extends Resource
 {
-    protected static ?string $model = BatchKencleng::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $model             = BatchKencleng::class;
+    protected static ?string $navigationIcon    = 'heroicon-o-inbox-stack';
+    protected static ?string $slug              = 'batch-kencleng';
+    protected static ?string $breadcumb         = 'Batch Kencleng';
 
     public static function form(Form $form): Form
     {
+        $batchKe = self::$model::count() + 1;
         return $form
             ->schema([
                 Forms\Components\TextInput::make('nama_batch')
+                    ->disabled()
+                    ->dehydrated()
                     ->required()
-                    ->default('Batch ke')
+                    ->prefix('Batch ke')
+                    ->default($batchKe)
                     ->maxLength(255),
                 Forms\Components\TextInput::make('jumlah')
+                    ->label('Jumlah Kencleng')
                     ->required()
                     ->disabledOn('edit')
-                    ->numeric(),
+                    ->integer()
+                    ->maxValue(3000),
             ])
             ->columns(2);
     }
@@ -40,8 +48,10 @@ class BatchKenclengResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('nama_batch')
+                    ->prefix('Batch ke-')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('jumlah')
+                    ->label('Jumlah Kencleng')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -59,8 +69,8 @@ class BatchKenclengResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->color('danger'),
-                Tables\Actions\ViewAction::make()
+                    ->label('Detail')
+                    ->icon('heroicon-o-eye')
                     ->color('success'),
                 Tables\Actions\Action::make('make_pdf')
                     ->label('Download PDF')
@@ -81,7 +91,7 @@ class BatchKenclengResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\KenclengsRelationManager::class,
         ];
     }
 
@@ -89,7 +99,6 @@ class BatchKenclengResource extends Resource
     {
         return [
             'index' => Pages\ListBatchKenclengs::route('/'),
-            // 'create' => Pages\CreateBatchKencleng::route('/create'),
             'edit' => Pages\EditBatchKencleng::route('/{record}/edit'),
         ];
     }

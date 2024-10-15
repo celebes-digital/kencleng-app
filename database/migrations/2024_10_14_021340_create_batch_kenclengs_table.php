@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('batch_kenclengs', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_batch');
-            $table->integer('jumlah');
+            $table->unsignedInteger('nama_batch');
+            $table->unsignedSmallInteger('jumlah');
             $table->timestamps();
         });
     }

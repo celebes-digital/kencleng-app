@@ -13,4 +13,9 @@ class Kencleng extends Model
         'no_kencleng',
         'qr_image'
     ];
+
+    public function batchKencleng()
+    {
+        return $this->belongsTo(BatchKencleng::class);
+    }
 }
