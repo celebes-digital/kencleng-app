@@ -17,9 +17,12 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class BatchKenclengResource extends Resource
 {
     protected static ?string $model             = BatchKencleng::class;
+    protected static ?string $label             = 'Batch Kencleng';
     protected static ?string $navigationIcon    = 'heroicon-o-inbox-stack';
     protected static ?string $slug              = 'batch-kencleng';
     protected static ?string $breadcumb         = 'Batch Kencleng';
+    protected static ?string $navigationGroup   = 'Kencleng';
+    protected static ?int    $navigationSort    = 2;
 
     public static function form(Form $form): Form
     {
