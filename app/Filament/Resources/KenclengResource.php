@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\Action;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 
 class KenclengResource extends Resource
 {
@@ -62,11 +63,20 @@ class KenclengResource extends Resource
             ->actions([
                 Action::make('download')
                     ->button()
-                    ->action(fn (Kencleng $kencleng) => Storage::download('/' . $kencleng->qr_image, 'qr-code.png'))
+                    ->action(function (Kencleng $kencleng) {
+                        $filePath = $kencleng->qr_image;
+                        if (Storage::disk('public')->exists($filePath)) {
+                            return response()->download(Storage::disk('public')->path($filePath), 'qr-code.png');
+                        } 
+                        Notification::make()
+                            ->title('Error')
+                            ->body('File not found.')
+                            ->send();
+                    })
                     ->successNotification(
                         Notification::make()
                             ->title('QR Berhasil Diunduh')
-                            ->body('QR Code telah berhasil diunduh.'),
+                            ->body('QR Code telah berhasil diunduh.')
                     ),
                 Tables\Actions\DeleteAction::make(),
             ])

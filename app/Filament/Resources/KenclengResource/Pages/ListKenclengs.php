@@ -34,7 +34,7 @@ class ListKenclengs extends ListRecords
                     $writer = new PngWriter();
 
                     // Create QR code
-                    $qrCode = QrCode::create('Life is too short to be generating QR codes')
+                    $qrCode = QrCode::create($no_kencleng)
                         ->setEncoding(new Encoding('UTF-8'))
                         ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
                         ->setSize(300)
