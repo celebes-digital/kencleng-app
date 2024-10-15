@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('infaqs', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->foreignId('distribusi_id')->constrained('distribusis')->cascadeOnDelete();
+            $table->foreignId('distribusi_id')->constrained('distribusi_kenclengs')->cascadeOnDelete();
             $table->date('tgl_transaksi');
             $table->integer('jumlah_donasi');
             $table->string('uraian')->default('Pemasukan dana kencleng Nomor');
