@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DownloadQRCodePdf;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -11,5 +12,9 @@ Route::view('/', 'welcome');
 // Route::view('profile', 'profile')
 //     ->middleware(['auth'])
 //     ->name('profile');
+
+Route::get('dashbord/qr-pdf', [DownloadQRCodePdf::class, 'download'])
+    ->middleware(['auth'])
+    ->name('qr-pdf');
 
 require __DIR__.'/auth.php';
