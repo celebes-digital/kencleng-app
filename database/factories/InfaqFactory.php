@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\DistribusiKencleng;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,9 +19,10 @@ class InfaqFactory extends Factory
     {
         return [
             'tgl_transaksi' => fake()->date(),
-            'jumlah'        => fake()->numberBetween(1, 20),
+            'jumlah_donasi' => fake()->numberBetween(1000, 100000),
             'uraian'        => fake()->randomElement(['Pemasukan dana kencleng Nomor']),
             'sumber_dana'   => fake()->randomElement(['Kencleng']),
+            'distribusi_id' => fake()->numberBetween(1, DistribusiKencleng::count()),
         ];
     }
 }
