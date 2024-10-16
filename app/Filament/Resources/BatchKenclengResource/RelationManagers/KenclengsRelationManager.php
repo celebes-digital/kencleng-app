@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BatchKenclengResource\RelationManagers;
 
+use App\Filament\Resources\KenclengResource;
 use App\Models\BatchKencleng;
 use App\Models\Kencleng;
 use Endroid\QrCode\Encoding\Encoding;
@@ -37,11 +38,8 @@ class KenclengsRelationManager extends RelationManager
 
     public function table(Table $table): Table
     {
-        return $table
+        return KenclengResource::table($table)
             ->recordTitleAttribute('no_kencleng')
-            ->columns([
-                Tables\Columns\TextColumn::make('no_kencleng'),
-            ])
             ->filters([
                 //
             ])
@@ -88,8 +86,13 @@ class KenclengsRelationManager extends RelationManager
                             ->title('Berhasil menambahkan kencleng'),
                     ),
             ])
-            ->actions([
-                Tables\Actions\DeleteAction::make(),
+            ->actions([ 
+                Tables\Actions\DeleteAction::make()
+                    ->after(function (Kencleng $kencleng) {
+                        $batchKencleng = BatchKencleng::find($kencleng->batch_kencleng_id);
+                        $batchKencleng->decrement('jumlah');
+                        $this->dispatch('refreshForm');
+                    }),
 
                 Tables\Actions\Action::make('download')
                     ->button()

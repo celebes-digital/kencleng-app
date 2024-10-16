@@ -9,14 +9,23 @@ use Livewire\Attributes\On;
 
 class EditBatchKencleng extends EditRecord
 {
-    protected static string $resource   = BatchKenclengResource::class;
-    protected static ?string $title         = 'Detail Batch Kencleng';
-    protected static ?string $breadcrumb    = 'Detail';
+    protected static string $resource        = BatchKenclengResource::class;
+    protected static ?string $title          = 'Detail Batch Kencleng';
+    protected static ?string $breadcrumb     = 'Detail';
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),
+            $this->getCancelFormAction()
+                ->label('Kembali'),
+        ];
+    }
+
+    protected function getFormActions(): array
+    {
+        return [
+            //
         ];
     }
 

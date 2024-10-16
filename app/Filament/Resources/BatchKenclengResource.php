@@ -59,13 +59,14 @@ class BatchKenclengResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
-                    ->label('Tanggal Dibuat')
+                    ->label('Dibuat')
                     ->since()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
+                    ->label('Terakhir Diubah')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->since(),
             ])
             ->filters([
                 //
