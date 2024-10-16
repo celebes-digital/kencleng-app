@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('distribusi_kenclengs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('kencleng_id')->constrained()->onDelete('cascade');
-            $table->bigInteger('donatur_id')->unsigned();
-            $table->bigInteger('kolektor_id')->unsigned();
+            $table->bigInteger('donatur_id')->unsigned()->nullable();
+            $table->bigInteger('kolektor_id')->unsigned()->nullable();
             $table->bigInteger('distributor_id')->unsigned();
-            $table->decimal('geo_lat', 10, 8);
-            $table->decimal('geo_long', 11, 8);
-            $table->date('tgl_distribusi');
-            $table->date('tgl_pengambilan');
+            $table->decimal('geo_lat', 10, 8)->nullable();
+            $table->decimal('geo_long', 11, 8)->nullable();
+            $table->date('tgl_distribusi')->nullable();
+            $table->date('tgl_pengambilan')->nullable();
 
             $table->foreign('donatur_id')->references('id')->on('profiles')->onDelete('cascade');
             $table->foreign('kolektor_id')->references('id')->on('profiles')->onDelete('cascade');
