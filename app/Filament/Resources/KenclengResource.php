@@ -27,6 +27,7 @@ class KenclengResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('batch_kencleng_id')
+                    ->label('Batch ke')
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('no_kencleng')
@@ -43,14 +44,20 @@ class KenclengResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('batch_kencleng_id')
+                    ->label('Batch ke')
                     ->numeric()
+                    ->grow(false)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('no_kencleng')
+                    ->grow(false)
+                    ->extraAttributes(['class' => 'font-bold text-lg text-blue-500'])
                     ->searchable(),
                 Tables\Columns\ImageColumn::make('qr_image')
-                    // ->square()
-                    ->height('10'),
+                    ->size('150px')
+                    ->alignCenter()
+                    ->square(),
             ])
+            ->defaultSortOptionLabel('batch_kencleng_id.nama_batch', 'desc')
             ->filters([
                 //
             ])
@@ -80,3 +87,4 @@ class KenclengResource extends Resource
         ];
     }
 }
+
