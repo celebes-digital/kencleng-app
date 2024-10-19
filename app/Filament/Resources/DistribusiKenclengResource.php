@@ -2,18 +2,27 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Components\Scanner;
+use App\Filament\Components\ScannerQrCode;
 use App\Filament\Resources\DistribusiKenclengResource\Pages;
-use App\Filament\Resources\DistribusiKenclengResource\RelationManagers;
+use App\Livewire\ScannerQR;
 use App\Models\DistribusiKencleng;
-use App\Models\Kencleng;
 use App\Models\Profile;
 use Filament\Forms;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Livewire;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+use App\Filament\Resources\DistribusiKenclengResource\Pages\CreateDistribusiKencleng;
+use GuzzleHttp\Promise\Create;
 
 class DistribusiKenclengResource extends Resource
 {
@@ -30,34 +39,12 @@ class DistribusiKenclengResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('kencleng_id')
-                    ->label('No. Kencleng')
-                    ->options(Kencleng::all()->pluck('no_kencleng', 'id'))
-                    ->required(),
-                Forms\Components\Select::make('donatur_id')
-                    ->label('Donator')
-                    ->options(Profile::where('group', 'donatur')->pluck('nama', 'id'))
-                    ->required(),
-                Forms\Components\Select::make('kolektor_id')
-                    ->label('Kolektor')
-                    ->options(Profile::where('group', 'kolektor')->pluck('nama', 'id'))
-                    ->required(),
-                Forms\Components\Select::make('distributor_id')
-                    ->label('Distributor')
-                    ->options(Profile::where('group', 'distributor')->pluck('nama', 'id'))
-                    ->required(),
-                Forms\Components\TextInput::make('geo_lat')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('geo_long')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\DatePicker::make('tgl_distribusi')
-                    ->native(false)
-                    ->required(),
-                Forms\Components\DatePicker::make('tgl_pengambilan')
-                    ->required(),
-            ]);
+                    ScannerQrCode::make('scanner')
+                        ->afterStateUpdated(fn (Set $set, $state) => $set('kencleng_id', $state)),
+                    TextInput::make('kencleng_id')
+                        ->label('No. Kencleng')
+            ])
+            ->columns(1);
     }
 
     public static function table(Table $table): Table
