@@ -7,11 +7,13 @@ use App\Filament\Resources\KenclengResource\RelationManagers;
 use App\Models\Kencleng;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
 
 class KenclengResource extends Resource
 {
@@ -62,7 +64,24 @@ class KenclengResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('download')
+                    ->button()
+                    ->action(function (Kencleng $kencleng) {
+                        $filePath = $kencleng->qr_image;
+                        if (Storage::disk('public')->exists($filePath)) {
+                            return response()->download(Storage::disk('public')->path($filePath), 'kencleng-' .$kencleng->no_kencleng . '.png');
+                        }
+                        Notification::make()
+                            ->title('Error')
+                            ->body('File tidak ditemukan.')
+                            ->send();
+                    })
+                    ->successNotification(
+                        Notification::make()
+                            ->title('QR Berhasil Diunduh')
+                            ->body('QR Code telah berhasil diunduh.')
+                    ),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -83,8 +102,6 @@ class KenclengResource extends Resource
         return [
             'index' => Pages\ListKenclengs::route('/'),
             'create' => Pages\CreateKencleng::route('/create'),
-            'edit' => Pages\EditKencleng::route('/{record}/edit'),
         ];
     }
 }
-
