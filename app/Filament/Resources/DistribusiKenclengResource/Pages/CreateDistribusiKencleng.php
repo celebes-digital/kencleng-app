@@ -24,6 +24,7 @@ class CreateDistribusiKencleng extends CreateRecord
 
             return false;
         }
+
         return true;
     }
 }

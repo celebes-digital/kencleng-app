@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('kencleng_id')->constrained()->onDelete('cascade');
             $table->bigInteger('donatur_id')->unsigned()->nullable();
             $table->bigInteger('kolektor_id')->unsigned()->nullable();
-            $table->bigInteger('distributor_id')->unsigned();
+            $table->bigInteger('distributor_id')->unsigned()->nullable();
             $table->decimal('geo_lat', 10, 8)->nullable();
             $table->decimal('geo_long', 11, 8)->nullable();
             $table->date('tgl_distribusi')->nullable();

@@ -41,12 +41,12 @@ class DistribusiKenclengResource extends Resource
                     ScannerQrCode::make('scanner')
                         ->live()
                         ->afterStateUpdated(function (Set $set, $state) {
-                            // $kencleng = Kencleng::where('no_kencleng', $state)->firstOrFail();
+                            $kencleng = Kencleng::where('no_kencleng', $state)->first();
                             Notification::make()
-                                ->title('Kencleng ' . $state  . ' ditemukan')
+                                ->title('Kencleng ' . $kencleng->no_kencleng  . ' ditemukan')
                                 ->success()
                                 ->send();
-                            $set('kencleng_id', $state);
+                            $set('kencleng_id', $kencleng->id);
                         }),
                     Fieldset::make('Data Kencleng')
                         ->schema([

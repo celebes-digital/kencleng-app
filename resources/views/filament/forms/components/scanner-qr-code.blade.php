@@ -18,7 +18,7 @@
     };
 
     const config = {
-        fps: 10,
+        fps: 100,
         qrbox: {
             width: 300,
             height: 300
@@ -64,21 +64,30 @@
     const handleQRCodeDetected = async (qrCodeMessage) => {
         console.log(`QR Code detected: ${qrCodeMessage}`);
         
-        const isNiceKencleng = await $wire.call('checkNoKencleng', qrCodeMessage);
+        window.qrScanner.instance.pause(true);
+        
+        setTimeout(async () => {
+            try {
+                const isNiceKencleng = await $wire.call('checkNoKencleng', qrCodeMessage);
+                console.log('isNiceKencleng ', isNiceKencleng);
 
-        console.log('isNiceKencleng ', isNiceKencleng);
-        if(isNiceKencleng) {
-            $wire.set('data.scanner', qrCodeMessage, true);
-    
-            if (window.qrScanner.instance) {
-                window.qrScanner.instance.pause(true);
-                // setTimeout(() => {
-                //     if (window.qrScanner.instance) {
-                //         window.qrScanner.instance.resume();
-                //     }
-                // }, 3000);
+                if (!isNiceKencleng && window.qrScanner.instance) {
+                    setTimeout(() => {
+                        if (window.qrScanner.instance) {
+                            window.qrScanner.instance.resume();
+                        }
+                    }, 1000);
+                }
+
+                if (isNiceKencleng) {
+                    console.log('QR Code message set to Livewire data');
+                    $wire.set('data.scanner', qrCodeMessage, true);
+                }
+                console.log('END: isNiceKencleng ', isNiceKencleng);
+            } catch (error) {
+                console.error('Error during QR code handling:', error);
             }
-        }
+        }, 1000);
     }
 
     const stopQrCodeScanner = async () => {
