@@ -38,7 +38,7 @@ class ListBatchKenclengs extends ListRecords
                         // Create QR code
                         $qrCode = QrCode::create($no_kencleng)
                             ->setEncoding(new Encoding('UTF-8'))
-                            ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
+                            ->setErrorCorrectionLevel(ErrorCorrectionLevel::Medium)
                             ->setSize(290)
                             ->setMargin(5);
                         $result = $writer->write($qrCode);

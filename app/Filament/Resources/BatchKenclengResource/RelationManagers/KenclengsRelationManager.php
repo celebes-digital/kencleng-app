@@ -61,9 +61,9 @@ class KenclengsRelationManager extends RelationManager
                         // Create QR code
                         $qrCode = QrCode::create($no_kencleng)
                             ->setEncoding(new Encoding('UTF-8'))
-                            ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
-                            ->setSize(280)
-                            ->setMargin(10);
+                            ->setErrorCorrectionLevel(ErrorCorrectionLevel::Medium)
+                            ->setSize(290)
+                            ->setMargin(5);
                         $result = $writer->write($qrCode);
 
                         // Save QR code to public storage
