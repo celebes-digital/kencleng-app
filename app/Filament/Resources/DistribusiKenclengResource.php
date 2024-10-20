@@ -2,17 +2,12 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Components\Scanner;
 use App\Filament\Components\ScannerQrCode;
 use App\Filament\Resources\DistribusiKenclengResource\Pages;
-use App\Livewire\ScannerQR;
 use App\Models\DistribusiKencleng;
+use App\Models\Kencleng;
 use App\Models\Profile;
-use Filament\Forms;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Livewire;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
@@ -21,8 +16,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-use App\Filament\Resources\DistribusiKenclengResource\Pages\CreateDistribusiKencleng;
-use GuzzleHttp\Promise\Create;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Split;
+use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 
 class DistribusiKenclengResource extends Resource
 {
@@ -39,10 +37,44 @@ class DistribusiKenclengResource extends Resource
     {
         return $form
             ->schema([
+                Split::make([
                     ScannerQrCode::make('scanner')
-                        ->afterStateUpdated(fn (Set $set, $state) => $set('kencleng_id', $state)),
-                    TextInput::make('kencleng_id')
-                        ->label('No. Kencleng')
+                        ->live()
+                        ->afterStateUpdated(function (Set $set, $state) {
+                            // $kencleng = Kencleng::where('no_kencleng', $state)->firstOrFail();
+                            Notification::make()
+                                ->title('Kencleng ' . $state  . ' ditemukan')
+                                ->success()
+                                ->send();
+                            $set('kencleng_id', $state);
+                        }),
+                    Fieldset::make('Data Kencleng')
+                        ->schema([
+                            Select::make('kencleng_id')
+                                ->label('No. Kencleng')
+                                ->options(Kencleng::all()->pluck('no_kencleng', 'id'))
+                                ->searchable()
+                                ->required(),
+                            Toggle::make('tag_lokasi')
+                                ->label('Tag Lokasi')
+                                ->inline(false)
+                                ->extraAttributes(['class' => 'mt-2'])
+                                ->helperText('Aktifkan untuk menandai lokasi saat ini'),
+                            Select::make('donatur_id')
+                                ->label('Donator')
+                                ->options(Profile::where('group', 'donatur')->pluck('nama', 'id'))
+                                ->searchable(),
+                            Select::make('distributor_id')
+                                ->label('Distributor')
+                                ->options(Profile::where('group', 'distributor')->pluck('nama', 'id'))
+                                ->searchable(),
+                            Select::make('kolektor_id')
+                                ->label('Kolektor')
+                                ->options(Profile::where('group', 'kolektor')->pluck('nama', 'id'))
+                                ->searchable(),
+                        ])
+                        ->columns(1),
+                ])
             ])
             ->columns(1);
     }

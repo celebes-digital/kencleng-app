@@ -1,7 +1,7 @@
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field">
-    <div id="reader" wire:key="qr-code-scanner-reader">
+    <div wire:ignore id="reader" wire:key="qr-code-scanner-reader">
         <div id="anim"></div>
     </div>
 </x-dynamic-component>
@@ -9,10 +9,16 @@
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 @endassets
 @script
-<script type="text/javascript">
-    let html5QrCode;
+<script>
+    // Global variables to manage scanner state
+    window.qrScanner = window.qrScanner || {
+        instance: null,
+        isInitialized: false,
+        initializationInProgress: false
+    };
+
     const config = {
-        fps: 10000,
+        fps: 10,
         qrbox: {
             width: 300,
             height: 300
@@ -20,70 +26,109 @@
     };
 
     const startQrCodeScanner = async () => {
+        if (window.qrScanner.isInitialized || window.qrScanner.initializationInProgress) {
+            console.log('Scanner already initialized or initialization in progress');
+            return;
+        }
+
+        window.qrScanner.initializationInProgress = true;
+
         try {
-            console.log('Getting cameras');
+            console.log('Initializing QR scanner');
             const devices = await Html5Qrcode.getCameras();
             if (devices && devices.length) {
                 const cameraId = devices[0].id;
-                html5QrCode = new Html5Qrcode("reader");
-                await html5QrCode.start(
+                window.qrScanner.instance = new Html5Qrcode("reader");
+                await window.qrScanner.instance.start(
                     cameraId,
                     config,
-                    qrCodeMessage => {
-                        console.log(`QR Code detected: ${qrCodeMessage}`);
-                        $wire.set('data.kencleng_id', qrCodeMessage, true).then(() => {
-                            // Pause scanning for 3 seconds
-                            html5QrCode.pause(true);
-                            setTimeout(() => {
-                                html5QrCode.resume();
-                            }, 3000);
-                        });
-                    },
-                    errorMessage => {
-                        console.log(`QR Code Error: ${errorMessage}`);
-                    }
+                    handleQRCodeDetected,
+                    errorMessage => console.log(`QR Code Error: ${errorMessage}`)
                 );
+                window.qrScanner.isInitialized = true;
                 const overlayElement = document.getElementById('reader');
-                let divAnimation = document.createElement("div");
-                divAnimation.classList.add('div-animation');
-                overlayElement.appendChild(divAnimation);
-                console.log('QR Code started');
+                if (overlayElement && !overlayElement.querySelector('.div-animation')) {
+                    let divAnimation = document.createElement("div");
+                    divAnimation.classList.add('div-animation');
+                    overlayElement.appendChild(divAnimation);
+                }
+                console.log('QR Code scanner initialized');
             }
         } catch (err) {
-            console.log('Error getting cameras or starting QR Code', err);
+            console.error('Error initializing QR Code scanner:', err);
+        } finally {
+            window.qrScanner.initializationInProgress = false;
+        }
+    }
+
+    const handleQRCodeDetected = async (qrCodeMessage) => {
+        console.log(`QR Code detected: ${qrCodeMessage}`);
+        
+        const isNiceKencleng = await $wire.call('checkNoKencleng', qrCodeMessage);
+
+        console.log('isNiceKencleng ', isNiceKencleng);
+        if(isNiceKencleng) {
+            $wire.set('data.scanner', qrCodeMessage, true);
+    
+            if (window.qrScanner.instance) {
+                window.qrScanner.instance.pause(true);
+                // setTimeout(() => {
+                //     if (window.qrScanner.instance) {
+                //         window.qrScanner.instance.resume();
+                //     }
+                // }, 3000);
+            }
         }
     }
 
     const stopQrCodeScanner = async () => {
-        if (html5QrCode && html5QrCode.isScanning) {
+        if (window.qrScanner.instance) {
             try {
-                await html5QrCode.stop();
-                console.log('QR Code scanner stopped');
+                if (window.qrScanner.instance.isScanning) {
+                    await window.qrScanner.instance.stop();
+                }
+                window.qrScanner.instance.clear();
+                window.qrScanner.instance = null;
+                window.qrScanner.isInitialized = false;
+                console.log('QR Code scanner stopped and reset');
             } catch (err) {
-                console.log('Error stopping QR Code scanner', err);
+                console.error('Error stopping QR Code scanner:', err);
             }
         }
     }
 
-    // Start the scanner when the component is mounted
-    $wire.on('component-mounted', () => {
-        console.log('QR Code Scanner component mounted');
-        if (!document.getElementById('reader').querySelector('.div-animation')) {
-            startQrCodeScanner();
-        }
-    });
-
-    // Stop the scanner when the component is unmounted or page is changed
-    $wire.on('component-unmounted', stopQrCodeScanner);
-    window.addEventListener('beforeunload', stopQrCodeScanner);
-
-    // Reinitialize the scanner when Livewire updates the DOM
-    document.addEventListener('livewire:navigated', () => {
+    const reinitializeScanner = () => {
+        console.log('Reinitializing scanner');
         stopQrCodeScanner().then(() => {
-            if (document.getElementById('reader') && !document.getElementById('reader').querySelector('.div-animation')) {
+            if (document.getElementById('reader')) {
                 startQrCodeScanner();
             }
         });
+    }
+
+    // Start the scanner when the component is mounted
+    $wire.on('component-mounted', () => {
+        console.log('Component mounted');
+        reinitializeScanner();
     });
+
+    // Clean up when the component is unmounted
+    $wire.on('component-unmounted', () => {
+        console.log('Component unmounted');
+        stopQrCodeScanner();
+    });
+
+    // Handle Livewire navigation
+    document.addEventListener('livewire:navigated', () => {
+        console.log('Livewire navigated');
+        if (document.getElementById('reader')) {
+            reinitializeScanner();
+        } else {
+            stopQrCodeScanner();
+        }
+    });
+
+    // Clean up on page unload
+    window.addEventListener('beforeunload', stopQrCodeScanner);
 </script>
 @endscript

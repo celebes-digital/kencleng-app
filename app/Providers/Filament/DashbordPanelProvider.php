@@ -29,7 +29,7 @@ class DashbordPanelProvider extends PanelProvider
             ->login()
             ->spa()
             ->spaUrlExceptions(fn(): array => [
-                url('/dashbord/tag-kencleng'),
+                url('/dashbord/distribusi-kencleng/create'),
             ])
             ->colors([
                 'primary' => Color::Emerald,
