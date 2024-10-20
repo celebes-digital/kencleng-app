@@ -86,7 +86,7 @@ class KenclengsRelationManager extends RelationManager
                             ->title('Berhasil menambahkan kencleng'),
                     ),
             ])
-            ->actions([ 
+            ->actions([
                 Tables\Actions\DeleteAction::make()
                     ->after(function (Kencleng $kencleng) {
                         $batchKencleng = BatchKencleng::find($kencleng->batch_kencleng_id);
@@ -99,7 +99,7 @@ class KenclengsRelationManager extends RelationManager
                     ->action(function (Kencleng $kencleng) {
                         $filePath = $kencleng->qr_image;
                         if (Storage::disk('public')->exists($filePath)) {
-                            return response()->download(Storage::disk('public')->path($filePath), 'qr-code.png');
+                            return response()->download(Storage::disk('public')->path($filePath), 'kencleng-' . $kencleng->no_kencleng . '.png');
                         }
                         Notification::make()
                             ->title('Error')
