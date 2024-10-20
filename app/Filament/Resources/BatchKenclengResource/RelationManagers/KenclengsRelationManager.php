@@ -46,6 +46,7 @@ class KenclengsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\Action::make('Tambah kencleng')
                     ->button()
+                    ->requiresConfirmation()
                     ->action(function (Livewire $livewire) {
                         $no_kencleng = now()->timestamp;
                         $id_batch = $this->ownerRecord->id;
@@ -88,6 +89,7 @@ class KenclengsRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\DeleteAction::make()
+                    ->requiresConfirmation()
                     ->after(function (Kencleng $kencleng) {
                         $batchKencleng = BatchKencleng::find($kencleng->batch_kencleng_id);
                         $batchKencleng->decrement('jumlah');
