@@ -18,4 +18,9 @@ class Kencleng extends Model
     {
         return $this->belongsTo(BatchKencleng::class);
     }
+
+    public function distribusiKenclengs()
+    {
+        return $this->hasMany(DistribusiKencleng::class);
+    }
 }
