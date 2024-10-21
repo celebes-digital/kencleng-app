@@ -1,13 +1,53 @@
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field">
-    <div wire:ignore id="reader" wire:key="qr-code-scanner-reader">
+    <div wire:ignore id="reader" wire:key="qr-code-scanner-reader" class="rounded-md overflow-hidden">
         <div id="anim"></div>
     </div>
 </x-dynamic-component>
+
+@push('styles')
+<style>
+    /* https://drive.google.com/file/d/1Gs0mAJWim9zwyxOMO3XYWc6DEBLLL1Nj/view?pli=1 */
+    #reader {
+        background-color: antiquewhite;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .div-animation {
+        position: absolute;
+        top: 56.5px;
+        left: 125.5px;
+        right: 125.5px;
+        height: 5px;
+        z-index: 100;
+        border-radius: 12px;
+        background-color: aqua;
+        animation: animate 4s ease-in-out infinite;
+        box-shadow: 0 0 10px 2px rgba(0, 255, 255, 0.7);
+    }
+
+    @keyframes animate {
+        0% {
+            top: 56.5px;
+        }
+
+        50% {
+            top: calc(100% - 65.5px);
+        }
+
+        100% {
+            top: 56.5px;
+        }
+    }
+</style>
+@endpush
+
 @assets
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 @endassets
+
 @script
 <script>
     // Global variables to manage scanner state
@@ -63,9 +103,9 @@
 
     const handleQRCodeDetected = async (qrCodeMessage) => {
         console.log(`QR Code detected: ${qrCodeMessage}`);
-        
+
         window.qrScanner.instance.pause(true);
-        
+
         setTimeout(async () => {
             try {
                 const isNiceKencleng = await $wire.call('checkNoKencleng', qrCodeMessage);
