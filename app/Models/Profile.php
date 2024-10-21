@@ -26,4 +26,9 @@ class Profile extends Model
         'poto_ktp',
         'group',
     ];
+
+    public function users()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
