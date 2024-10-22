@@ -47,13 +47,11 @@ new #[Layout('layouts.guest')] class extends Component
             $this->only('email', 'password', 'password_confirmation', 'token'),
             function ($user) {
                 $user->forceFill([
-                    'password' => Hash::make($this->password),
-                    'remember_token' => Str::random(60),
+                    'password'          => Hash::make($this->password),
+                    'remember_token'    => Str::random(60),
+                    'is_active'         => true,
+                    'email_verified_at' => now(),
                 ])->save();
-
-                if ($user->markEmailAsVerified()) {
-                    event(new Verified($user));
-                }
 
                 event(new PasswordReset($user));
             }
