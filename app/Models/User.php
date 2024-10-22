@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\ResetPasswordNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use Filament\Models\Contracts\FilamentUser;
@@ -25,6 +26,11 @@ class User extends Authenticatable implements FilamentUser, HasName, MustVerifyE
     public function getFilamentName(): string
     {
         return $this->user->profiles->nama ?? 'Admin';
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 
     protected $fillable = [
