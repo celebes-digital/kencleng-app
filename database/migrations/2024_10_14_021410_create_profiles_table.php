@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->string('nama', 255);
             $table->date('tgl_lahir');
-            $table->char('nik', 16);
+            $table->char('nik', 20)->nullable()->unique();
             $table->enum('kelamin', ['L', 'P']);
             $table->string('pekerjaan', 100);
             $table->string('alamat', 255);
@@ -23,10 +25,10 @@ return new class extends Migration
             $table->string('kecamatan', 100);
             $table->string('kabupaten', 100);
             $table->string('provinsi', 100);
-            $table->string('no_hp', 15);
-            $table->string('no_wa', 15);
-            $table->string('poto', 100);
-            $table->string('poto_ktp', 100);
+            $table->string('no_hp', 15)->nullable();
+            $table->string('no_wa', 15)->nullable();
+            $table->string('foto', 100)->nullable();
+            $table->string('foto_ktp', 100)->nullable();
             $table->string('group', 100);
             $table->timestamps();
         });
