@@ -10,6 +10,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Password;
 
 class CreateProfile extends CreateRecord
 {
@@ -54,7 +55,21 @@ class CreateProfile extends CreateRecord
 
     protected function afterCreate() {
         $user = User::find($this->record->user_id);
-        $user->sendEmailVerificationNotification();
+        $this->sendPasswordResetLink($user->email);
+    }
+
+    private function sendPasswordResetLink($email): void
+    {
+        $status = Password::sendResetLink(
+            $this->only('email')
+        );
+
+        if ($status != Password::RESET_LINK_SENT) {
+            $this->addError('email', __($status));
+
+            return;
+        }
+
 
         Notification::make()
             ->title('Verifikasi Email Terkirim')
@@ -62,6 +77,6 @@ class CreateProfile extends CreateRecord
             ->icon('heroicon-o-envelope')
             ->iconColor('success')
             ->send();
-
+        return;
     }
 }

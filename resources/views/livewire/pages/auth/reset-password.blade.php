@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Session;
@@ -49,6 +50,10 @@ new #[Layout('layouts.guest')] class extends Component
                     'password' => Hash::make($this->password),
                     'remember_token' => Str::random(60),
                 ])->save();
+
+                if ($user->markEmailAsVerified()) {
+                    event(new Verified($user));
+                }
 
                 event(new PasswordReset($user));
             }
