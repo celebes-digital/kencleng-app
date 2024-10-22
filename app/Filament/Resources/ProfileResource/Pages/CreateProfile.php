@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\ProfileResource\Pages;
 
 use App\Filament\Resources\ProfileResource;
-use App\Models\Profile;
 use App\Models\User;
 use Filament\Actions;
 use Filament\Notifications\Notification;
@@ -61,7 +60,7 @@ class CreateProfile extends CreateRecord
     private function sendPasswordResetLink($email): void
     {
         $status = Password::sendResetLink(
-            $this->only('email')
+            ['email' => $email]
         );
 
         if ($status != Password::RESET_LINK_SENT) {
