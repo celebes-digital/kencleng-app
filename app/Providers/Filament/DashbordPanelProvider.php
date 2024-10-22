@@ -37,6 +37,7 @@ class DashbordPanelProvider extends PanelProvider
             ->sidebarWidth(250)
             ->sidebarCollapsibleOnDesktop()
             ->viteTheme('resources/css/filament/dashbord/theme.css')
+            ->brandName('Kencleng Jariyah')
             // ->viteTheme('resources/css/app.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -48,6 +49,8 @@ class DashbordPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
             ])
+            ->passwordReset()
+            ->profile()
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
