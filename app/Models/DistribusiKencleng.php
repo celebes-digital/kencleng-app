@@ -22,7 +22,7 @@ class DistribusiKencleng extends Model
 
     public function kencleng()
     {
-        return $this->belongsTo(Kencleng::class);
+        return $this->belongsTo(Kencleng::class, 'kencleng_id');
     }
 
     public function donatur()
@@ -32,11 +32,11 @@ class DistribusiKencleng extends Model
 
     public function kolektor()
     {
-        return $this->belongsTo(Profile::class);
+        return $this->belongsTo(Profile::class, 'kolektor_id');
     }
 
     public function distributor()
     {
-        return $this->belongsTo(Profile::class);
+        return $this->belongsTo(Profile::class, 'distributor_id');
     }
 }
