@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets\StatsDashbordOverview;
+use App\Filament\Widgets\StatsTopDonaturOverview;
 
 class Dashboard extends \Filament\Pages\Dashboard
 {
@@ -17,6 +18,7 @@ class Dashboard extends \Filament\Pages\Dashboard
     {
         return [
             StatsDashbordOverview::class,
+            StatsTopDonaturOverview::class,
         ];
     }
 }
