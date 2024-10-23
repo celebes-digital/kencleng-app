@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -18,27 +19,26 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class DashbordPanelProvider extends PanelProvider
+class DashboardPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
             ->default()
-            ->id('dashbord')
-            ->path('dashbord')
+            ->id('dashboard')
+            ->path('dashboard')
             ->login()
             ->spa()
             ->spaUrlExceptions(fn(): array => [
-                url('/dashbord/distribusi-kencleng/create'),
+                url('/dashboard/distribusi-kencleng/create'),
             ])
             ->colors([
                 'primary' => Color::Emerald,
             ])
             ->sidebarWidth(250)
             ->sidebarCollapsibleOnDesktop()
-            ->viteTheme('resources/css/filament/dashbord/theme.css')
+            ->viteTheme('resources/css/filament/dashboard/theme.css')
             ->brandName('Kencleng Jariyah')
-            // ->viteTheme('resources/css/app.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -50,7 +50,25 @@ class DashbordPanelProvider extends PanelProvider
                 Widgets\FilamentInfoWidget::class,
             ])
             ->passwordReset()
-            ->profile()
+            ->profile(isSimple: false)
+            ->navigationGroups([
+                NavigationGroup::make()
+                    ->label('Kencleng')
+                    ->icon('heroicon-o-cube')
+                    ->collapsible(false),
+                NavigationGroup::make()
+                    ->label('Distribusi')
+                    ->icon('heroicon-o-truck')
+                    ->collapsible(false),
+                NavigationGroup::make()
+                    ->label('Jadwal')
+                    ->icon('heroicon-o-calendar')
+                    ->collapsible(false),
+                NavigationGroup::make()
+                    ->label('Keuangan')
+                    ->icon('heroicon-o-currency-dollar')
+                    ->collapsible(false),
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
