@@ -18,6 +18,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class DashboardPanelProvider extends PanelProvider
 {
@@ -47,7 +48,7 @@ class DashboardPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // Widgets\FilamentInfoWidget::class,
             ])
             ->passwordReset()
             ->profile(isSimple: false)
@@ -79,6 +80,13 @@ class DashboardPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+            ])
+            ->plugins([
+                FilamentFullCalendarPlugin::make()
+                    ->selectable()
+                    ->editable(false)
+                    ->timezone(config('app.timezone'))
+                    ->locale(config('app.locale'))
             ])
             ->authMiddleware([
                 Authenticate::class,
