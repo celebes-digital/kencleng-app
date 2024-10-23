@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -49,7 +50,25 @@ class DashboardPanelProvider extends PanelProvider
                 Widgets\FilamentInfoWidget::class,
             ])
             ->passwordReset()
-            ->profile()
+            ->profile(isSimple: false)
+            ->navigationGroups([
+                NavigationGroup::make()
+                    ->label('Kencleng')
+                    ->icon('heroicon-o-cube')
+                    ->collapsible(false),
+                NavigationGroup::make()
+                    ->label('Distribusi')
+                    ->icon('heroicon-o-truck')
+                    ->collapsible(false),
+                NavigationGroup::make()
+                    ->label('Jadwal')
+                    ->icon('heroicon-o-calendar')
+                    ->collapsible(false),
+                NavigationGroup::make()
+                    ->label('Keuangan')
+                    ->icon('heroicon-o-currency-dollar')
+                    ->collapsible(false),
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

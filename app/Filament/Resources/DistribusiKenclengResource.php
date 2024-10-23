@@ -26,12 +26,12 @@ class DistribusiKenclengResource extends Resource
 {
     protected static ?string $model = DistribusiKencleng::class;
 
-    protected static ?string $modelLabel        = 'Distribusi Kencleng';
+    protected static ?string $modelLabel        = 'Data Distribusi';
     protected static ?string $label             = 'Data Kencleng';
     protected static ?string $navigationIcon    = 'heroicon-o-cube';
     protected static ?string $slug              = 'distribusi-kencleng';
-    protected static ?string $navigationGroup   = 'Kencleng';
-    protected static ?int    $navigationSort    = 3;
+    protected static ?string $navigationGroup   = 'Distribusi';
+    protected static ?int    $navigationSort    = 1;
 
     public static function form(Form $form): Form
     {
