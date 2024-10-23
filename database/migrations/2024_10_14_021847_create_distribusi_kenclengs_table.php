@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('geo_long', 11, 8)->nullable();
             $table->date('tgl_distribusi')->nullable();
             $table->date('tgl_pengambilan')->nullable();
+            $table->integer('jumlah')->unsigned()->nullable();
 
             $table->foreign('donatur_id')->references('id')->on('profiles')->onDelete('cascade');
             $table->foreign('kolektor_id')->references('id')->on('profiles')->onDelete('cascade');

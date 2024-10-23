@@ -18,6 +18,7 @@ class DistribusiKencleng extends Model
         'geo_long',
         'tgl_distribusi',
         'tgl_pengambilan',
+        'jumlah',
     ];
 
     public function kencleng()
