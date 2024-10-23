@@ -17,15 +17,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-        // Kencleng::factory(10)->create();
-        Profile::factory(10)->create();
-        DistribusiKencleng::factory(10)->create();
-        InfaqFactory::factory(10)->create();
+        // Seed the users
+        \App\Models\User::factory(100)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Seed the profiles
+        \App\Models\Profile::factory(200)->create();
+
+        // Seed the kenclengs
+        \App\Models\Kencleng::factory(10)->create();
+
+        // Seed the distribusi kenclengs
+        \App\Models\DistribusiKencleng::factory(1000)->create();
+
+        // Seed the infaqs
+        // \App\Models\Infaq::factory(10)->create();
     }
 }

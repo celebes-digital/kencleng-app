@@ -18,15 +18,19 @@ class DistribusiKenclengFactory extends Factory
      */
     public function definition(): array
     {
+        $tglDistribusi = $this->faker->optional()->dateTimeBetween('-2 months', 'now');
+        $tglPengambilan = $tglDistribusi ? $this->faker->optional()->dateTimeBetween($tglDistribusi, 'now') : null;
+
         return [
-            // 'no_kencleng'       => fake()->randomNumber(8),
-            'kencleng_id'       => fake()->numberBetween(1, Kencleng::count()),
-            'donatur_id'        => fake()->numberBetween(1, Profile::count()),
-            'distributor_id'    => fake()->numberBetween(1, Profile::count()),
-            'geo_lat'           => mt_rand(-90000000, 90000000) / 1000000,
-            'geo_long'          => mt_rand(-90000000, 90000000) / 1000000,
-            'tgl_distribusi'    => fake()->date(),
-            'tgl_pengambilan'   => fake()->date(),
+            'kencleng_id'       => Kencleng::factory(),
+            'donatur_id'        => Profile::factory(),
+            'kolektor_id'       => Profile::factory(),
+            'distributor_id'    => Profile::factory(),
+            'geo_lat'           => $this->faker->latitude,
+            'geo_long'          => $this->faker->longitude,
+            'tgl_distribusi'    => $tglDistribusi ? $tglDistribusi->format('Y-m-d') : null,
+            'tgl_pengambilan'   => $tglPengambilan ? $tglPengambilan->format('Y-m-d') : null,
+            'jumlah'            => $this->faker->numberBetween(1000, 10000000),
         ];
     }
 }
