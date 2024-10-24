@@ -22,10 +22,20 @@ return new class extends Migration
             $table->date('tgl_distribusi')->nullable();
             $table->date('tgl_pengambilan')->nullable();
             $table->integer('jumlah')->unsigned()->nullable();
+            $table->boolean('diterima')->default(false);
 
-            $table->foreign('donatur_id')->references('id')->on('profiles')->onDelete('cascade');
-            $table->foreign('kolektor_id')->references('id')->on('profiles')->onDelete('cascade');
-            $table->foreign('distributor_id')->references('id')->on('profiles')->onDelete('cascade');
+            $table->foreign('donatur_id')
+                    ->references('id')
+                    ->on('profiles')
+                    ->onDelete('cascade');
+            $table->foreign('kolektor_id')
+                    ->references('id')
+                    ->on('profiles')
+                    ->onDelete('cascade');
+            $table->foreign('distributor_id')
+                    ->references('id')
+                    ->on('profiles')
+                    ->onDelete('cascade');
             $table->timestamps();
         });
     }

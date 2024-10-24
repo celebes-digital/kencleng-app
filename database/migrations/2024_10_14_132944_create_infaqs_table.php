@@ -12,11 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('infaqs', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->foreignId('distribusi_id')->constrained('distribusi_kenclengs')->cascadeOnDelete();
+            $table->id();
+            $table->foreignId('distribusi_id')
+                    ->constrained('distribusi_kenclengs')
+                    ->cascadeOnDelete();
+
             $table->date('tgl_transaksi');
             $table->integer('jumlah_donasi');
-            $table->string('uraian')->default('Pemasukan dana kencleng Nomor');
+            $table->string('uraian')->nullable();
             $table->string('sumber_dana')->default('Kencleng');
             $table->timestamps();
         });

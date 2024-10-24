@@ -7,6 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Infaq extends Model
 {
-    /** @use HasFactory<\Database\Factories\InfaqFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'distribusi_id',
+        'tgl_transaksi',
+        'jumlah_donasi',
+        'uraian',
+        'sumber_dana'
+    ];
+
+    public function distribusi()
+    {
+        return $this->belongsTo(DistribusiKencleng::class, 'distribusi_id');
+    }
 }

@@ -19,6 +19,7 @@ class DistribusiKencleng extends Model
         'tgl_distribusi',
         'tgl_pengambilan',
         'jumlah',
+        'diterima'
     ];
 
     public function kencleng()
