@@ -45,68 +45,83 @@ class KenclengResource extends Resource
 
     public static function table(Table $table): Table
     {
-        // Cek status terkahir kencleng
-        // Jika ada dan tgl_pengambilan ada, maka status = 'Tersedia'
-        // Jika tgl_distribusi ada dan tgl_pengambilan null, maka status = 'Sedang diisi'
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('batch_kencleng_id')
-                    ->label('Batch ke')
-                    ->numeric()
+                    ->label('Batch')
                     ->grow(false)
+                    ->alignCenter()
                     ->sortable(),
+                Tables\Columns\ImageColumn::make('qr_image')
+                    ->size('120px')
+                    ->grow(false)
+                    ->square(),
                 Tables\Columns\TextColumn::make('no_kencleng')
                     ->grow(false)
                     ->extraAttributes(['class' => 'font-bold text-lg text-blue-500'])
                     ->searchable(),
-                Tables\Columns\ImageColumn::make('qr_image')
-                    ->size('150px')
-                    ->alignCenter()
-                    ->square(),
                 Tables\Columns\TextColumn::make('status')
-                        ->label('Status')
-                        ->badge()
-                        ->color(fn($state) => match ($state) {
-                            'Tersedia' => 'success',
-                            'Sedang diisi' => 'warning',
-                            'Belum didistribusikan' => 'danger',
-                        })
-                        ->getStateUsing(function (Kencleng $record) {
-                                $latestDistribusi = $record
-                                                        ->distribusiKenclengs()
-                                                        ->latest('tgl_distribusi')
-                                                        ->first();
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn($state) => match ($state) {
+                        'Tersedia' => 'success',
+                        'Sedang diisi' => 'warning',
+                        'Belum didistribusikan' => 'danger',
+                    })
+                    ->getStateUsing(function (Kencleng $record) {
+                        $latestDistribusi = $record
+                            ->distribusiKenclengs()
+                            ->latest('tgl_distribusi')
+                            ->first();
 
-                                if ($latestDistribusi) {
-                                    if ($latestDistribusi->tgl_pengambilan) {
-                                        return 'Tersedia';
-                                    } elseif ($latestDistribusi->tgl_distribusi && !$latestDistribusi->tgl_pengambilan) {
-                                        return 'Sedang diisi';
-                                    }
-                                }
-                                return 'Belum didistribusikan';
-                            })
-                        ])
-            ->defaultSortOptionLabel('batch_kencleng_id.nama_batch', 'desc')
-            ->filters([
-                //
+                        if ($latestDistribusi) {
+                            if ($latestDistribusi->tgl_pengambilan) {
+                                return 'Tersedia';
+                            } elseif ($latestDistribusi->tgl_distribusi && !$latestDistribusi->tgl_pengambilan) {
+                                return 'Sedang diisi';
+                            }
+                        }
+                        return 'Belum didistribusikan';
+                    })
             ])
+            ->defaultSortOptionLabel('batch_kencleng_id.nama_batch', 'desc')
+            ->filters([])
             ->actions([
                 Tables\Actions\Action::make('view_riwayat')
                     ->label('Riwayat')
-                    ->url(fn($record) => KenclengResource::getUrl('riwayat', ['record' => $record])),
+                    ->icon('heroicon-o-film')
+                    ->url(
+                        fn($record) 
+                            => KenclengResource::getUrl(
+                                    'riwayat', ['record' => $record]
+                                )
+                    ),
                 Tables\Actions\Action::make('download')
                     ->button()
-                    ->action(function (Kencleng $kencleng) {
-                        $filePath = $kencleng->qr_image;
-                        if (Storage::disk('public')->exists($filePath)) {
-                            return response()->download(Storage::disk('public')->path($filePath), 'kencleng-' . $kencleng->no_kencleng . '.png');
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('info')
+                    ->action(
+                        function (Kencleng $kencleng) 
+                        {
+                            $filePath = $kencleng->qr_image;
+                            if (Storage::disk('public')->exists($filePath)) {
+                                return response()
+                                        ->download(Storage::disk('public')
+                                        ->path(
+                                            $filePath), 'kencleng-' 
+                                            . $kencleng->no_kencleng 
+                                            . '.png'
+                                        );
+                            }
+
+                            Notification::make()
+                                ->title('Error')
+                                ->icon('heroicon-o-exclamation-circle')
+                                ->iconColor('danger')
+                                ->body('File tidak ditemukan.')
+                                ->send();
                         }
-                        Notification::make()
-                            ->title('Error')
-                            ->body('File tidak ditemukan.')
-                            ->send();
-                    })
+                    )
                     ->successNotification(
                         Notification::make()
                             ->title('QR Berhasil Diunduh')
@@ -115,9 +130,9 @@ class KenclengResource extends Resource
 
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 
