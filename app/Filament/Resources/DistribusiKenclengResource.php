@@ -91,16 +91,18 @@ class DistribusiKenclengResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('kolektor.nama')
                     ->label('Kolektor')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('distributor.nama')
                     ->label('Distributor')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('geo_lat')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('geo_long')
-                    ->numeric()
-                    ->sortable(),
+                // Tables\Columns\TextColumn::make('geo_lat')
+                //     ->numeric()
+                //     ->sortable(),
+                // Tables\Columns\TextColumn::make('geo_long')
+                //     ->numeric()
+                //     ->sortable(),
                 Tables\Columns\TextColumn::make('tgl_distribusi')
                     ->date()
                     ->sortable(),
@@ -120,6 +122,43 @@ class DistribusiKenclengResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('lokasi')
+                    ->iconButton()
+                    ->icon(
+                        function ($record) {
+                            if($record->tgl_pengambilan) {
+                                return 'heroicon-o-check-circle';
+                            } else {
+                                return ($record->geo_lat && $record->geo_long) 
+                                    ? 'heroicon-o-map-pin' 
+                                    : 'heroicon-o-x-circle';
+                            }
+                        }
+                    )
+                    ->color(
+                        function ($record) {
+                            if ($record->tgl_pengambilan) {
+                                return 'success';
+                            } else {
+                                return ($record->geo_lat && $record->geo_long)
+                                    ? 'info'
+                                    : 'danger';
+                            }
+                        }
+                    )
+                    ->disabled(
+                        fn ($record) 
+                            => !($record->geo_lat && $record->geo_long)
+                    )
+                    ->url(
+                        fn ($record) 
+                            => "https://www.google.com/maps/search/?api=1&query=" 
+                                . $record->geo_lat
+                                . "," 
+                                . $record->geo_long, 
+                        true
+                    )
+                    ->label(''),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
