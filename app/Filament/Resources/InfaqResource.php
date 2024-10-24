@@ -6,9 +6,11 @@ use App\Filament\Resources\InfaqResource\Pages;
 use App\Filament\Resources\InfaqResource\RelationManagers;
 use App\Models\Infaq;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -24,14 +26,14 @@ class InfaqResource extends Resource
         return $form
             ->schema([
                 Forms\Components\DatePicker::make('tgl_transaksi')
+                    ->native(false)
                     ->required(),
-                Forms\Components\TextInput::make('jumlah')
+                Forms\Components\TextInput::make('jumlah_donasi')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('uraian')
+                Forms\Components\TextArea::make('uraian')
                     ->required()
-                    ->maxLength(255)
-                    ->default('Pemasukan dana kencleng Nomor'),
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('sumber_dana')
                     ->required()
                     ->maxLength(255)
@@ -43,33 +45,40 @@ class InfaqResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('ID')
+                Tables\Columns\TextColumn::make('distribusi.donatur.nama')
+                    ->label('Nama Donatur')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('tgl_transaksi')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('jumlah')
+                Tables\Columns\TextColumn::make('jumlah_donasi')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('uraian')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('sumber_dana')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('tgl_transaksi', 'desc')
             ->filters([
-                //
-            ])
+                Tables\Filters\Filter::make('tgl_transaksi')
+                    ->form([
+                        DatePicker::make('dari')
+                            ->native(false)
+                            ->default(now()->subMonth()),
+                        DatePicker::make('sampai')
+                            ->native(false)
+                            ->default(now()),
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        $query->whereBetween('tgl_transaksi', $data);
+                    }),
+                ], layout: FiltersLayout::Modal)
+                ->hiddenFilterIndicators()
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->iconButton(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
