@@ -8,99 +8,94 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 use App\Models\DistribusiKencleng;
+use App\Models\Infaq;
+use App\Models\Profile;
+use Illuminate\Support\Number;
 
 class StatsDashbordOverview extends BaseWidget
 {
     protected function getStats(): array
     {
-        $now = Carbon::now();
-
+        $now                = Carbon::now();
         $startOfMonth       = $now->startOfMonth();
-        $startOfLastMonth   = $now->subMonth()->startOfMonth();
-        $endOfLastMonth     = $now->subMonth()->endOfMonth();
 
-        $currentMonthSum    = DistribusiKencleng::where
-                                (
-                                    'tgl_pengambilan', '>=', $startOfMonth
-                                )
-                                ->sum('jumlah');
-        $lastMonthSum       = DistribusiKencleng::whereBetween
-                                (
-                                    'tgl_pengambilan',
-                                    [$startOfLastMonth, $endOfLastMonth]
-                                )
-                                ->sum('jumlah');
+        $totalPemasukanKencleng         = Infaq::sum('jumlah_donasi');
 
-        $percentageChange   = $lastMonthSum > 0
-                                ? (($currentMonthSum - $lastMonthSum) / $lastMonthSum) * 100
-                                : 0;
+        $totalDistribusiKencleng        = DistribusiKencleng::whereNotNull('tgl_distribusi')
+                                                            ->count();
 
-        $description        = $percentageChange >= 0
-                                ? abs($percentageChange) . '% meningkat'
-                                : abs($percentageChange) . '% menurun';
-        $descriptionIcon    = $percentageChange >= 0
-                                ? 'heroicon-m-arrow-trending-up'
-                                : 'heroicon-m-arrow-trending-down';
-
-        $currentMonthCount  = DistribusiKencleng::where
-                                (
-                                    'tgl_pengambilan', '>=', $startOfMonth
-                                )
-                                ->count();
-
-        $averageDailyDistribusi     = $currentMonthCount > 0
-                                        ? $currentMonthSum / $currentMonthCount
-                                        : 0;
+        $distribusiKenclengBulanIni     = DistribusiKencleng::where
+                                            (
+                                                'tgl_distribusi', '>=', $now->startOfMonth()
+                                            )
+                                            ->count();
         
-        // Perhitungan jumlah kencleng masuk
-        $currentMonthKenclengMasuk  = DistribusiKencleng::where
-                                        (
-                                            'tgl_pengambilan', '>=', $startOfMonth
-                                        )
-                                        ->count();
-        $lastMonthKenclengMasuk     = DistribusiKencleng::whereBetween
-                                        (
-                                            'tgl_pengambilan',
-                                            [$startOfLastMonth, $endOfLastMonth]
-                                        )
-                                        ->count();
-
-        $kenclengMasukDifference    = $lastMonthKenclengMasuk > 0
-                                        ? (($currentMonthKenclengMasuk - $lastMonthKenclengMasuk) / $lastMonthKenclengMasuk) * 100
-                                        : 0;
-
-        $kenclengMasukDescription   = $kenclengMasukDifference >= 0
-                                        ? 'Bertambah ' . abs($kenclengMasukDifference)
-                                        : 'Berkurang ' . abs($kenclengMasukDifference);
-        $isMeningkat                = $kenclengMasukDifference >= 0
-                                        ? true
-                                        : false;
+        $totalPengguna                  = Profile::all()->count();
         
-        // Perhitungan pengguna yang mendaftar
-        $allUsers               = \App\Models\Profile::all()->count();
-        $currentMonthNewUsers   = \App\Models\Profile::where
-                                    (
-                                        'created_at', '>=', $startOfMonth
-                                    )
-                                    ->count();
+        $totalPenggunaBulanIni          = Profile::where
+                                            (
+                                                'created_at', '>=', $now->startOfMonth()
+                                            )
+                                            ->count();
+
+
+        $currentMonthSum                = Infaq::where
+                                            (
+                                                'tgl_transaksi', '>=', $startOfMonth
+                                            )
+                                            ->sum('jumlah_donasi');
 
         return [
-            Stat::make('Pemasukan Kencleng', 'Rp ' . $currentMonthSum)
-                ->description($description . ' dari bulan lalu')
-                ->descriptionIcon($descriptionIcon)
+            Stat::make
+                (
+                    'Total Pemasukan Kencleng', 
+                    $this->formatRupiah($totalPemasukanKencleng)
+                )
+                ->description
+                (
+                    $this->formatRupiah($currentMonthSum) . ' bulan ini'
+                )
+                ->descriptionIcon('heroicon-m-banknotes')
                 ->color('success'),
 
-            Stat::make('Kencleng Masuk', $currentMonthCount . ' Kencleng')
-                ->description($kenclengMasukDescription . ' dari bulan lalu')
-                ->descriptionIcon(
-                    'heroicon-m-arrow-trending-' . ($isMeningkat ? 'up' : 'down')
+            Stat::make
+                (
+                    'Total Distribusi Kencleng', 
+                    $totalDistribusiKencleng . ' Kencleng'
                 )
-                ->color($isMeningkat ? 'success' : 'danger'),
+                ->description($distribusiKenclengBulanIni . ' kencleng bulan ini')
+                ->descriptionIcon('heroicon-m-cube')
+                ->color('info'),
                 
-            Stat::make('Pengguna Baru', $allUsers . ' Pengguna')
-                ->description('Bertambah ' . $currentMonthNewUsers . ' pengguna bulan ini')
+            Stat::make
+                (
+                    'Total Pengguna', 
+                    $totalPengguna . ' Pengguna'
+                )
+                ->description($totalPenggunaBulanIni . ' pengguna bulan ini')
                 ->descriptionIcon('heroicon-m-user-plus')
                 ->color('warning'),
         ];
+    }
+
+
+    // Fungsi format ke uang, jadi kalau satu 1980200 menjadi Rp 1,98 Jt
+    private function formatRupiah($amount)
+    {
+        if ($amount >= 1000000000) {
+            return 'Rp'
+                . number_format($amount / 1000000000, 2)
+                . ' M';
+        } elseif ($amount >= 1000000) {
+            return 'Rp'
+                . number_format($amount / 1000000, 1)
+                . ' Jt';
+        } elseif ($amount >= 1000) {
+            return 'Rp'
+                . number_format($amount / 1000)
+                . ' Rb';
+        } else {
+            return 'Rp ' . number_format($amount, 2);
+        }
     }
 }
