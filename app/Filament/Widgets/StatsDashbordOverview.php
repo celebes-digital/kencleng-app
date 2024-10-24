@@ -10,6 +10,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 use App\Models\DistribusiKencleng;
 use App\Models\Infaq;
 use App\Models\Profile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Number;
 
 class StatsDashbordOverview extends BaseWidget
@@ -17,9 +18,9 @@ class StatsDashbordOverview extends BaseWidget
 
     public static function canView(): bool
     {
-        return auth()->user()->is_admin;
+        return Auth::user()->is_admin;
     }
-    
+
     protected function getStats(): array
     {
         $now                = Carbon::now();
