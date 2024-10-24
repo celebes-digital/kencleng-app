@@ -4,14 +4,16 @@ namespace App\Filament\Resources\ProfileResource\Pages;
 
 use App\Filament\Resources\ProfileResource;
 use App\Models\User;
-use Filament\Actions;
-use Filament\Notifications\Notification;
-use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Support\Facades\Hash;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Password;
 
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\CreateRecord;
+
+use Filament\Actions;
 use Filament\Actions\Action;
+
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Wizard;
@@ -178,7 +180,7 @@ class CreateProfile extends CreateRecord
 
         $user = User::create([
             'email'      => $data['email'],
-            'password'   => Hash::make('temp_password_key'),
+            'password'   => bcrypt('temp_password_key'),
         ]);
 
         $data['user_id'] = $user->id;
@@ -204,7 +206,6 @@ class CreateProfile extends CreateRecord
 
             return;
         }
-
 
         Notification::make()
             ->title('Verifikasi Email Terkirim')
