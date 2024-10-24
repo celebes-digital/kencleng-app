@@ -7,6 +7,8 @@ use Filament\Pages\Page;
 
 class JadwalKoleksi extends Page
 {
+
+    protected static bool $shouldRegisterNavigation = false;
     protected static string $view               = 'filament.pages.jadwal-koleksi';
     protected static ?string $modelLabel        = 'Jadwal Koleksiki';
     protected static ?string $label             = 'Jadwal Koleksiki';
