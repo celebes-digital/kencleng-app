@@ -45,6 +45,9 @@ class KenclengResource extends Resource
 
     public static function table(Table $table): Table
     {
+        // Cek status terkahir kencleng
+        // Jika ada dan tgl_pengambilan ada, maka status = 'Tersedia'
+        // Jika tgl_distribusi ada dan tgl_pengambilan null, maka status = 'Sedang diisi'
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('batch_kencleng_id')
@@ -60,7 +63,30 @@ class KenclengResource extends Resource
                     ->size('150px')
                     ->alignCenter()
                     ->square(),
-            ])
+                Tables\Columns\TextColumn::make('status')
+                        ->label('Status')
+                        ->badge()
+                        ->color(fn($state) => match ($state) {
+                            'Tersedia' => 'success',
+                            'Sedang diisi' => 'warning',
+                            'Belum didistribusikan' => 'danger',
+                        })
+                        ->getStateUsing(function (Kencleng $record) {
+                                $latestDistribusi = $record
+                                                        ->distribusiKenclengs()
+                                                        ->latest('tgl_distribusi')
+                                                        ->first();
+
+                                if ($latestDistribusi) {
+                                    if ($latestDistribusi->tgl_pengambilan) {
+                                        return 'Tersedia';
+                                    } elseif ($latestDistribusi->tgl_distribusi && !$latestDistribusi->tgl_pengambilan) {
+                                        return 'Sedang diisi';
+                                    }
+                                }
+                                return 'Belum didistribusikan';
+                            })
+                        ])
             ->defaultSortOptionLabel('batch_kencleng_id.nama_batch', 'desc')
             ->filters([
                 //
