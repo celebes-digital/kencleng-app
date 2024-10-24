@@ -6,10 +6,16 @@ use App\Models\Infaq;
 use Filament\Widgets\ChartWidget;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
+use Illuminate\Support\Facades\Auth;
 
 class StatsPemasukanKenclengBulanan extends ChartWidget
 {
     protected static ?string $heading = 'Statistik Pemasukan Kencleng Bulanan';
+
+    public static function canView(): bool
+    {
+        return Auth::user()->is_admin;
+    }
 
     protected function getData(): array
     {

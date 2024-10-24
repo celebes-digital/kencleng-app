@@ -3,11 +3,17 @@
 namespace App\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class StatsTopDonaturOverview extends ChartWidget
 {
     protected static ?string $heading = 'Chart';
+
+    public static function canView(): bool
+    {
+        return Auth::user()->is_admin;
+    }
 
     protected function getData(): array
     {

@@ -14,6 +14,12 @@ use Illuminate\Support\Number;
 
 class StatsDashbordOverview extends BaseWidget
 {
+
+    public static function canView(): bool
+    {
+        return auth()->user()->is_admin;
+    }
+    
     protected function getStats(): array
     {
         $now                = Carbon::now();
