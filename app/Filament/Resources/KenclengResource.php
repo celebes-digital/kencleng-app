@@ -2,13 +2,11 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\StatusKencleng;
 use App\Filament\Resources\KenclengResource\Pages;
-use App\Models\DistribusiKencleng;
 use App\Models\Kencleng;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -61,28 +59,7 @@ class KenclengResource extends Resource
                     ->extraAttributes(['class' => 'font-bold text-lg text-blue-500'])
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
-                    ->badge()
-                    ->color(fn($state) => match ($state) {
-                        'Tersedia' => 'success',
-                        'Sedang diisi' => 'warning',
-                        'Belum didistribusikan' => 'danger',
-                    })
-                    ->getStateUsing(function (Kencleng $record) {
-                        $latestDistribusi = $record
-                            ->distribusiKenclengs()
-                            ->latest('tgl_distribusi')
-                            ->first();
-
-                        if ($latestDistribusi) {
-                            if ($latestDistribusi->tgl_pengambilan) {
-                                return 'Tersedia';
-                            } elseif ($latestDistribusi->tgl_distribusi && !$latestDistribusi->tgl_pengambilan) {
-                                return 'Sedang diisi';
-                            }
-                        }
-                        return 'Belum didistribusikan';
-                    })
+                    ->badge(StatusKencleng::class)
             ])
             ->defaultSortOptionLabel('batch_kencleng_id.nama_batch', 'desc')
             ->filters([])
@@ -91,27 +68,30 @@ class KenclengResource extends Resource
                     ->label('Riwayat')
                     ->icon('heroicon-o-film')
                     ->url(
-                        fn($record) 
-                            => KenclengResource::getUrl(
-                                    'riwayat', ['record' => $record]
-                                )
+                        fn($record)
+                        => KenclengResource::getUrl(
+                            'riwayat',
+                            ['record' => $record]
+                        )
                     ),
                 Tables\Actions\Action::make('download')
                     ->button()
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('info')
                     ->action(
-                        function (Kencleng $kencleng) 
-                        {
+                        function (Kencleng $kencleng) {
                             $filePath = $kencleng->qr_image;
                             if (Storage::disk('public')->exists($filePath)) {
                                 return response()
-                                        ->download(Storage::disk('public')
-                                        ->path(
-                                            $filePath), 'kencleng-' 
-                                            . $kencleng->no_kencleng 
+                                    ->download(
+                                        Storage::disk('public')
+                                            ->path(
+                                                $filePath
+                                            ),
+                                        'kencleng-'
+                                            . $kencleng->no_kencleng
                                             . '.png'
-                                        );
+                                    );
                             }
 
                             Notification::make()
@@ -146,9 +126,9 @@ class KenclengResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListKenclengs::route('/'),
-            'create' => Pages\CreateKencleng::route('/create'),
-            'riwayat' => Pages\RiwayatKencleng::route('/{record}/riwayat'),
+            'index'     => Pages\ListKenclengs::route('/'),
+            'create'    => Pages\CreateKencleng::route('/create'),
+            'riwayat'   => Pages\RiwayatKencleng::route('/{record}/riwayat'),
         ];
     }
 }
