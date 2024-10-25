@@ -23,9 +23,22 @@ use Filament\Forms\Components\Split;
 use Filament\Forms\Components\Toggle;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Kalau halaman ini nanti mau di kasih aktif untuk admin
+ * maka toggle untuk is_kolektor dihilangkan ketika yang akses admin
+ */
+
 class TagLokasi extends Page implements HasForms
 {
     use InteractsWithForms;
+
+    public static function canAccess(): bool
+    {
+        $user = Auth::user()->load('profile');
+        return
+            (!$user->is_admin && $user->is_active) 
+                && ($user->profile->group === 'kolektor' || $user->profile->group === 'distributor');
+    }
 
     public ?array $data = [];
 
