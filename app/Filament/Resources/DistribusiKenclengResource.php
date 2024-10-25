@@ -147,6 +147,7 @@ class DistribusiKenclengResource extends Resource
                 Tables\Columns\IconColumn::make('diterima')
                     ->boolean()
             ])
+            ->defaultSort('updated_at', 'desc')
             ->filters([])
             ->actions([
                 Tables\Actions\Action::make('konfirmasi')
