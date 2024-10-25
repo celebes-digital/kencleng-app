@@ -8,22 +8,20 @@ use App\Models\DistribusiKencleng;
 use App\Models\Infaq;
 use App\Models\Kencleng;
 use App\Models\Profile;
-use Filament\Actions\Action;
+
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Split;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Number;
 
 class DistribusiKenclengResource extends Resource
 {
@@ -44,14 +42,13 @@ class DistribusiKenclengResource extends Resource
                     ScannerQrCode::make('scanner')
                         ->live()
                         ->afterStateUpdated(
-                            function (Set $set, $state) 
-                            {
+                            function (Set $set, $state) {
                                 $kencleng = Kencleng::where('no_kencleng', $state)->first();
 
                                 Notification::make()
                                     ->title(
-                                        'Kencleng ' 
-                                            . $kencleng->no_kencleng  
+                                        'Kencleng '
+                                            . $kencleng->no_kencleng
                                             . ' ditemukan'
                                     )
                                     ->success()
@@ -59,45 +56,47 @@ class DistribusiKenclengResource extends Resource
 
                                 $set('kencleng_id', $kencleng->id);
                             }
-                    ),
+                        ),
 
                     Fieldset::make('Data Kencleng')
                         ->schema([
                             Select::make('kencleng_id')
                                 ->label('No. Kencleng')
+                                ->relationship('kencleng', 'no_kencleng')
                                 ->options(Kencleng::all()->pluck('no_kencleng', 'id'))
                                 ->searchable()
-                                ->required(),
+                                ->required()
+                                ->optionsLimit(10),
 
-                            Toggle::make('tag_lokasi')
-                                ->label('Tag Lokasi')
-                                ->inline(false)
-                                ->extraAttributes(['class' => 'mt-2'])
-                                ->helperText('Aktifkan untuk menandai lokasi saat ini'),
-
-                            Select::make('donatur_id')
-                                ->label('Donator')
-                                ->options(
-                                    Profile::where('group', 'donatur')
-                                        ->pluck('nama', 'id')
-                                )
-                                ->searchable(),
+                            // Select::make('donatur_id')
+                            //     ->label('Donator')
+                            //     ->relationship('donatur', 'nama')
+                            //     ->options(
+                            //         Profile::where('group', 'donatur')
+                            //             ->pluck('nama', 'id')
+                            //     )
+                            //     ->searchable()
+                            //     ->optionsLimit(10),
 
                             Select::make('distributor_id')
                                 ->label('Distributor')
+                                 ->relationship('distributor', 'nama')
                                 ->options(
                                     Profile::where('group', 'distributor')
                                         ->pluck('nama', 'id')
                                 )
-                                ->searchable(),
+                                ->searchable()
+                                ->optionsLimit(10),
 
-                            Select::make('kolektor_id')
-                                ->label('Kolektor')
-                                ->options(
-                                    Profile::where('group', 'kolektor')
-                                        ->pluck('nama', 'id')
-                                )
-                                ->searchable(),
+                            // Select::make('kolektor_id')
+                            //     ->label('Kolektor')
+                            //     ->relationship('donatur', 'nama')
+                            //     ->options(
+                            //         Profile::where('group', 'kolektor')
+                            //             ->pluck('nama', 'id')
+                            //     )
+                            //     ->searchable()
+                            //     ->optionsLimit(10),
                         ])
                         ->columns(1),
                 ])
@@ -124,23 +123,22 @@ class DistribusiKenclengResource extends Resource
                     ->label('Distributor')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
-                // Tables\Columns\TextColumn::make('geo_lat')
-                //     ->numeric()
-                //     ->sortable(),
-                // Tables\Columns\TextColumn::make('geo_long')
-                //     ->numeric()
-                //     ->sortable(),
+                Tables\Columns\TextColumn::make('geo_lat')
+                    ->numeric()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('geo_long')
+                    ->numeric()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('tgl_distribusi')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('tgl_pengambilan')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Terakhir diubah')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -153,24 +151,29 @@ class DistribusiKenclengResource extends Resource
                 Tables\Actions\Action::make('konfirmasi')
                     ->button()
                     ->color(
-                        fn ($record) 
-                            => $record->tgl_pengambilan && !$record->diterima
-                                ? 'primary' 
-                                : 'gray' 
+                        fn($record)
+                        => $record->tgl_pengambilan && !$record->diterima
+                            ? 'primary'
+                            : 'gray'
                     )
                     ->disabled(
-                        fn ($record) 
-                            => !$record->tgl_pengambilan || $record->diterima
+                        fn($record)
+                        => !$record->tgl_pengambilan || $record->diterima
                     )
                     ->modalSubmitActionLabel('Konfirmasi')
-                    ->form([
+                    ->form(fn($record) => [
+                        TextInput::make('donasi')
+                            ->default(Number::currency($record->jumlah, 'IDR', 'id'))
+                            ->prefixIcon('heroicon-o-banknotes')
+                            ->disabled(),
                         TextInput::make('jumlah_donasi')
                             ->label('Jumlah Diterima')
+                            ->prefix('Rp')
                             ->numeric()
                             ->minValue(0)
-                            ->prefix('Rp')
                             ->required(),
                         Textarea::make('uraian')
+                            ->label('Keterangan Tambahan')
                             ->autosize()
                             ->rows(3)
                     ])
@@ -192,21 +195,21 @@ class DistribusiKenclengResource extends Resource
                     ->tooltip('Lihat Lokasi')
                     ->icon('heroicon-o-map-pin')
                     ->color(
-                        fn ($record) 
-                                => ($record->geo_lat && $record->geo_long)
-                                    ? 'info'
-                                    : 'gray'
+                        fn($record)
+                        => ($record->geo_lat && $record->geo_long)
+                            ? 'info'
+                            : 'gray'
                     )
                     ->disabled(
-                        fn ($record) 
-                                => !($record->geo_lat && $record->geo_long)
+                        fn($record)
+                        => !($record->geo_lat && $record->geo_long)
                     )
                     ->url(
-                        fn ($record) 
-                                => "https://www.google.com/maps/search/?api=1&query=" 
-                                    . $record->geo_lat
-                                    . "," 
-                                    . $record->geo_long, 
+                        fn($record)
+                        => "https://www.google.com/maps/search/?api=1&query="
+                            . $record->geo_lat
+                            . ","
+                            . $record->geo_long,
                         true
                     ),
                 Tables\Actions\EditAction::make()
@@ -227,9 +230,9 @@ class DistribusiKenclengResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDistribusiKenclengs::route('/'),
-            'create' => Pages\CreateDistribusiKencleng::route('/create'),
-            'edit' => Pages\EditDistribusiKencleng::route('/{record}/edit'),
+            'index'     => Pages\ListDistribusiKenclengs::route('/'),
+            'create'    => Pages\CreateDistribusiKencleng::route('/create'),
+            'edit'      => Pages\EditDistribusiKencleng::route('/{record}/edit'),
         ];
     }
 }
