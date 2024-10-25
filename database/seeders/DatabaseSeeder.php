@@ -31,5 +31,10 @@ class DatabaseSeeder extends Seeder
 
         // Seed the infaqs
         // \App\Models\Infaq::factory(10)->create();
+
+        $this->call(ProvinceSeeder::class);
+        $this->call(DistrictSeeder::class);
+        $this->call(SubDistrictSeeder::class);
+        $this->call(PostalCodeSeeder::class);
     }
 }
