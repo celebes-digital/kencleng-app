@@ -6,7 +6,7 @@ use App\Models\Kencleng;
 use App\Models\DistribusiKencleng;
 
 use App\Filament\Components\ScannerQrCode;
-
+use App\Models\Profile;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
 use Filament\Support\Exceptions\Halt;
@@ -20,6 +20,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Split;
+use Filament\Forms\Components\Toggle;
+use Illuminate\Support\Facades\Auth;
 
 class TagLokasi extends Page implements HasForms
 {
@@ -48,16 +50,20 @@ class TagLokasi extends Page implements HasForms
                     ScannerQrCode::make('scanner')
                         ->label('')
                         ->live()
-                        ->afterStateUpdated(function (Set $set, $state) {
-                            $kencleng = Kencleng::where('no_kencleng', $state)->first();
+                        ->afterStateUpdated(
+                            function (Set $set, $state) 
+                            {
+                                $kencleng = Kencleng::where('no_kencleng', $state)->first();
 
-                            Notification::make()
-                                ->title('Kencleng ' . $kencleng->no_kencleng  . ' ditemukan')
-                                ->success()
-                                ->send();
+                                Notification::make()
+                                    ->title('Kencleng ' . $kencleng->no_kencleng  . ' ditemukan')
+                                    ->success()
+                                    ->send();
 
-                            $set('kencleng_id', $kencleng->id);
-                        }),
+                                $set('kencleng_id', $kencleng->id);
+                            }
+                        ),
+
                     Fieldset::make('')
                         ->schema([
                             Select::make('kencleng_id')
@@ -69,12 +75,31 @@ class TagLokasi extends Page implements HasForms
                                 ->required()
                                 ->hint('Scan QR Code Kencleng')
                                 ->columnSpanFull(),
+
+                            
+                            Select::make('donatur_id')
+                                ->label('Donator')
+                                ->relationship('donatur', 'nama')
+                                ->options(
+                                    Profile::where('group', 'donatur')
+                                        ->pluck('nama', 'id')
+                                )
+                                ->searchable()
+                                ->columnSpanFull()
+                                ->required()
+                                ->optionsLimit(10),
+
                             TextInput::make('latitude')
                                 ->disabled()
                                 ->required(),
+
                             TextInput::make('longitude')
                                 ->disabled()
                                 ->required(),
+
+                            Toggle::make('is_kolektor')
+                                ->label('Aktifkan jika sebagai kolektor')
+                                ->columnSpanFull(),
                         ])
                 ])->from('md'),
             ])
@@ -124,11 +149,16 @@ class TagLokasi extends Page implements HasForms
                 return;
             }
 
-            $distribusiKencleng->update([
-                'tgl_distribusi' => now(),
-                'geo_lat'        => $this->data['latitude'],
-                'geo_long'       => $this->data['longitude'],
-            ]);
+            $distribusiKencleng->tgl_distribusi = now();
+            $distribusiKencleng->geo_lat        = $this->data['latitude'];
+            $distribusiKencleng->geo_long       = $this->data['longitude'];
+            $distribusiKencleng->donatur_id     = $this->data['donatur_id'];
+
+            if($this->data['is_kolektor']) {
+                $distribusiKencleng->kolektor_id = Auth::user()->profile->id;
+            }
+
+            $distribusiKencleng->save();
 
         } catch (Halt $e) {
             return;
