@@ -10,7 +10,7 @@ class Subdistrict extends Model
 {
     use HasFactory;
 
-    protected $fillabel = [
+    protected $fillable = [
         'district_id',
         'name'
     ];

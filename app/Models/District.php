@@ -10,8 +10,7 @@ class District extends Model
 {
     use HasFactory;
 
-
-    protected $fillabel = [
+    protected $fillable = [
         'province_id',
         'name'
     ];

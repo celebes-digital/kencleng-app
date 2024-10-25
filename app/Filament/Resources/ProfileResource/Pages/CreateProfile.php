@@ -3,6 +3,9 @@
 namespace App\Filament\Resources\ProfileResource\Pages;
 
 use App\Filament\Resources\ProfileResource;
+use App\Models\District;
+use App\Models\Province;
+use App\Models\Subdistrict;
 use App\Models\User;
 
 use Illuminate\Database\Eloquent\Model;
@@ -19,6 +22,8 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Illuminate\Support\Collection;
 
 class CreateProfile extends CreateRecord
 {
@@ -91,6 +96,7 @@ class CreateProfile extends CreateRecord
                                         ->maxLength(100)
                                 ])
                                 ->columns(3),
+
                             Fieldset::make('Kontak')
                                 ->schema([
                                     Forms\Components\TextInput::make('no_hp')
@@ -111,25 +117,56 @@ class CreateProfile extends CreateRecord
                                         ->maxLength(15),
                                 ])
                                 ->columns(2),
+
                             Fieldset::make('Alamat')
                                 ->schema([
-                                    Forms\Components\TextInput::make('alamat')
-                                        ->required()
-                                        ->maxLength(255),
+                                    Forms\Components\Select::make('provinsi')
+                                        ->options(Province::all()->pluck('name', 'id')->toArray())
+                                        ->searchable()
+                                        ->live()
+                                        ->required(),
+
+                                    Forms\Components\Select::make('kabupaten')
+                                        ->options(fn (Get $get): Collection => District::query()
+                                            ->where('province_id', $get('provinsi'))
+                                            ->pluck('name', 'id'))
+                                        ->searchable()
+                                        ->live()
+                                        ->createOptionForm([
+                                            Forms\Components\TextInput::make('name')
+                                                ->required(),
+                                        ])
+                                        ->createOptionUsing(function (array $data, Get $get): int {
+                                            $data['province_id'] = $get('provinsi');
+                                            return District::create($data)->getKey();
+                                        })
+                                        ->required(),
+
+                                    Forms\Components\Select::make('kecamatan')
+                                        ->options(fn (Get $get): Collection => Subdistrict::query()
+                                            ->where('district_id', $get('kabupaten'))
+                                            ->pluck('name', 'id'))
+                                        ->searchable()
+                                        ->createOptionForm([
+                                            Forms\Components\TextInput::make('name')
+                                                ->required(),
+                                        ])
+                                        ->createOptionUsing(function (array $data, Get $get): int {
+                                            $data['district_id'] = $get('kabupaten');
+                                            return Subdistrict::create($data)->getKey();
+                                        })
+                                        ->required(),
+
                                     Forms\Components\TextInput::make('kelurahan')
                                         ->required()
                                         ->maxLength(100),
-                                    Forms\Components\TextInput::make('kecamatan')
+
+                                    Forms\Components\TextInput::make('alamat')
+                                        ->label('Detail alamat')
                                         ->required()
-                                        ->maxLength(100),
-                                    Forms\Components\TextInput::make('kabupaten')
-                                        ->required()
-                                        ->maxLength(100),
-                                    Forms\Components\TextInput::make('provinsi')
-                                        ->required()
-                                        ->maxLength(100),
+                                        ->maxLength(255),
                                 ])
-                                ->columns(3),
+                                ->columns(2),
                             Fieldset::make('Dokumen')
                                 ->schema([
                                     Forms\Components\FileUpload::make('foto')
@@ -175,13 +212,17 @@ class CreateProfile extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         if ($data['group'] === 'donatur' && $data['email'] === null) {
-            $data['email'] = $data['nama'] . '@donatur.com';
+            $data['email'] = $data['nik'] . '@donatur.com';
         }
 
         $user = User::create([
             'email'      => $data['email'],
             'password'   => bcrypt('temp_password_key'),
         ]);
+
+        $data['provinsi']   = Province::find($data['provinsi'])->name;
+        $data['kabupaten']  = District::find($data['kabupaten'])->name;
+        $data['kecamatan']  = Subdistrict::find($data['kecamatan'])->name;
 
         $data['user_id'] = $user->id;
         $profile = static::getModel()::create($data);
