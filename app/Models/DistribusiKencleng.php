@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StatusDistribusi;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,6 +21,10 @@ class DistribusiKencleng extends Model
         'tgl_pengambilan',
         'jumlah',
         'diterima'
+    ];
+
+    protected $casts = [
+        'status' => StatusDistribusi::class
     ];
 
     public function kencleng()
