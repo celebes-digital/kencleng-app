@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\StatusDistribusi;
 use App\Filament\Components\ScannerQrCode;
 use App\Filament\Resources\DistribusiKenclengResource\Pages;
 use App\Models\DistribusiKencleng;
@@ -68,35 +69,37 @@ class DistribusiKenclengResource extends Resource
                                 ->required()
                                 ->optionsLimit(10),
 
-                            // Select::make('donatur_id')
-                            //     ->label('Donator')
-                            //     ->relationship('donatur', 'nama')
-                            //     ->options(
-                            //         Profile::where('group', 'donatur')
-                            //             ->pluck('nama', 'id')
-                            //     )
-                            //     ->searchable()
-                            //     ->optionsLimit(10),
 
                             Select::make('distributor_id')
                                 ->label('Distributor')
-                                 ->relationship('distributor', 'nama')
+                                ->relationship('distributor', 'nama')
                                 ->options(
                                     Profile::where('group', 'distributor')
                                         ->pluck('nama', 'id')
                                 )
                                 ->searchable()
+                                ->required()
                                 ->optionsLimit(10),
 
-                            // Select::make('kolektor_id')
-                            //     ->label('Kolektor')
-                            //     ->relationship('donatur', 'nama')
-                            //     ->options(
-                            //         Profile::where('group', 'kolektor')
-                            //             ->pluck('nama', 'id')
-                            //     )
-                            //     ->searchable()
-                            //     ->optionsLimit(10),
+                            Select::make('donatur_id')
+                                ->label('Donator')
+                                ->relationship('donatur', 'nama')
+                                ->options(
+                                    Profile::where('group', 'donatur')
+                                        ->pluck('nama', 'id')
+                                )
+                                ->searchable()
+                                ->optionsLimit(10),
+
+                            Select::make('kolektor_id')
+                                ->label('Kolektor')
+                                ->relationship('kolektor', 'nama')
+                                ->options(
+                                    Profile::where('group', 'kolektor')
+                                        ->pluck('nama', 'id')
+                                )
+                                ->searchable()
+                                ->optionsLimit(10),
                         ])
                         ->columns(1),
                 ])
@@ -142,8 +145,9 @@ class DistribusiKenclengResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\IconColumn::make('diterima')
-                    ->boolean()
+                Tables\Columns\TextColumn::make('status')
+                    ->badge(StatusDistribusi::class)
+                    ->sortable(),
             ])
             ->defaultSort('updated_at', 'desc')
             ->filters([])
@@ -152,13 +156,13 @@ class DistribusiKenclengResource extends Resource
                     ->button()
                     ->color(
                         fn($record)
-                        => $record->tgl_pengambilan && !$record->diterima
+                            => $record->status->value === 'distribusi'
                             ? 'primary'
                             : 'gray'
                     )
                     ->disabled(
                         fn($record)
-                        => !$record->tgl_pengambilan || $record->diterima
+                        => $record->status->value !== 'kembali'
                     )
                     ->modalSubmitActionLabel('Konfirmasi')
                     ->form(fn($record) => [
@@ -186,7 +190,7 @@ class DistribusiKenclengResource extends Resource
                                 'uraian'        => $data['uraian'],
                             ]);
                             $record->update([
-                                'diterima' => true,
+                                'status' => 'diterima',
                             ]);
                         }
                     ),
@@ -196,13 +200,13 @@ class DistribusiKenclengResource extends Resource
                     ->icon('heroicon-o-map-pin')
                     ->color(
                         fn($record)
-                        => ($record->geo_lat && $record->geo_long)
+                        => $record->status->value !== 'distribusi'
                             ? 'info'
                             : 'gray'
                     )
                     ->disabled(
                         fn($record)
-                        => !($record->geo_lat && $record->geo_long)
+                        => $record->status->value === 'distribusi'
                     )
                     ->url(
                         fn($record)

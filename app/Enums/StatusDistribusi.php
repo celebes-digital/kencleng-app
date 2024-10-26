@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+use Filament\Support\Colors\Color;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
@@ -26,8 +27,8 @@ enum StatusDistribusi: string implements HasLabel, HasIcon, HasColor
     public function getColor(): string
     {
         return match ($this) {
-            self::DISTRIBUSI => 'info',
-            self::DIISI      => 'amber',
+            self::DISTRIBUSI => 'danger',
+            self::DIISI      => 'info',
             self::KEMBALI    => 'warning',
             self::DITERIMA   => 'primary',
         };

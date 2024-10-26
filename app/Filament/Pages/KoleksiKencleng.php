@@ -114,13 +114,12 @@ class KoleksiKencleng extends Page implements HasForms
         try 
         {
             $distribusiKencleng = DistribusiKencleng::where('kencleng_id', $this->data['kencleng_id'])
-                                        ->whereNotNull('tgl_distribusi')
-                                        ->whereNull('tgl_pengambilan')
-                                        ->first();
+                                        ->where('status', 'diisi')
+                                        ->latest();
 
             if (empty($distribusiKencleng)) {
                 Notification::make()
-                    ->title('Kencleng tidak tersedia, hubungi admin untuk informasi lebih lanjut')
+                    ->title('Status kencleng tidak valid, hubungi admin untuk informasi lebih lanjut')
                     ->danger()
                     ->send();
                 return;

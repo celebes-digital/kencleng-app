@@ -12,13 +12,13 @@ class CreateDistribusiKencleng extends CreateRecord
 {
     protected static string $resource = DistribusiKenclengResource::class;
 
-    protected function beforeCreate($record)
+    protected function beforeCreate()
     {
-        $kencleng = Kencleng::where('no_kencleng', $record->no_kencleng)->first();
+        $kencleng = Kencleng::where('no_kencleng', $this->data['scanner'])->first();
         
         if($kencleng->status == 1 ) {
             Notification::make()
-                ->title('Kencleng ' . $record->no_kencleng . ' sedang didistribusikan')
+                ->title('Kencleng ' . $this->data['scanner'] . ' sedang didistribusikan')
                 ->danger()
                 ->send();
 

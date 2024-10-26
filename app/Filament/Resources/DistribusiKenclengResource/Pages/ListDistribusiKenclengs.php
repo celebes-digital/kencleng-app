@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\DistribusiKenclengResource\Pages;
 
+use App\Enums\StatusDistribusi;
 use App\Filament\Resources\DistribusiKenclengResource;
 use App\Models\DistribusiKencleng;
 use Filament\Actions;
@@ -23,16 +24,40 @@ class ListDistribusiKenclengs extends ListRecords
     {
         return [
             'All'           => Tab::make()
-                ->badgeColor('info')
-                ->badge(fn() => DistribusiKencleng::query()->count()),
-            'Konfirmasi'    => Tab::make()
-                ->badgeColor('warning')
-                ->modifyQueryUsing(fn($query) => $query->whereNotNull('tgl_pengambilan')->where('diterima', 0))
-                ->badge(fn() => DistribusiKencleng::query()->whereNotNull('tgl_pengambilan')->where('diterima', 0)->count()),
-            'Diterima'    => Tab::make()
-                ->badgeColor('primary')
-                ->modifyQueryUsing(fn($query) => $query->where('diterima', 1))
-                ->badge(fn() => DistribusiKencleng::query()->where('diterima', 1)->count()),
+                                    ->badgeColor('primary')
+                                    ->badge(fn() => DistribusiKencleng::query()->count()),
+            'Distribusi'    => Tab::make()
+                                    ->badgeColor(StatusDistribusi::DISTRIBUSI->getColor())
+                                    ->modifyQueryUsing(
+                                        fn($query) => $query->where('status', 'distribusi')
+                                    )
+                                    ->badge(
+                                        fn() => DistribusiKencleng::query()->where('status', 'distribusi')->count()
+                                    ),
+            'Sedang Diisi'  => Tab::make()
+                                    ->badgeColor(StatusDistribusi::DIISI->getColor())
+                                    ->modifyQueryUsing(
+                                        fn($query) => $query->where('status', 'diisi')
+                                    )
+                                    ->badge(
+                                        fn() => DistribusiKencleng::query()->where('status', 'diisi')->count()
+                                    ),
+            'Kembali'       => Tab::make()
+                                    ->badgeColor(StatusDistribusi::KEMBALI->getColor())
+                                    ->modifyQueryUsing(
+                                        fn($query) => $query->where('status', 'kembali')
+                                    )
+                                    ->badge(
+                                        fn() => DistribusiKencleng::query()->where('status', 'kembali')->count()
+                                    ),
+            'Diterima'      => Tab::make()
+                                    ->badgeColor(StatusDistribusi::DITERIMA->getColor())
+                                    ->modifyQueryUsing(
+                                        fn($query) => $query->where('status', 'diterima')
+                                    )
+                                    ->badge(
+                                        fn() => DistribusiKencleng::query()->where('status', 'diterima')->count()
+                                    ),
         ];
     }
 }
