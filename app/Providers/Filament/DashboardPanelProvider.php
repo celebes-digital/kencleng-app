@@ -79,7 +79,7 @@ class DashboardPanelProvider extends PanelProvider
             ])
             ->plugins([
                 FilamentFullCalendarPlugin::make()
-                    ->selectable()
+                    ->selectable(false)
                     ->editable(false)
                     ->timezone(config('app.timezone'))
                     ->locale(config('app.locale'))
