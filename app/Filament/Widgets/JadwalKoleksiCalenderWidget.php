@@ -2,19 +2,20 @@
 
 namespace App\Filament\Widgets;
 
+use Carbon\Carbon;
+use App\Models\DistribusiKencleng;
+use Illuminate\Database\Eloquent\Model;
+
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
+use Saade\FilamentFullCalendar\Actions\EditAction;
+use Saade\FilamentFullCalendar\Actions\ViewAction;
 use Saade\FilamentFullCalendar\Data\EventData;
 
-use App\Models\DistribusiKencleng;
-use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\Actions\Action as InfoAction;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\TextEntry;
-use Illuminate\Database\Eloquent\Model;
-use Saade\FilamentFullCalendar\Actions\EditAction;
-use Saade\FilamentFullCalendar\Actions\ViewAction;
 
 class JadwalKoleksiCalenderWidget extends FullCalendarWidget
 {
@@ -43,17 +44,20 @@ class JadwalKoleksiCalenderWidget extends FullCalendarWidget
 
     public function fetchEvents(array $fetchInfo): array
     {
-        // dd($fetchInfo);
         return DistribusiKencleng::query()
-            ->whereBetween('tgl_distribusi', [
-                Carbon::parse($fetchInfo['start'])->subMonthNoOverflow(),
-                Carbon::parse($fetchInfo['end'])->subMonthNoOverflow()
-            ])
+            ->whereBetween(
+                'tgl_distribusi', 
+                [
+                    Carbon::parse($fetchInfo['start'])->subMonthNoOverflow(),
+                    Carbon::parse($fetchInfo['end'])->subMonthNoOverflow()
+                ]
+            )
             ->select('distribusi_kenclengs.*', 'kenclengs.no_kencleng')
             ->join('kenclengs', 'distribusi_kenclengs.kencleng_id', '=', 'kenclengs.id')
             ->get()
             ->map(
-                function (DistribusiKencleng $event) {
+                function (DistribusiKencleng $event) 
+                {
                     $nextMonth = Carbon::parse($event->tgl_distribusi)
                         ->addMonthWithoutOverflow()
                         ->format('Y-m-d');
@@ -65,10 +69,7 @@ class JadwalKoleksiCalenderWidget extends FullCalendarWidget
                         ->allDay(true)
                         ->end($nextMonth)
                         ->backgroundColor(
-                            $this->getEventBackgroundColor(
-                                $event,
-                                Carbon::parse($event->tgl_distribusi)
-                            )
+                            $this->getColorByStatus($event, true)
                         )
                         ->borderColor($event->status->value !== 'diterima' ? '#fbeed3' : '')
                         ->textColor('#fff');
@@ -111,27 +112,12 @@ class JadwalKoleksiCalenderWidget extends FullCalendarWidget
                             ->badge()
                             ->color(
                                 function ($record) {
-                                    $deadline = Carbon::parse($record->tgl_distribusi)
-                                        ->addMonthWithoutOverflow()
-                                        ->addDay(1);
-
-                                    if ($record->status->value === 'diterima') {
-                                        return 'primary';
-                                    }
-
-                                    if ($deadline->isPast()) {
-                                        return 'danger';
-                                    }
-
-                                    if ($deadline->subDays(7)->isPast()) {
-                                        return 'warning';
-                                    }
-
-                                    return 'info';
+                                    return $this->getColorByStatus($record);
                                 }
                             )
                             ->formatStateUsing(
-                                function ($state, $record) {
+                                function ($state, $record) 
+                                {
                                     $deadline = Carbon::parse($state)
                                         ->addMonthWithoutOverflow()
                                         ->addDay(1);
@@ -189,20 +175,28 @@ class JadwalKoleksiCalenderWidget extends FullCalendarWidget
         JS;
     }
 
-    private function getEventBackgroundColor(DistribusiKencleng $event, Carbon $distribusiDate): string
+    private function getColorByStatus(DistribusiKencleng $event, bool $isHex = false): string
     {
+        $deadline = Carbon::parse($event->tgl_distribusi)
+            ->addMonthWithoutOverflow()
+            ->addDay(1);
+
+        $color = $isHex 
+                    ? ['', '#dc2626', '#f59e0b', '#3b82f6'] 
+                    : ['primary', 'danger', 'warning', 'info'];
+
         if ($event->status->value === 'diterima') {
-            return ''; // Primary color for 'diterima'
+            return $color[0];
         }
 
-        if ($distribusiDate->copy()->addMonth()->isPast()) {
-            return '#dc2626'; // Red for past dates
+        if ($deadline->isPast()) {
+            return $color[1];
         }
 
-        if ($distribusiDate->copy()->addDays(23)->isPast()) {
-            return '#f59e0b'; // Warning color
+        if ($deadline->subDays(7)->isPast()) {
+            return $color[2];
         }
 
-        return '#3b82f6'; // Default color
+        return $color[3];
     }
 }
