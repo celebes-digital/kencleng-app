@@ -171,9 +171,16 @@ class CreateProfile extends CreateRecord
                                 ->schema([
                                     Forms\Components\FileUpload::make('foto')
                                         ->image()
+                                        ->disk('public')
+                                        ->directory('foto')
+                                        ->visibility('private')
                                         ->required(),
                                     Forms\Components\FileUpload::make('foto_ktp')
                                         ->label('Foto KTP')
+                                        ->disk('public')
+                                        ->directory('foto-ktp')
+                                        ->visibility('private')
+                                        ->imageEditor()
                                         ->image()
                                         ->required(fn(Get $get) => $get('group') !== 'donatur'),
                                 ])

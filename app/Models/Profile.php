@@ -24,8 +24,8 @@ class Profile extends Model
         'provinsi',
         'no_hp',
         'no_wa',
-        'poto',
-        'poto_ktp',
+        'foto',
+        'foto_ktp',
         'group',
         'user_id',
     ];
