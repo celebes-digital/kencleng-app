@@ -16,6 +16,7 @@ use Filament\Infolists\Components\Actions\Action as InfoAction;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\TextEntry;
+use Illuminate\Support\Facades\Auth;
 
 class JadwalKoleksiCalenderWidget extends FullCalendarWidget
 {
@@ -44,7 +45,19 @@ class JadwalKoleksiCalenderWidget extends FullCalendarWidget
 
     public function fetchEvents(array $fetchInfo): array
     {
-        return DistribusiKencleng::query()
+        $query = DistribusiKencleng::query();
+
+        $user = Auth::user();
+
+        if($user->profile->group === 'kolektor') {
+            $query->where('kolektor_id', $user->profile->id);
+        }
+        
+        if($user->profile->group === 'distributor') {
+            $query->where('distributor_id', $user->profile->id);
+        }
+
+        return $query
             ->whereBetween(
                 'tgl_distribusi', 
                 [
