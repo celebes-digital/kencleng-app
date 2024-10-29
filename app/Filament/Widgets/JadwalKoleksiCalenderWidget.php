@@ -49,11 +49,11 @@ class JadwalKoleksiCalenderWidget extends FullCalendarWidget
 
         $user = Auth::user();
 
-        if($user->profile->group === 'kolektor') {
+        if(!$user->is_admin && $user->profile->group === 'kolektor') {
             $query->where('kolektor_id', $user->profile->id);
         }
         
-        if($user->profile->group === 'distributor') {
+        if(!$user->is_admin && $user->profile->group === 'distributor') {
             $query->where('distributor_id', $user->profile->id);
         }
 
