@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Filament\Widgets\StatsDashbordOverview;
 use App\Filament\Widgets\StatsPemasukanKenclengBulanan;
 use App\Filament\Widgets\StatsTopDonaturOverview;
+use App\Filament\Widgets\TableDeadlineWidget;
 
 class Dashboard extends \Filament\Pages\Dashboard
 {
@@ -21,6 +22,7 @@ class Dashboard extends \Filament\Pages\Dashboard
             StatsDashbordOverview::class,
             StatsTopDonaturOverview::class,
             StatsPemasukanKenclengBulanan::class,
+            TableDeadlineWidget::class,
         ];
     }
 }
