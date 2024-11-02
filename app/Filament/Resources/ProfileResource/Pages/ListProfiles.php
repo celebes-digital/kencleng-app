@@ -5,11 +5,13 @@ namespace App\Filament\Resources\ProfileResource\Pages;
 use App\Filament\Resources\ProfileResource;
 use App\Models\Profile;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Password;
 
 class ListProfiles extends ListRecords
 {
@@ -61,6 +63,7 @@ class ListProfiles extends ListRecords
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('alamat')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('kelurahan')
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -89,7 +92,7 @@ class ListProfiles extends ListRecords
                         'distributor'   => 'info',
                         default         => 'primary',
                     })
-                    ->formatStateUsing(fn (string $state) => ucfirst($state))
+                    ->formatStateUsing(fn(string $state) => ucfirst($state))
                     ->searchable(),
                 Tables\Columns\IconColumn::make('user.is_active')
                     ->label('Status')
@@ -112,13 +115,47 @@ class ListProfiles extends ListRecords
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->defaultSort('nama')
+            ->defaultSort('updated_at', 'desc')
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
+                    ->iconButton()
                     ->color('warning'),
+                Tables\Actions\Action::make('send_confirmation_email')
+                    ->label('Kirim Email Verifikasi')
+                    ->iconButton()
+                    ->icon('heroicon-o-envelope')
+                    ->disabled(fn($record) => $record->user->hasVerifiedEmail())
+                    ->color(fn($record) => $record->user->hasVerifiedEmail() ? 'gray' : 'info')
+                    ->action(
+                        function ($record) {
+                            $status = Password::sendResetLink(
+                                ['email' => $record->user->email]
+                            );
+
+                            if ($status != Password::RESET_LINK_SENT) {
+                                $this->addError('email', __($status));
+
+                                Notification::make()
+                                    ->title('Verifikasi Email Gagal Dikirim')
+                                    ->body('Email verifikasi gagal dikirim ke alamat email pengguna.')
+                                    ->icon('heroicon-o-envelope')
+                                    ->iconColor('danger')
+                                    ->send();
+
+                                return;
+                            }
+
+                            Notification::make()
+                                ->title('Verifikasi Email Terkirim')
+                                ->body('Email verifikasi telah dikirim ke alamat email pengguna.')
+                                ->icon('heroicon-o-envelope')
+                                ->iconColor('success')
+                                ->send();
+                        }
+                    )
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
