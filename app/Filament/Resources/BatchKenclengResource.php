@@ -60,7 +60,7 @@ class BatchKenclengResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('')
                     ->label('Totdak di Distributor')
-                    ->state(fn (BatchKencleng $record) => $record->kenclengs->count())
+                    ->state(fn (BatchKencleng $record) => $record->kenclengs->where('status', 1)->count())
                     ->alignCenter()
                     ->numeric()
                     ->sortable(),
