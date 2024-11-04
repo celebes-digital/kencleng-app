@@ -20,6 +20,8 @@ class InfaqResource extends Resource
     protected static ?string $model             = Infaq::class;
     protected static ?string $navigationIcon    = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup   = 'Keuangan';
+    protected static ?string $modelLabel        = 'Perolehan Donasi';
+    protected static ?string $slug              = 'perolehan-donasi';
 
     public static function form(Form $form): Form
     {
@@ -55,12 +57,12 @@ class InfaqResource extends Resource
                 Tables\Columns\TextColumn::make('jumlah_donasi')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('uraian')
-                    ->searchable(),
+                // Tables\Columns\TextColumn::make('uraian')
+                //     ->searchable(),
                 Tables\Columns\TextColumn::make('sumber_dana')
                     ->searchable(),
             ])
-            ->defaultSort('tgl_transaksi', 'desc')
+            ->defaultSort('updated_at', 'desc')
             ->filters([
                 Tables\Filters\Filter::make('tgl_transaksi')
                     ->form([
@@ -77,13 +79,14 @@ class InfaqResource extends Resource
                 ], layout: FiltersLayout::Modal)
                 ->hiddenFilterIndicators()
             ->actions([
-                Tables\Actions\EditAction::make()
-                    ->iconButton(),
+                // Hanya untuk owner
+                // Tables\Actions\EditAction::make()
+                //     ->iconButton(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 
@@ -98,8 +101,8 @@ class InfaqResource extends Resource
     {
         return [
             'index' => Pages\ListInfaqs::route('/'),
-            'create' => Pages\CreateInfaq::route('/create'),
-            'edit' => Pages\EditInfaq::route('/{record}/edit'),
+            // 'create' => Pages\CreateInfaq::route('/create'),
+            // 'edit' => Pages\EditInfaq::route('/{record}/edit'),
         ];
     }
 }
