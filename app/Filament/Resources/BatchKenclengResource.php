@@ -54,20 +54,28 @@ class BatchKenclengResource extends Resource
                     ->prefix('Batch ke-')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('jumlah')
-                    ->label('Jumlah Kencleng')
+                    ->label('Total Kencleng')
+                    ->alignCenter()
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->label('Dibuat')
-                    ->since()
+                Tables\Columns\TextColumn::make('')
+                    ->label('Totdak di Distributor')
+                    ->state(fn (BatchKencleng $record) => $record->kenclengs->count())
+                    ->alignCenter()
+                    ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->label('Terakhir Diubah')
-                    ->sortable()
-                    ->since(),
+                // Tables\Columns\TextColumn::make('created_at')
+                //     ->dateTime()
+                //     ->label('Dibuat')
+                //     ->since()
+                //     ->sortable(),
+                // Tables\Columns\TextColumn::make('updated_at')
+                //     ->dateTime()
+                //     ->label('Terakhir Diubah')
+                //     ->sortable()
+                //     ->since(),
             ])
+            ->defaultSort('updated_at', 'desc')
             ->filters([
                 //
             ])

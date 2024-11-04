@@ -20,6 +20,7 @@ class ListBatchKenclengs extends ListRecords
     {
         return [
             Actions\CreateAction::make()
+                ->label('Tambah Batch')
                 ->createAnother(false)
                 ->using(function(array $data, string $model): Model {
                     $batch = $model::create($data);
