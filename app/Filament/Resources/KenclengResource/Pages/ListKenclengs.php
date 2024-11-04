@@ -23,35 +23,29 @@ class ListKenclengs extends ListRecords
     public function getTabs(): array
     {
         return [
-            'All'               => Tab::make()
-                                        ->badgeColor('gray'),
+            'All'
+                 => Tab::make()
+                    ->badgeColor('gray'),
                                         
-            'Belum Distribusi'  => Tab::make()
-                                        ->badgeColor(StatusKencleng::BelumDistribusi->getColor())
-                                        ->modifyQueryUsing(
-                                            fn () => Kencleng::query()->where('status', 0)
-                                        )
-                                        ->badge(
-                                            fn () => Kencleng::query()->where('status', 0)->count()
-                                        ),
+            'Aqtif'  
+                => Tab::make()
+                    ->badgeColor(StatusKencleng::AQTIF->getColor())
+                    ->modifyQueryUsing(
+                        fn () => Kencleng::query()->where('status', 0)
+                    )
+                    ->badge(
+                        fn () => Kencleng::query()->where('status', 0)->count()
+                    ),
 
-            'Sedang Diisi'      => Tab::make()
-                                        ->badgeColor(StatusKencleng::DalamDistribusi->getColor())
-                                        ->modifyQueryUsing(
-                                            fn () => Kencleng::query()->where('status', 1)
-                                        )
-                                        ->badge(
-                                            fn () => Kencleng::query()->where('status', 1)->count()
-                                        ),
-
-            'Tersedia'          => Tab::make()
-                                        ->badgeColor(StatusKencleng::SelesaiDistribusi->getColor())
-                                        ->modifyQueryUsing(
-                                            fn () => Kencleng::query()->where('status', 2)
-                                        )
-                                        ->badge(
-                                            fn () => Kencleng::query()->where('status', 2)->count()
-                                        ),
+            'Distributor'
+                => Tab::make()
+                    ->badgeColor(StatusKencleng::DISTRIBUTOR->getColor())
+                    ->modifyQueryUsing(
+                        fn () => Kencleng::query()->where('status', 1)
+                    )
+                    ->badge(
+                        fn () => Kencleng::query()->where('status', 1)->count()
+                    ),
         ];
     }
 }

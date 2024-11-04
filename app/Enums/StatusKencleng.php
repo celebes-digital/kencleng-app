@@ -7,25 +7,22 @@ use Filament\Support\Contracts\HasLabel;
 
 enum StatusKencleng: string implements HasLabel, HasColor
 {
-    case BelumDistribusi    = '0';
-    case DalamDistribusi    = '1';
-    case SelesaiDistribusi  = '2';
+    case AQTIF          = '0';
+    case DISTRIBUTOR    = '1';
 
     public function getLabel(): string
     {
         return match ($this) {
-            self::BelumDistribusi   => 'Belum Distribusi',
-            self::DalamDistribusi   => 'Sedang Diisi',
-            self::SelesaiDistribusi => 'Tersedia',
+            self::AQTIF       => 'Aqtif',
+            self::DISTRIBUTOR => 'Distributor',
         };
     }
 
     public function getColor(): string
     {
         return match ($this) {
-            self::BelumDistribusi   => 'danger',
-            self::DalamDistribusi   => 'warning',
-            self::SelesaiDistribusi => 'success',
+            self::AQTIF       => 'primary',
+            self::DISTRIBUTOR => 'warning',
         };
     }
 }
