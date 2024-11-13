@@ -31,7 +31,7 @@ class DistribusiKenclengResource extends Resource
     protected static ?string $modelLabel        = 'Data Distribusi';
     protected static ?string $label             = 'Data Kencleng';
     protected static ?string $navigationIcon    = 'heroicon-o-cube';
-    protected static ?string $slug              = 'distribusi-kencleng';
+    protected static ?string $slug              = 'distribusi';
     protected static ?string $navigationGroup   = 'Distribusi';
     protected static ?int    $navigationSort    = 1;
 
