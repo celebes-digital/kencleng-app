@@ -18,6 +18,8 @@ class DistribusiKencleng extends Model
         'geo_lat',
         'geo_long',
         'tgl_distribusi',
+        'tgl_aktivasi',
+        'tgl_batas_pengambilan',
         'tgl_pengambilan',
         'jumlah',
         'status'

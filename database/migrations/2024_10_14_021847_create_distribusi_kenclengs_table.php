@@ -20,6 +20,8 @@ return new class extends Migration
             $table->decimal('geo_lat', 10, 8)->nullable();
             $table->decimal('geo_long', 11, 8)->nullable();
             $table->date('tgl_distribusi')->nullable();
+            $table->date('tgl_aktivasi')->nullable();
+            $table->date('tgl_batas_pengambilan')->nullable();
             $table->date('tgl_pengambilan')->nullable();
             $table->integer('jumlah')->unsigned()->nullable();
             $table->string('status')->default('distribusi');
