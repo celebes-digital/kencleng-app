@@ -14,7 +14,7 @@ class CreateDistribusiKencleng extends CreateRecord
 
     protected function beforeCreate()
     {
-        $kencleng = Kencleng::where('no_kencleng', $this->data['scanner'])->first();
+        $kencleng = Kencleng::where('id', $this->data['kencleng_id'])->first();
         
         if($kencleng->status == 1 ) {
             Notification::make()
