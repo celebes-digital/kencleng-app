@@ -154,6 +154,9 @@ class DistribusiKenclengResource extends Resource
             ->actions([
                 Tables\Actions\Action::make('konfirmasi')
                     ->button()
+                    ->hidden(
+                        fn($record)
+                        => $record->status->value !== 'kembali')
                     ->color(
                         fn($record)
                             => $record->status->value === 'distribusi'
