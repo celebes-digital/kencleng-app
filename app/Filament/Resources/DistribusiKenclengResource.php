@@ -237,9 +237,9 @@ class DistribusiKenclengResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'     => Pages\ListDistribusiKenclengs::route('/'),
-            'create'    => Pages\CreateDistribusiKencleng::route('/create'),
-            'edit'      => Pages\EditDistribusiKencleng::route('/{record}/edit'),
+            'index'         => Pages\ListDistribusiKenclengs::route('/'),
+            'create'        => Pages\CreateDistribusiKencleng::route('/create'),
+            'edit'          => Pages\EditDistribusiKencleng::route('/{record}/edit'),
         ];
     }
 }
