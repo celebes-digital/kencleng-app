@@ -4,18 +4,18 @@ namespace App\Filament\Pages;
 
 use App\Models;
 use App\Filament\Components\ScannerQrCode;
-use App\Models\DistribusiKencleng;
+
 use Filament\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Forms\Components;
 use Filament\Forms\Set;
 
-use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Concerns\InteractsWithForms;
 
-use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Exceptions\Halt;
+use Filament\Notifications\Notification;
 
 class DistribusiToDistributor extends Page implements HasForms
 {
@@ -42,6 +42,7 @@ class DistribusiToDistributor extends Page implements HasForms
         return $form
             ->schema([
                 Components\Split::make([
+                    // Inputan untuk scanner
                     ScannerQrCode::make('scanner')
                     ->hiddenLabel()
                     ->live()
@@ -59,7 +60,8 @@ class DistribusiToDistributor extends Page implements HasForms
                         }
                     ),
 
-                Components\Fieldset::make('Data Kencleng')
+                    // Data distribusi
+                    Components\Fieldset::make('Data Distribusi')
                     ->schema([
                         Components\Select::make('kencleng_id')
                             ->label('ID Kencleng')
@@ -89,19 +91,20 @@ class DistribusiToDistributor extends Page implements HasForms
 
     protected function getFormActions(): array
     {
-        return [
+        return 
+        [
             Action::make('save')
                 ->label('Konfirmasi')
                 ->submit('save'),
         ];
     }
 
-
     public function checkNoKencleng($noKencleng): bool
     {
         $kencleng = Models\Kencleng::where('no_kencleng', $noKencleng)->first();
 
-        if (!$kencleng) {
+        // Jika qr bukan dari nomor kencleng
+        if ( !$kencleng ) {
             Notification::make()
                 ->title('Kencleng ' . $noKencleng  . ' tidak terdaftar')
                 ->danger()
@@ -113,26 +116,28 @@ class DistribusiToDistributor extends Page implements HasForms
         return true;
     }
 
-
     public function save()
     {
-        try {
-            $query = DistribusiKencleng::create([
+        try 
+        {
+            // Inisialisasi data distribusi kencleng
+            // DIstributor ID dan status jadi distribusi
+            $query = Models\DistribusiKencleng::create([
                 'kencleng_id'       => $this->data['kencleng_id'],
                 'distributor_id'    => $this->data['distributor_id'],
                 'tgl_distribusi'    => now(),
                 'status'            => 'distribusi',
             ]);
 
-            if (!$query) {
-                throw new Halt('Gagal menyimpan data');
-            }
+            if ( !$query ) throw new Halt('Gagal menyimpan data');
 
             Notification::make()
                 ->title('Berhasil melakukan distribusi kencleng ke distributor')
                 ->success()
                 ->send();
-        } catch (Halt $e) {
+        } 
+        catch (Halt $e) 
+        {
             return;
         }
     }
