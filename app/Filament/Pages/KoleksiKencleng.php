@@ -34,7 +34,7 @@ class KoleksiKencleng extends Page implements HasForms
     protected static ?string $navigationIcon    = 'heroicon-o-cube';
     protected static ?string $slug              = 'koleksi-kencleng';
     protected static ?string $navigationGroup   = 'Distribusi';
-    protected static ?int    $navigationSort    = 2;
+    protected static ?int    $navigationSort    = 4;
 
     public function mount(): void
     {
