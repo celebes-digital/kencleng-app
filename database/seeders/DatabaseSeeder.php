@@ -18,16 +18,16 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Seed the users
-        \App\Models\User::factory(100)->create();
+        // \App\Models\User::factory(100)->create();
 
-        // Seed the profiles
-        \App\Models\Profile::factory(200)->create();
+        // // Seed the profiles
+        // \App\Models\Profile::factory(200)->create();
 
-        // Seed the kenclengs
-        \App\Models\Kencleng::factory(10)->create();
+        // // Seed the kenclengs
+        // \App\Models\Kencleng::factory(10)->create();
 
-        // Seed the distribusi kenclengs
-        \App\Models\DistribusiKencleng::factory(1000)->create();
+        // // Seed the distribusi kenclengs
+        // \App\Models\DistribusiKencleng::factory(1000)->create();
 
         // Seed the infaqs
         // \App\Models\Infaq::factory(10)->create();
