@@ -110,8 +110,9 @@ class BatchKenclengResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBatchKenclengs::route('/'),
-            'edit' => Pages\EditBatchKencleng::route('/{record}/edit'),
+            'index'         => Pages\ListBatchKenclengs::route('/'),
+            'distribusi'    => Pages\DistribusiBatchKencleng::route('/{record}/distribusi'),
+            'edit'          => Pages\EditBatchKencleng::route('/{record}/edit'),
         ];
     }
 }

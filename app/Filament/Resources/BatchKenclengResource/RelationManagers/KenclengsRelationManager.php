@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BatchKenclengResource\RelationManagers;
 
+use App\Filament\Resources\BatchKenclengResource;
 use App\Filament\Resources\KenclengResource;
 use App\Models\BatchKencleng;
 use App\Models\Kencleng;
@@ -44,6 +45,12 @@ class KenclengsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
+                Tables\Actions\Action::make('Distribusi Kencleng')
+                    ->button()
+                    ->url(
+                        fn (): string => 
+                        BatchKenclengResource::getUrl('distribusi', ['record' => $this->ownerRecord->id])
+                    ),
                 Tables\Actions\Action::make('Tambah kencleng')
                     ->button()
                     ->requiresConfirmation()
