@@ -238,7 +238,7 @@ class DistribusiKenclengResource extends Resource
     {
         return [
             'index'         => Pages\ListDistribusiKenclengs::route('/'),
-            'create'        => Pages\CreateDistribusiKencleng::route('/create'),
+            // 'create'        => Pages\CreateDistribusiKencleng::route('/create'),
             'edit'          => Pages\EditDistribusiKencleng::route('/{record}/edit'),
         ];
     }
