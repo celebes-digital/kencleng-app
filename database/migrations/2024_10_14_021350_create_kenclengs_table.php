@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('batch_kencleng_id')->constrained('batch_kenclengs');
             $table->char('no_kencleng', 10);
             $table->string('qr_image', 100);
-            $table->tinyInteger('status')->default(0);
+            $table->boolean('status')->default(0);
             $table->timestamps();
         });
     }

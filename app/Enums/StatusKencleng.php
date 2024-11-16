@@ -5,24 +5,24 @@ namespace App\Enums;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
-enum StatusKencleng: string implements HasLabel, HasColor
+enum StatusKencleng: int implements HasLabel, HasColor
 {
-    case AQTIF          = '0';
-    case DISTRIBUTOR    = '1';
+    case TERSEDIA           = 0;
+    case SEDANGDISTRIBUSI   = 1;
 
     public function getLabel(): string
     {
         return match ($this) {
-            self::AQTIF       => 'Aqtif',
-            self::DISTRIBUTOR => 'Distributor',
+            self::TERSEDIA          => 'Tersedia',
+            self::SEDANGDISTRIBUSI  => 'Sedang Distribusi',
         };
     }
 
     public function getColor(): string
     {
         return match ($this) {
-            self::AQTIF       => 'primary',
-            self::DISTRIBUTOR => 'warning',
+            self::TERSEDIA          => 'primary',
+            self::SEDANGDISTRIBUSI  => 'warning',
         };
     }
 }

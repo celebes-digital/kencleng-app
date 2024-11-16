@@ -2,10 +2,11 @@
 
 namespace App\Filament\Resources\KenclengResource\Pages;
 
-use App\Enums\StatusKencleng;
 use App\Filament\Resources\KenclengResource;
+use App\Enums\StatusKencleng;
+
 use App\Models\Kencleng;
-use Filament\Actions;
+
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 
@@ -22,30 +23,23 @@ class ListKenclengs extends ListRecords
 
     public function getTabs(): array
     {
+        
         return [
             'All'
                  => Tab::make()
                     ->badgeColor('gray'),
                                         
-            'Aqtif'  
+            StatusKencleng::TERSEDIA->getLabel()
                 => Tab::make()
-                    ->badgeColor(StatusKencleng::AQTIF->getColor())
-                    ->modifyQueryUsing(
-                        fn () => Kencleng::query()->where('status', 0)
-                    )
-                    ->badge(
-                        fn () => Kencleng::query()->where('status', 0)->count()
-                    ),
+                    ->badgeColor(StatusKencleng::TERSEDIA->getColor())
+                    ->modifyQueryUsing(fn () => Kencleng::query()->where('status', 0))
+                    ->badge(fn () => Kencleng::query()->where('status', 0)->count()),
 
-            'Distributor'
+            StatusKencleng::SEDANGDISTRIBUSI->getLabel()
                 => Tab::make()
-                    ->badgeColor(StatusKencleng::DISTRIBUTOR->getColor())
-                    ->modifyQueryUsing(
-                        fn () => Kencleng::query()->where('status', 1)
-                    )
-                    ->badge(
-                        fn () => Kencleng::query()->where('status', 1)->count()
-                    ),
+                    ->badgeColor(StatusKencleng::SEDANGDISTRIBUSI->getColor())
+                    ->modifyQueryUsing(fn () => Kencleng::query()->where('status', 1))
+                    ->badge(fn () => Kencleng::query()->where('status', 1)->count()),
         ];
     }
 }
