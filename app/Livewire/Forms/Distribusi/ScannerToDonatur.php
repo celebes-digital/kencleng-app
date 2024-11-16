@@ -6,84 +6,123 @@ use App\Enums\StatusKencleng;
 use Livewire\Component;
 
 use App\Models;
-use Filament\Forms\Form;
-use Filament\Forms\Components;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Concerns\InteractsWithForms;
+
+use Filament\Forms;
+use Filament\Tables;
 
 use Filament\Support\Exceptions\Halt;
 use Filament\Notifications\Notification;
 
-class ScannerToDonatur extends Component implements HasForms
+class ScannerToDonatur
+    extends Component
+    implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {
-    use InteractsWithForms;
+    use Forms\Concerns\InteractsWithForms;
+    use Tables\Concerns\InteractsWithTable;
 
-    public array $newDistribusi;
+    public int $jumlahDistribusi;
 
     public ?array $data = [];
 
     public function mount(): void
     {
-        $this->newDistribusi = [];
+        $this->jumlahDistribusi = 0;
 
         $this->form->fill($this->data);
     }
 
-    public function form(Form $form): Form
+    public function form(Forms\Form $form): Forms\Form
     {
         return $form
             ->schema([
-                Components\Select::make('donatur_id')
+                Forms\Components\Select::make('donatur_id')
                     ->label('Donatur')
-                    ->options(Models\Profile::get()->pluck('nama', 'id'))
-                    ->live(true)
+                    ->placeholder('Pilih Donatur')
                     ->searchable()
-                    ->required()
-                    ->optionsLimit(10),
+                    ->searchPrompt('Masukkan minimal 3 karakter')
+                    ->noSearchResultsMessage("Donatur tidak ditemukan")
+                    ->getSearchResultsUsing(
+                        function (string $search): array {
+                            if ((strlen($search) < 2)) return [];
 
-                Components\Select::make('kencleng_id')
+                            return Models\Profile::where('nama', 'like', "%{$search}%")
+                                ->limit(7)
+                                ->pluck('nama', 'id')
+                                ->toArray();
+                        }
+                    )
+                    ->getOptionLabelUsing(fn($value): ?string => Models\Profile::find($value)?->nama)
+                    ->required(),
+
+                Forms\Components\Select::make('kencleng_id')
                     ->label('ID Kencleng')
-                    ->options(Models\Kencleng::all()->pluck('no_kencleng', 'id'))
+                    ->placeholder('Scan QR Code Kencleng')
                     ->searchable()
-                    ->required()
-                    ->optionsLimit(2),
+                    ->searchPrompt('Scanning QR Code kencleng')
+                    ->getSearchResultsUsing(
+                        function (string $search): array {
+                            if ((strlen($search) < 3)) return [];
+
+                            return Models\Kencleng::where('no_kencleng', 'like', "%{$search}%")
+                                ->where('status', StatusKencleng::TERSEDIA)
+                                ->limit(7)
+                                ->pluck('no_kencleng', 'id')
+                                ->toArray();
+                        }
+                    )
+                    ->getOptionLabelUsing(fn($value): ?string => Models\Kencleng::find($value)?->no_kencleng)
+                    ->required(),
             ])
             ->statePath('data')
-            ->columns(2);
+            ->columns([
+                'md' => 2,
+                'lg' => 2,
+                'xl' => 2,
+            ]);
+    }
+
+    public function table(Tables\Table $table): Tables\Table
+    {
+        return $table
+            ->query(Models\DistribusiKencleng::whereNull('distributor_id'))
+            ->columns([
+                Tables\Columns\TextColumn::make('kencleng.no_kencleng')
+                    ->label('No. Kencleng'),
+                Tables\Columns\TextColumn::make('donatur.nama')
+                    ->label('Donatur'),
+                Tables\Columns\TextColumn::make('tgl_distribusi')
+                    ->label('Tanggal Distribusi')
+            ])
+            ->filters([
+                //
+            ])
+            ->defaultSort('tgl_distribusi', 'desc');
     }
 
     public function save()
     {
-        try
+        try 
         {
-           $kencleng = Models\Kencleng::findOrFail($this->data['kencleng_id']);
-           
-        //    if ($kencleng->status == StatusKencleng::DISTRIBUTOR) 
-        //         throw new Halt('Kencleng sudah didistribusikan');
+            // Inisialisasi data distribusi kencleng
+            // DIstributor ID dan status jadi distribusi
+            $query = Models\DistribusiKencleng::create([
+                'kencleng_id'       => $this->data['kencleng_id'],
+                'donatur_id'        => $this->data['donatur_id'],
+                'tgl_distribusi'    => now(),
+                'status'            => 'distribusi',
+            ]);
 
-        //     // Inisialisasi data distribusi kencleng
-        //     // DIstributor ID dan status jadi distribusi
-        //     $query = Models\DistribusiKencleng::create([
-        //         'kencleng_id'       => $this->data['kencleng_id'],
-        //         'donatur_id'    => $this->data['donatur_id'],
-        //         'tgl_distribusi'    => now(),
-        //         'status'            => 'distribusi',
-        //     ]);
+            if (!$query) throw new Halt('Gagal menyimpan data');
 
-        //     if (!$query) throw new Halt('Gagal menyimpan data');
+            $this->form->fill(['distributor_id' => $this->data['donatur_id']]);
+            Notification::make()
+                ->title('Berhasil melakukan distribusi kencleng ke donatur')
+                ->success()
+                ->send();
 
-            $dataTampil = [
-                'id'                => $kencleng->id,
-                'no_kencleng'       => $kencleng->no_kencleng,
-                'status'            => 'Distribusi',
-                'batch'             => 'Batch ke-' . $kencleng->batchKenclengs->nama_batch,
-                'waktu_distribusi'  => now(),
-            ];
-
-            // Simpan data kedalam array
-            array_push($this->newDistribusi, $dataTampil);
-        }
-        catch (Halt $e)
+            $this->jumlahDistribusi++;
+        } 
+        catch (Halt $e) 
         {
             Notification::make()
                 ->title($e->getMessage() ?? 'Gagal menyimpan data')
@@ -91,18 +130,12 @@ class ScannerToDonatur extends Component implements HasForms
                 ->send();
             return;
         }
-        $this->form->fill(['donatur_id' => $this->data['donatur_id']]);
-
-        Notification::make()
-            ->title('Berhasil melakukan distribusi kencleng ke distributor')
-            ->success()
-            ->send();
     }
 
     public function render()
     {
         return view('livewire.forms.distribusi.scanner-to-donatur', [
-            'newDistribusi' => $this->newDistribusi,
+            'jumlahDistribusi' => $this->jumlahDistribusi,
         ]);
     }
 }

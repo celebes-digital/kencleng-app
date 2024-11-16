@@ -59,11 +59,13 @@ class ScannerToDistributor
                     ->placeholder('Scan QR Code Kencleng')
                     ->searchable()
                     ->searchPrompt('Scanning QR Code kencleng')
+                    ->noSearchResultsMessage('Kencleng tidak tersedia')
                     ->getSearchResultsUsing(
                         function (string $search): array {
                             if ((strlen($search) < 3)) return [];
 
                             return Models\Kencleng::where('no_kencleng', 'like', "%{$search}%")
+                                ->where('status', StatusKencleng::TERSEDIA)
                                 ->limit(7)
                                 ->pluck('no_kencleng', 'id')
                                 ->toArray();
@@ -102,11 +104,6 @@ class ScannerToDistributor
     {
         try
         {
-           $kencleng = Models\Kencleng::findOrFail($this->data['kencleng_id']);
-           
-           if ($kencleng->status == StatusKencleng::DISTRIBUTOR) 
-                throw new Halt('Kencleng sedang didistribusikan');
-
             // Inisialisasi data distribusi kencleng
             // DIstributor ID dan status jadi distribusi
             $query = Models\DistribusiKencleng::create([
