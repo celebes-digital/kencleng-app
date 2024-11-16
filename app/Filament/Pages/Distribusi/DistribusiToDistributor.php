@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\Pages;
+namespace App\Filament\Pages\Distribusi;
 
 use Filament\Pages\Page;
 
 class DistribusiToDistributor extends Page
 {
-    protected static string $view = 'filament.pages.distribusi-to-distributor';
+    protected static string $view = 'filament.pages.distribusi.to-distributor';
 
     protected static ?string $modelLabel        = 'Ke Distributor';
     protected static ?string $title             = 'Ke Distributor';
@@ -15,11 +15,4 @@ class DistribusiToDistributor extends Page
     protected static ?int    $navigationSort    = 3;
 
     protected static ?string $navigationLabel   = 'Ke Distributor';
-
-    public ?string $activeTab;
-
-    public function mount(): void
-    {
-        $this->activeTab = 'Scanner';
-    }
 }

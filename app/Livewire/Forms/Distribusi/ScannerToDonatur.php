@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Forms;
+namespace App\Livewire\Forms\Distribusi;
 
 use App\Enums\StatusKencleng;
 use Livewire\Component;
@@ -14,7 +14,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Support\Exceptions\Halt;
 use Filament\Notifications\Notification;
 
-class ScannerFormField extends Component implements HasForms
+class ScannerToDonatur extends Component implements HasForms
 {
     use InteractsWithForms;
 
@@ -33,9 +33,9 @@ class ScannerFormField extends Component implements HasForms
     {
         return $form
             ->schema([
-                Components\Select::make('distributor_id')
-                    ->label('Distributor')
-                    ->options(Models\Profile::where('group', 'distributor')->pluck('nama', 'id'))
+                Components\Select::make('donatur_id')
+                    ->label('Donatur')
+                    ->options(Models\Profile::get()->pluck('nama', 'id'))
                     ->live(true)
                     ->searchable()
                     ->required()
@@ -58,19 +58,19 @@ class ScannerFormField extends Component implements HasForms
         {
            $kencleng = Models\Kencleng::findOrFail($this->data['kencleng_id']);
            
-           if ($kencleng->status == StatusKencleng::DISTRIBUTOR) 
-                throw new Halt('Kencleng sudah didistribusikan');
+        //    if ($kencleng->status == StatusKencleng::DISTRIBUTOR) 
+        //         throw new Halt('Kencleng sudah didistribusikan');
 
-            // Inisialisasi data distribusi kencleng
-            // DIstributor ID dan status jadi distribusi
-            $query = Models\DistribusiKencleng::create([
-                'kencleng_id'       => $this->data['kencleng_id'],
-                'distributor_id'    => $this->data['distributor_id'],
-                'tgl_distribusi'    => now(),
-                'status'            => 'distribusi',
-            ]);
+        //     // Inisialisasi data distribusi kencleng
+        //     // DIstributor ID dan status jadi distribusi
+        //     $query = Models\DistribusiKencleng::create([
+        //         'kencleng_id'       => $this->data['kencleng_id'],
+        //         'donatur_id'    => $this->data['donatur_id'],
+        //         'tgl_distribusi'    => now(),
+        //         'status'            => 'distribusi',
+        //     ]);
 
-            if (!$query) throw new Halt('Gagal menyimpan data');
+        //     if (!$query) throw new Halt('Gagal menyimpan data');
 
             $dataTampil = [
                 'id'                => $kencleng->id,
@@ -91,7 +91,7 @@ class ScannerFormField extends Component implements HasForms
                 ->send();
             return;
         }
-        $this->form->fill(['distributor_id' => $this->data['distributor_id']]);
+        $this->form->fill(['donatur_id' => $this->data['donatur_id']]);
 
         Notification::make()
             ->title('Berhasil melakukan distribusi kencleng ke distributor')
@@ -101,7 +101,7 @@ class ScannerFormField extends Component implements HasForms
 
     public function render()
     {
-        return view('livewire.forms.scanner-form-field', [
+        return view('livewire.forms.distribusi.scanner-to-donatur', [
             'newDistribusi' => $this->newDistribusi,
         ]);
     }
