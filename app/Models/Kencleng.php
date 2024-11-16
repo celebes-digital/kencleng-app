@@ -11,6 +11,7 @@ class Kencleng extends Model
     use HasFactory;
 
     protected $fillable = [
+        'batch_kencleng_id',
         'no_kencleng',
         'qr_image'
     ];
@@ -21,7 +22,7 @@ class Kencleng extends Model
 
     public function batchKenclengs()
     {
-        return $this->belongsTo(BatchKencleng::class);
+        return $this->belongsTo(BatchKencleng::class, 'batch_kencleng_id', 'id');
     }
 
     public function distribusiKenclengs()
