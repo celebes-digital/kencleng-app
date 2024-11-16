@@ -135,6 +135,7 @@ class DistribusiKenclengResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('tgl_distribusi')
+                    ->hidden(fn ($livewire) => $livewire->activeTab !== 'Distribusi')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('tgl_pengambilan')
