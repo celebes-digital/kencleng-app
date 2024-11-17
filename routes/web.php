@@ -19,4 +19,6 @@ Route::get('dashbord/qr-pdf/{id}', [DownloadQRCodePdf::class, 'download'])
 
 Route::get('daftar-donatur', App\Livewire\Forms\DaftarDonatur::class);
 
+Route::get('daftar/donatur', App\Livewire\Pages\Daftar\Donatur::class);
+
 require __DIR__.'/auth.php';
