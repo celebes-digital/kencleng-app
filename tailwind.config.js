@@ -1,5 +1,4 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
-import forms from '@tailwindcss/forms';
 import preset from './vendor/filament/support/tailwind.config.preset'
 
 /** @type {import('tailwindcss').Config} */
@@ -8,9 +7,8 @@ export default {
     content: [
         "./vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php",
         "./storage/framework/views/*.php",
-        "./resources/views/**/*.blade.php",
-        "./vendor/filament/**/*.blade.php",
-        "./app/Filament/**/*.php",
+        "./resources/**/*.blade.php",
+        "./resources/**/*.js",
 
         // Activity timeline
         "./vendor/jaocero/activity-timeline/resources/views/**/*.blade.php",
@@ -24,5 +22,5 @@ export default {
         },
     },
 
-    plugins: [forms],
+    plugins: [],
 };
