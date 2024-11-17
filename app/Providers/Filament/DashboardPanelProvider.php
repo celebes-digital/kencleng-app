@@ -60,6 +60,10 @@ class DashboardPanelProvider extends PanelProvider
                     ->icon('heroicon-o-truck')
                     ->collapsible(false),
                 NavigationGroup::make()
+                    ->label('Koleksi')
+                    ->icon('heroicon-o-swatch')
+                    ->collapsible(false),
+                NavigationGroup::make()
                     ->label('Jadwal')
                     ->icon('heroicon-o-calendar')
                     ->collapsible(false),
