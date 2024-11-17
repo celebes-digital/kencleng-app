@@ -28,6 +28,7 @@ class KoleksiKencleng extends Page implements HasForms
 
     public ?array $data = [];
 
+    protected static bool $shouldRegisterNavigation = false;
     protected static string  $view              = 'filament.pages.koleksi-kencleng';
     protected static ?string $modelLabel        = 'Koleksi Kencleng ki';
     protected static ?string $label             = 'Koleksi Kencleng ki';
