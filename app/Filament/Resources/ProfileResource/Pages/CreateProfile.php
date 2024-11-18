@@ -10,6 +10,7 @@ use App\Models\User;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Collection;
 
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
@@ -18,12 +19,8 @@ use Filament\Actions;
 use Filament\Actions\Action;
 
 use Filament\Forms;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Illuminate\Support\Collection;
 
 class CreateProfile extends CreateRecord
 {
@@ -34,11 +31,11 @@ class CreateProfile extends CreateRecord
     {
         return $form
             ->schema([
-                Wizard::make([
-                    Wizard\Step::make('Data Pengguna')
+                Forms\Components\Wizard::make([
+                    Forms\Components\Wizard\Step::make('Data Pengguna')
                         ->icon('heroicon-m-envelope')
                         ->schema([
-                            Fieldset::make('Data Pribadi')
+                            Forms\Components\Fieldset::make('Data Pribadi')
                                 ->schema([
                                     Forms\Components\Select::make('group')
                                         ->placeholder('Pilih group')
@@ -59,10 +56,10 @@ class CreateProfile extends CreateRecord
                                 ]),
                         ])
                         ->columns(1),
-                    Wizard\Step::make('Detail Pengguna')
+                    Forms\Components\Wizard\Step::make('Detail Pengguna')
                         ->icon('heroicon-m-user-circle')
                         ->schema([
-                            Fieldset::make('Data Pribadi')
+                            Forms\Components\Fieldset::make('Data Pribadi')
                                 ->schema([
                                     Forms\Components\TextInput::make('nama')
                                         ->required()
@@ -97,7 +94,7 @@ class CreateProfile extends CreateRecord
                                 ])
                                 ->columns(3),
 
-                            Fieldset::make('Kontak')
+                            Forms\Components\Fieldset::make('Kontak')
                                 ->schema([
                                     Forms\Components\TextInput::make('no_hp')
                                         ->label('Nomor HP')
@@ -118,7 +115,7 @@ class CreateProfile extends CreateRecord
                                 ])
                                 ->columns(2),
 
-                            Fieldset::make('Alamat')
+                            Forms\Components\Fieldset::make('Alamat')
                                 ->schema([
                                     Forms\Components\Select::make('provinsi')
                                         ->options(Province::all()->pluck('name', 'id')->toArray())
@@ -167,7 +164,7 @@ class CreateProfile extends CreateRecord
                                         ->maxLength(255),
                                 ])
                                 ->columns(2),
-                            Fieldset::make('Dokumen')
+                            Forms\Components\Fieldset::make('Dokumen')
                                 ->schema([
                                     Forms\Components\FileUpload::make('foto')
                                         ->image()
@@ -237,11 +234,12 @@ class CreateProfile extends CreateRecord
         return $profile;
     }
 
-    protected function afterCreate()
-    {
-        $user = User::find($this->record->user_id);
-        $this->sendPasswordResetLink($user->email);
-    }
+    // Dilakukan terpisah oleh admin
+    // protected function afterCreate()
+    // {
+    //     $user = User::find($this->record->user_id);
+    //     $this->sendPasswordResetLink($user->email);
+    // }
 
     private function sendPasswordResetLink($email): void
     {
