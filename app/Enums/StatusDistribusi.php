@@ -38,9 +38,9 @@ enum StatusDistribusi: string implements HasLabel, HasIcon, HasColor
     {
         return match ($this) {
             self::DISTRIBUSI => 'heroicon-o-cube',
-            self::DIISI      => 'heroicon-o-clipboard-check',
-            self::KEMBALI    => 'heroicon-o-arrow-left-circle',
-            self::DITERIMA   => 'heroicon-o-check-badge',
+            self::DIISI      => 'heroicon-o-archive-box-arrow-down',
+            self::KEMBALI    => 'heroicon-o-arrow-uturn-right',
+            self::DITERIMA   => 'heroicon-o-check-circle',
         };
     }
 }
