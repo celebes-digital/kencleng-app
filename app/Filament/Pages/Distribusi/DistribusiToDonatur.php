@@ -2,12 +2,19 @@
 
 namespace App\Filament\Pages\Distribusi;
 
-use Filament\Actions\Action;
 use Filament\Pages\Page;
+use Filament\Actions\Action;
+
+use Illuminate\Support\Facades\Auth;
 
 class DistribusiToDonatur extends Page
 {
     protected static string $view = 'filament.pages.distribusi.to-donatur';
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()->is_admin;
+    }
 
     protected static ?string $modelLabel        = 'Ke Donatur';
     protected static ?string $title             = 'Ke Donatur';
