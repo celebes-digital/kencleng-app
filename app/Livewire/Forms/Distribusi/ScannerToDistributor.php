@@ -11,6 +11,8 @@ use Filament\Forms;
 use Filament\Tables;
 
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Exceptions\Halt;
 
 class ScannerToDistributor 
@@ -40,7 +42,7 @@ class ScannerToDistributor
                     ->placeholder('Pilih Distributor')
                     ->searchable()
                     ->searchPrompt('Masukkan minimal 3 karakter')
-                    ->noSearchResultsMessage(fn ($component): string => "Distributor tidak ditemukan")
+                    ->noSearchResultsMessage(fn (): string => "Distributor tidak ditemukan")
                     ->getSearchResultsUsing(
                         function (string $search): array {
                             if((strlen($search) < 3)) return [];
@@ -52,6 +54,7 @@ class ScannerToDistributor
                         }
                     )
                     ->getOptionLabelUsing(fn($value): ?string => Models\Profile::find($value)?->nama)
+                    ->columnSpan(2)
                     ->required(),
 
                 Forms\Components\Select::make('kencleng_id')
@@ -72,13 +75,26 @@ class ScannerToDistributor
                         }
                     )
                     ->getOptionLabelUsing(fn($value): ?string => Models\Kencleng::find($value)?->no_kencleng)
+                    ->columnSpan(2)
                     ->required(),
+
+                Forms\Components\Actions::make([
+                    Forms\Components\Actions\Action::make('saveAction')
+                        ->label('Distribusi')
+                        ->button()
+                        ->icon('heroicon-o-chevron-right')
+                        ->iconPosition(IconPosition::After)
+                        ->action(fn () => $this->saveAction())
+                ])
+                ->verticalAlignment(VerticalAlignment::End)
+                ->fullWidth()
             ])
             ->statePath('data')
             ->columns([
-                'md' => 2,
-                'lg' => 2,
-                'xl' => 2,
+                'sm' => 5,
+                'md' => 5,
+                'lg' => 5,
+                'xl' => 5,
             ]);
     }
 
@@ -100,22 +116,25 @@ class ScannerToDistributor
             ->defaultSort('tgl_distribusi', 'desc');
     }
 
-    public function save()
+    public function saveAction()
     {
         try
         {
+            $data = $this->form->getState();
+
             // Inisialisasi data distribusi kencleng
             // DIstributor ID dan status jadi distribusi
             $query = Models\DistribusiKencleng::create([
-                'kencleng_id'       => $this->data['kencleng_id'],
-                'distributor_id'    => $this->data['distributor_id'],
+                'kencleng_id'       => $data['kencleng_id'],
+                'distributor_id'    => $data['distributor_id'],
                 'tgl_distribusi'    => now(),
                 'status'            => 'distribusi',
             ]);
 
             if (!$query) throw new Halt('Gagal menyimpan data');
 
-            $this->form->fill(['distributor_id' => $this->data['distributor_id']]);
+            $this->form->fill(['distributor_id' => $data['distributor_id']]);
+
             Notification::make()
                 ->title('Berhasil melakukan distribusi kencleng ke distributor')
                 ->success()
