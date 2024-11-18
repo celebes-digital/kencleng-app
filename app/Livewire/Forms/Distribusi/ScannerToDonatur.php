@@ -2,16 +2,18 @@
 
 namespace App\Livewire\Forms\Distribusi;
 
-use App\Enums\StatusKencleng;
 use Livewire\Component;
+use App\Enums\StatusKencleng;
 
 use App\Models;
 
 use Filament\Forms;
 use Filament\Tables;
 
-use Filament\Support\Exceptions\Halt;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\VerticalAlignment;
+use Filament\Support\Exceptions\Halt;
 
 class ScannerToDonatur
     extends Component
@@ -52,6 +54,7 @@ class ScannerToDonatur
                         }
                     )
                     ->getOptionLabelUsing(fn($value): ?string => Models\Profile::find($value)?->nama)
+                    ->columnSpan(2)
                     ->required(),
 
                 Forms\Components\Select::make('kencleng_id')
@@ -59,6 +62,7 @@ class ScannerToDonatur
                     ->placeholder('Scan QR Code Kencleng')
                     ->searchable()
                     ->searchPrompt('Scanning QR Code kencleng')
+                    ->noSearchResultsMessage('Kencleng tidak tersedia')
                     ->getSearchResultsUsing(
                         function (string $search): array {
                             if ((strlen($search) < 3)) return [];
@@ -71,13 +75,26 @@ class ScannerToDonatur
                         }
                     )
                     ->getOptionLabelUsing(fn($value): ?string => Models\Kencleng::find($value)?->no_kencleng)
+                    ->columnSpan(2)
                     ->required(),
+
+                    Forms\Components\Actions::make([
+                        Forms\Components\Actions\Action::make('saveAction')
+                            ->label('Distribusi')
+                            ->button()
+                            ->icon('heroicon-o-chevron-right')
+                            ->iconPosition(IconPosition::After)
+                            ->action(fn() => $this->saveAction())
+                    ])
+                    ->verticalAlignment(VerticalAlignment::End)
+                    ->fullWidth()
             ])
             ->statePath('data')
             ->columns([
-                'md' => 2,
-                'lg' => 2,
-                'xl' => 2,
+                'sm' => 5,
+                'md' => 5,
+                'lg' => 5,
+                'xl' => 5,
             ]);
     }
 
@@ -93,9 +110,7 @@ class ScannerToDonatur
                 Tables\Columns\TextColumn::make('tgl_distribusi')
                     ->label('Tanggal Distribusi')
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->defaultSort('tgl_distribusi', 'desc');
     }
 
@@ -103,6 +118,9 @@ class ScannerToDonatur
     {
         try 
         {
+            // Sekaligus menjalankan validasi form
+            $data = $this->form->getState();
+
             // Inisialisasi data distribusi kencleng
             // DIstributor ID dan status jadi distribusi
             $query = Models\DistribusiKencleng::create([
@@ -114,7 +132,8 @@ class ScannerToDonatur
 
             if (!$query) throw new Halt('Gagal menyimpan data');
 
-            $this->form->fill(['distributor_id' => $this->data['donatur_id']]);
+            $this->form->fill(['donatur_id' => $this->data['donatur_id']]);
+
             Notification::make()
                 ->title('Berhasil melakukan distribusi kencleng ke donatur')
                 ->success()

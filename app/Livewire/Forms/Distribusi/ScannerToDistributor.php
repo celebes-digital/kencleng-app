@@ -42,7 +42,7 @@ class ScannerToDistributor
                     ->placeholder('Pilih Distributor')
                     ->searchable()
                     ->searchPrompt('Masukkan minimal 3 karakter')
-                    ->noSearchResultsMessage(fn (): string => "Distributor tidak ditemukan")
+                    ->noSearchResultsMessage(fn (): string => "Donatur tidak ditemukan")
                     ->getSearchResultsUsing(
                         function (string $search): array {
                             if((strlen($search) < 3)) return [];
@@ -110,16 +110,14 @@ class ScannerToDistributor
                 Tables\Columns\TextColumn::make('tgl_distribusi')
                     ->label('Tanggal Distribusi')
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->defaultSort('tgl_distribusi', 'desc');
     }
 
     public function saveAction()
     {
-        try
-        {
+        try {
+            // Sekaligus menjalankan validasi form
             $data = $this->form->getState();
 
             // Inisialisasi data distribusi kencleng

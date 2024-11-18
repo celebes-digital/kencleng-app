@@ -1,21 +1,9 @@
 <x-filament-panels::form wire:submit="save">
-
-    <div class="flex flex-col md:flex-row w-full items-end">
-
         {{-- Form --}}
-        <div class="w-full md:w-10/12">
+        <div class="w-full">
             {{ $this->form }}
         </div>
 
-        {{-- Button submit --}}
-        <div class="w-full md:w-2/12 flex justify-center md:pl-2 mt-4 md:mt-0">
-            <x-filament::button wire:click="save" class="w-full">
-                Simpan
-            </x-filament::button>
-        </div>
-    </div>
-
-    
     <div>
         <div>
             <h1 class="font-semibold text-sm text-slate-900">
