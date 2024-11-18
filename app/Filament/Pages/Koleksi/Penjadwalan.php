@@ -3,17 +3,27 @@
 namespace App\Filament\Pages\Koleksi;
 
 use App\Enums\StatusDistribusi;
-use App\Models\DistribusiKencleng;
-use Filament\Pages\Page;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Table;
 
-class Penjadwalan extends Page implements HasTable
+use App\Models\DistribusiKencleng;
+use App\Models\Profile;
+
+use Filament\Pages\Page;
+use Filament\Tables;
+use Filament\Forms\Components\Select;
+
+use Illuminate\Support\Facades\Auth;
+
+class Penjadwalan extends Page implements Tables\Contracts\HasTable
 {
-    use InteractsWithTable;
-    
+    use Tables\Concerns\InteractsWithTable;
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()->is_admin;
+    }
+
+    protected static string $view = 'filament.pages.koleksi.penjadwalan';
+
     protected static ?string $navigationGroup   = 'Koleksi';
     protected static ?int    $navigationSort    = 1;
     protected static ?string $navigationLabel   = 'Penjadwalan';
@@ -21,18 +31,57 @@ class Penjadwalan extends Page implements HasTable
     protected static ?string $title             = 'Penjadwalan';
     protected static ?string $slug              = 'koleksi/penjadwalan';
     protected static ?string $navigationIcon    = 'heroicon-o-document-text';
-    
-    public function table(Table $table): Table
+
+    public function table(Tables\Table $table): Tables\Table
     {
         return $table
-            ->query(DistribusiKencleng::where('status', StatusDistribusi::DIISI))
+            ->query(
+                DistribusiKencleng::where('status', StatusDistribusi::DIISI)
+                ->where('tgl_batas_pengambilan', '>=', now()->addDays(7)))
             ->columns([
-                TextColumn::make('kencleng.no_kencleng'),
-                TextColumn::make('donatur.nama'),
+                Tables\Columns\TextColumn::make('kencleng.no_kencleng')
+                    ->label('ID Kencleng')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('donatur.nama')
+                    ->label('Donatur')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('kolektor.nama')
+                    ->label('Kolektor')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('donatur.no_wa')
+                    ->label('No. Whatsapp'),
+                Tables\Columns\TextColumn::make('donatur.alamat')
+                    ->label('Alamat')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('tgl_batas_pengambilan')
+                    ->label('Jadwal')
+                    ->sortable(),
             ])
             ->filters([])
-            ->actions([]);
+            ->actions([
+                Tables\Actions\Action::make('pilihKolektor')
+                ->button()
+                ->icon('heroicon-o-forward')
+                ->color('primary')
+                ->modalSubmitActionLabel('Jadwalkan')
+                ->form(
+                    fn() => [
+                        Select::make('kolektor_id')
+                        ->label('Kolektor')
+                        ->native(false)
+                        ->options(Profile::where('group', 'kolektor')->pluck('nama', 'id')->toArray())
+                    ]
+                )
+                ->action(
+                    function (DistribusiKencleng $record, $data) 
+                    {
+                        $record->update([
+                            'kolektor_id' => $data['kolektor_id'],
+                        ]);
+                    }
+                ),
+            ]);
     }
-
-    protected static string $view = 'filament.pages.koleksi.penjadwalan';
 }
