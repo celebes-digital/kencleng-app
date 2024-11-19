@@ -221,7 +221,7 @@ class CreateProfile extends CreateRecord
 
         $user = User::create([
             'email'      => $data['email'],
-            'password'   => bcrypt('temp_password_key'),
+            'password'   => bcrypt(env('DEFAULT_PASSWORD', 'kencleng123')),
         ]);
 
         $data['provinsi']   = Province::find($data['provinsi'])->name;
