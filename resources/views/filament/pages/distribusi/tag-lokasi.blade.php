@@ -19,11 +19,13 @@
         console.log('Error to get location');
     }
 
-    navigator
-        .geolocation
-        .getCurrentPosition(
-            successGetLocation,
-            error
-        );
+    Livewire.on('getLocation', () => {
+        navigator
+            .geolocation
+            .getCurrentPosition(
+                successGetLocation,
+                error
+            );
+    })
 </script>
 @endscript
