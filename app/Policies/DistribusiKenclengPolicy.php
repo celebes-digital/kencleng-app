@@ -13,7 +13,8 @@ class DistribusiKenclengPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->is_admin;
+        return $user->is_admin || 
+            $user->profile?->group === 'distributor';
     }
 
     /**
@@ -21,7 +22,9 @@ class DistribusiKenclengPolicy
      */
     public function view(User $user, DistribusiKencleng $distribusiKencleng): bool
     {
-        return $user->is_admin;
+        return $user->is_admin ||
+            ($user->profile?->group === 'distributor'
+            && $user->profile?->distributor_id === $distribusiKencleng->distributor_id);
     }
 
     /**
