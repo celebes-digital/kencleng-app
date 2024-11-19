@@ -26,8 +26,8 @@ class DashboardPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
-            ->id('dashboard')
-            ->path('dashboard')
+            ->id('')
+            ->path('')
             ->login()
             ->spa()
             ->spaUrlExceptions(fn(): array => [
