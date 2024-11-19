@@ -2,8 +2,10 @@
 
 namespace App\Filament\Pages\Koleksi;
 
+use App\Enums\StatusDistribusi;
 use App\Models\DistribusiKencleng;
 use Filament\Forms;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
@@ -58,11 +60,11 @@ class JadwalKoleksi
                 ->form(
                     fn ($record) => [
                         Forms\Components\TextInput::make('donatur_id')
-                        ->readOnly()
+                        ->disabled()
                         ->default($record->donatur->nama)
                         ->label('Donatur'),
                         Forms\Components\TextInput::make('alamat')
-                        ->readOnly()
+                        ->disabled()
                         ->default($record->donatur->alamat)
                         ->label('Alamat'),
                         Forms\Components\TextInput::make('jumlah')
@@ -83,8 +85,8 @@ class JadwalKoleksi
                     ]
                 )
                 ->action(
-                    function ($record, $values) {
-                        dd($record, $values);
+                    function ($record, $data) {
+                        $this->konfirmasiDonasiAction($record, $data);
                     }
                 ),
 
@@ -111,5 +113,42 @@ class JadwalKoleksi
                     true
                 ),
             ]);
+    }
+
+    public function konfirmasiDonasiAction($record, $data)
+    {
+        $record->update([
+            'tgl_pengembalian'  => now(),
+            'jumlah'            => $data['jumlah'],
+            'status'            => 'kembali',
+        ]);
+
+        if ($data['status'] == 'lanjut_tetap') {
+            DistribusiKencleng::create([
+                'kencleng_id'           => $record['kencleng_id'],
+                'donatur_id'            => $record['donatur_id'],
+                'tgl_distribusi'        => now(),
+                'tgl_aktivasi'          => now(),
+                'geo_lat'               => $record['latitude'],
+                'geo_long'              => $record['longitude'],
+                'status'                => 'diisi',
+                'tgl_batas_pengambilan' => now()->addMonth(),
+            ]);
+        }
+
+        if ($data['status'] == 'lanjut_pindah') {
+            DistribusiKencleng::create([
+                'kencleng_id'           => $record['kencleng_id'],
+                'donatur_id'            => $record['donatur_id'],
+                'tgl_distribusi'        => now(),
+                'status'                => 'distribusi',
+                'tgl_batas_pengambilan' => now()->addMonth(),
+            ]);
+        }
+
+        Notification::make()
+            ->success()
+            ->title('Berhasil mengkonfirmasi pengambilan kencleng')
+            ->send();
     }
 }

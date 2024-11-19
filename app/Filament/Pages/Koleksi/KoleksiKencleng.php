@@ -143,6 +143,7 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
             $distribusiKencleng->update([
                 'tgl_pengambilan'   => now(),
                 'jumlah'            => $this->data['jumlah'],
+                'status'            => 'kembali',
             ]);
 
             if( $data['status'] == 'lanjut_tetap' ) {
