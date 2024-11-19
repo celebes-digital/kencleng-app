@@ -21,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
             PanelsRenderHook::USER_MENU_BEFORE,
             fn(): string => Blade::render('@livewire(\'jadwal-navigation-topbar\')'),
         );
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::USER_MENU_PROFILE_BEFORE,
+            fn(): string => Blade::render('filament.components.user-role'),
+        );
     }
 
     /**
