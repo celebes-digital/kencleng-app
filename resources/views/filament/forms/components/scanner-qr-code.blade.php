@@ -77,7 +77,7 @@
             console.log('Initializing QR scanner');
             const devices = await Html5Qrcode.getCameras();
             if (devices && devices.length) {
-                const cameraId = devices[0].id;
+                const cameraId = devices.length < 2 ? devices[0].id : devices[1].id;
                 window.qrScanner.instance = new Html5Qrcode("reader");
                 await window.qrScanner.instance.start(
                     cameraId,
