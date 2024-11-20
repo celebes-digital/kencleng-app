@@ -18,8 +18,8 @@ class TransaksiResource extends Resource
     protected static ?string $model             = Transaksi::class;
     protected static ?string $navigationIcon    = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup   = 'Keuangan';
-    protected static ?string $modelLabel        = 'Penggunaan Donasi';
-    protected static ?string $slug              = 'penggunaan-donasi';
+    protected static ?string $modelLabel        = 'Transaksi';
+    protected static ?string $slug              = 'transaksi';
 
 
     public static function form(Form $form): Form
