@@ -52,6 +52,10 @@ class DashboardPanelProvider extends PanelProvider
             ->profile(isSimple: false)
             ->navigationGroups([
                 NavigationGroup::make()
+                    ->label('Setting')
+                    ->icon('heroicon-o-cog-6-tooth')
+                    ->collapsible(false),
+                NavigationGroup::make()
                     ->label('Kencleng')
                     ->icon('heroicon-o-cube')
                     ->collapsible(false),
@@ -62,10 +66,6 @@ class DashboardPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Koleksi')
                     ->icon('heroicon-o-swatch')
-                    ->collapsible(false),
-                NavigationGroup::make()
-                    ->label('Jadwal')
-                    ->icon('heroicon-o-calendar')
                     ->collapsible(false),
                 NavigationGroup::make()
                     ->label('Keuangan')
