@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class AdminResource extends Resource
 {
@@ -34,10 +35,20 @@ class AdminResource extends Resource
                     ->maxLength(50),
                 Forms\Components\Select::make('level')
                     ->native(false)
-                    ->options([
-                        'admin' => 'Admin',
-                        'manajer' => 'Manager',
-                    ])
+                    ->options(
+                    function() {
+                        $option = [
+                            'admin' => 'Admin',
+                            'manajer' => 'Manager',
+                        ];
+
+                        if (Auth::user()->admin->level === 'superadmin') {
+                            $option['principal'] = 'Principal';
+                        }
+
+                        return $option;
+                    })
+                    ->disableOptionWhen(fn ($value) => $value === 'principal' && Auth::user()->admin->level !== 'superadmin')
                     ->required(),
                 Forms\Components\TextInput::make('telepon')
                     ->tel()
