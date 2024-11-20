@@ -37,7 +37,7 @@ class Penjadwalan extends Page implements Tables\Contracts\HasTable
         return $table
             ->query(
                 DistribusiKencleng::where('status', StatusDistribusi::DIISI)
-                ->where('tgl_batas_pengambilan', '>=', now()->addDays(7)))
+                ->where('tgl_batas_pengambilan', '<=', now()->addDays(7)))
             ->columns([
                 Tables\Columns\TextColumn::make('kencleng.no_kencleng')
                     ->label('ID Kencleng')
