@@ -8,7 +8,7 @@ use Illuminate\Contracts\Console\PromptsForMissingInput;
 
 class MakeAdmin extends Command implements PromptsForMissingInput
 {
-    protected $signature = 'make:user-admin {email} {--P|password=}';
+    protected $signature = 'make:admin {email} {--P|password=} {--N|nama=}';
 
     protected $description = 'Command to create admin user';
 
@@ -24,7 +24,7 @@ class MakeAdmin extends Command implements PromptsForMissingInput
         if (!$this->argument('email')) {
             $this->error('Email is required.');
         }
-        
+
         if(!$this->option('password')) {
             $password = $this->secret('Enter your password');
         }
@@ -36,13 +36,19 @@ class MakeAdmin extends Command implements PromptsForMissingInput
         }
 
         $this->info('Create user as admin...');
+
         $password = $this->option('password') ?? $password;
-        User::create([
+        $user = User::create([
             'email'     => $this->argument('email'),
             'password'  => bcrypt($password),
             'is_admin'  => true,
             'is_active' => true,
             'email_verified_at' => now(),
+        ]);
+
+        $user->admin->create([
+            'nama' => $this->option('nama') ?? 'Admin',
+            'level' => 'superadmin',
         ]);
 
         $this->newLine();

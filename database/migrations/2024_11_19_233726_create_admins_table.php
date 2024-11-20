@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('level', ['admin', 'manajer', 'principal', 'superadmin']);
             $table->string('telepon')->nullable();
 
-            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('cabang_id')->nullable()->constrained()->onDelete('set null');
 
             $table->timestamps();
