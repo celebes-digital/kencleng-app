@@ -25,6 +25,10 @@ class AreaResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('cabang_id')
+                    ->native(false)
+                    ->relationship('cabang', 'nama_cabang')
+                    ->required(),
                 Forms\Components\TextInput::make('nama_area')
                     ->required()
                     ->maxLength(255),
@@ -36,6 +40,8 @@ class AreaResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('nama_area')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('cabang.nama_cabang')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

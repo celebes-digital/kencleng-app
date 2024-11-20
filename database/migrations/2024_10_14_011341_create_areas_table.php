@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('areas', function (Blueprint $table) {
             $table->id();
 
+            $table->foreignId('cabang_id')->nullable()->constrained()->onDelete('set null');
             $table->string('nama_area');
 
             $table->timestamps();

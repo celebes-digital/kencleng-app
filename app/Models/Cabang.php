@@ -15,4 +15,9 @@ class Cabang extends Model
         'telepon',
         'email',
     ];
+
+    public function areas()
+    {
+        return $this->hasMany(Area::class);
+    }
 }
