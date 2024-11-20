@@ -46,7 +46,7 @@ class MakeAdmin extends Command implements PromptsForMissingInput
             'email_verified_at' => now(),
         ]);
 
-        $user->admin->create([
+        $user->admin()->create([
             'nama' => $this->option('nama') ?? 'Admin',
             'level' => 'superadmin',
         ]);
