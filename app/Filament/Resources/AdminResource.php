@@ -49,6 +49,7 @@ class AdminResource extends Resource
                         return $option;
                     })
                     ->disableOptionWhen(fn ($value) => $value === 'principal' && Auth::user()->admin->level !== 'superadmin')
+                    ->live(onBlur: true)
                     ->required(),
                 Forms\Components\TextInput::make('telepon')
                     ->tel()
@@ -56,7 +57,11 @@ class AdminResource extends Resource
                 Forms\Components\Select::make('cabang_id')
                     ->native(false)
                     ->relationship('cabang', 'nama_cabang')
-                    ->required(),
+                    ->required(
+                        function ($get) {
+                            return $get('level') !== 'principal';
+                        }
+                    ),
                 Forms\Components\Group::make([
                     Forms\Components\Hidden::make('is_admin')
                         ->default(true),
