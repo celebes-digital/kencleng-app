@@ -99,6 +99,7 @@ class Konfirmasi
                     function (DistribusiKencleng $record, $data) 
                     {
                         Infaq::create([
+                            'cabang_id'     => Auth::user()->admin->cabang_id,
                             'distribusi_id' => $record->id,
                             'tgl_transaksi' => now(),
                             'jumlah_donasi' => $data['jumlah_donasi'],
