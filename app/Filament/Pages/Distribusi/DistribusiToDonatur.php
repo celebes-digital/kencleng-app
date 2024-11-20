@@ -13,7 +13,7 @@ class DistribusiToDonatur extends Page
 
     public static function canAccess(): bool
     {
-        return Auth::user()->is_admin;
+        return Auth::user()->admin?->level === 'admin';
     }
 
     protected static ?int    $navigationSort    = 3;
