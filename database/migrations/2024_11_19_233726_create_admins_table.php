@@ -18,7 +18,12 @@ return new class extends Migration
             $table->enum('level', ['admin', 'manajer', 'principal', 'superadmin']);
             $table->string('telepon')->nullable();
 
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            /** 
+             * User ID must be set to nullable because that is default behaviour from filament, set the belongs to relationship to null
+             * https://filamentphp.com/docs/3.x/forms/advanced#saving-data-to-a-belongsto-relationship
+             * This use when make admin (admin resource form)
+            */
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('cabang_id')->nullable()->constrained()->onDelete('set null');
 
             $table->timestamps();
