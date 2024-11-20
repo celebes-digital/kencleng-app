@@ -3,7 +3,7 @@
 namespace App\Filament\Pages\Koleksi;
 
 use App\Enums\StatusDistribusi;
-
+use App\Models\Area;
 use App\Models\DistribusiKencleng;
 use App\Models\Profile;
 
@@ -52,6 +52,7 @@ class Penjadwalan extends Page implements Tables\Contracts\HasTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('donatur.no_wa')
                     ->label('No. Whatsapp'),
+                Tables\Columns\TextColumn::make('area.area_id'),
                 Tables\Columns\TextColumn::make('donatur.alamat')
                     ->label('Alamat')
                     ->searchable(),
@@ -79,6 +80,28 @@ class Penjadwalan extends Page implements Tables\Contracts\HasTable
                     {
                         $record->update([
                             'kolektor_id' => $data['kolektor_id'],
+                        ]);
+                    }
+                ),
+                Tables\Actions\Action::make('aturArea')
+                ->button()
+                ->icon('heroicon-o-map')
+                ->color('primary')
+                ->modalSubmitActionLabel('Atur Area')
+                ->form(
+                    fn() => [
+                        Select::make('area')
+                        ->label('Area')
+                        ->native(false)
+                        ->relationship('area', 'nama_area')
+                        ->options(Area::all()->pluck('nama_area', 'id')->toArray())
+                    ]
+                )
+                ->action(
+                    function (DistribusiKencleng $record, $data) 
+                    {
+                        $record->update([
+                            'area' => $data['area'],
                         ]);
                     }
                 ),

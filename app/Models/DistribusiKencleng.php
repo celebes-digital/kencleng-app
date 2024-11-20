@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\StatusDistribusi;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class DistribusiKencleng extends Model
 {
@@ -22,12 +23,22 @@ class DistribusiKencleng extends Model
         'tgl_batas_pengambilan',
         'tgl_pengambilan',
         'jumlah',
-        'status'
+        'status',
+        'cabang_id',
+        'area_id',
     ];
 
     protected $casts = [
         'status' => StatusDistribusi::class
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function ($model) {
+            $user = Auth::user();
+            $model->cabang_id = $user->is_admin ? $user->admin->cabang_id : null;
+        });
+    }
 
     public function kencleng()
     {
@@ -47,5 +58,15 @@ class DistribusiKencleng extends Model
     public function distributor()
     {
         return $this->belongsTo(Profile::class, 'distributor_id');
+    }
+
+    public function cabang()
+    {
+        return $this->belongsTo(Cabang::class);
+    }
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
     }
 }

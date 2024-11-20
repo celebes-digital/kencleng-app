@@ -26,18 +26,21 @@ return new class extends Migration
             $table->integer('jumlah')->unsigned()->nullable();
             $table->string('status')->default('distribusi');
 
+            $table->foreignId('area_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('cabang_id')->nullable()->constrained()->onDelete('set null');
+
             $table->foreign('donatur_id')
                     ->references('id')
                     ->on('profiles')
-                    ->onDelete('cascade');
+                    ->onDelete('set null');
             $table->foreign('kolektor_id')
                     ->references('id')
                     ->on('profiles')
-                    ->onDelete('cascade');
+                    ->onDelete('set null');
             $table->foreign('distributor_id')
                     ->references('id')
                     ->on('profiles')
-                    ->onDelete('cascade');
+                    ->onDelete('set null');
             $table->timestamps();
         });
     }
