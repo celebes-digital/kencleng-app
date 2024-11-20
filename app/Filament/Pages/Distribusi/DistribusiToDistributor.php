@@ -13,7 +13,9 @@ class DistribusiToDistributor extends Page
 
     public static function canAccess(): bool
     {
-        return Auth::user()->admin?->level === 'admin';
+        $user = Auth::user();
+
+        return $user->is_admin && $user->admin->level === 'admin';
     }
 
     protected static ?int    $navigationSort    = 2;
