@@ -171,7 +171,7 @@ class CreateProfile extends CreateRecord
                                         ->disk('public')
                                         ->directory('foto')
                                         ->visibility('private')
-                                        ->required(),
+                                        ->required(fn(Get $get) => $get('group') !== 'donatur'),
                                     Forms\Components\FileUpload::make('foto_ktp')
                                         ->label('Foto KTP')
                                         ->disk('public')
