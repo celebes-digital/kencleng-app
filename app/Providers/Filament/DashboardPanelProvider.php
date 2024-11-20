@@ -36,6 +36,7 @@ class DashboardPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Emerald,
             ])
+            ->favicon(asset('logo-aqtif.png'))
             ->sidebarWidth(250)
             ->sidebarCollapsibleOnDesktop()
             ->viteTheme('resources/css/filament/dashboard/theme.css')
