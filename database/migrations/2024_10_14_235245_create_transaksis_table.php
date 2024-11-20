@@ -13,10 +13,14 @@ return new class extends Migration
     {
         Schema::create('transaksis', function (Blueprint $table) {
             $table->id();
+
             $table->date('tgl_transaksi');
             $table->integer('jumlah');
             $table->string('uraian');
             $table->string('sumber_dana');
+
+            $table->foreignId('cabang_id')->nullable()->constrained()->onDelete('set null');
+
             $table->timestamps();
         });
     }
