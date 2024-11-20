@@ -86,7 +86,9 @@ class AdminResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                $query->where('level', 'admin')->orWhere('level', 'manajer');
+                if(Auth::user()->admin->level !== 'superadmin') {
+                    $query->where('level', 'admin')->orWhere('level', 'manajer');
+                }
             })
             ->columns([
                 Tables\Columns\TextColumn::make('nama')
