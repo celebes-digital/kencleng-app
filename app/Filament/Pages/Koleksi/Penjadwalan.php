@@ -52,7 +52,10 @@ class Penjadwalan extends Page implements Tables\Contracts\HasTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('donatur.no_wa')
                     ->label('No. Whatsapp'),
-                Tables\Columns\TextColumn::make('area.area_id'),
+                Tables\Columns\TextColumn::make('area.nama_area')
+                    ->label('Area')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('donatur.alamat')
                     ->label('Alamat')
                     ->searchable(),
@@ -90,10 +93,10 @@ class Penjadwalan extends Page implements Tables\Contracts\HasTable
                 ->modalSubmitActionLabel('Atur Area')
                 ->form(
                     fn() => [
-                        Select::make('area')
+                        Select::make('area_id')
                         ->label('Area')
                         ->native(false)
-                        ->relationship('area', 'nama_area')
+                        ->relationship('area')
                         ->options(Area::all()->pluck('nama_area', 'id')->toArray())
                     ]
                 )
@@ -101,7 +104,7 @@ class Penjadwalan extends Page implements Tables\Contracts\HasTable
                     function (DistribusiKencleng $record, $data) 
                     {
                         $record->update([
-                            'area' => $data['area'],
+                            'area_id' => $data['area'],
                         ]);
                     }
                 ),

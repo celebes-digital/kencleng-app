@@ -2,8 +2,10 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Area;
 use Carbon\Carbon;
 use App\Models\DistribusiKencleng;
+use App\Models\Profile;
 use Illuminate\Database\Eloquent\Model;
 
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
@@ -12,6 +14,7 @@ use Saade\FilamentFullCalendar\Actions\ViewAction;
 use Saade\FilamentFullCalendar\Data\EventData;
 
 use Filament\Actions\Action;
+use Filament\Forms;
 use Filament\Infolists\Components\Actions\Action as InfoAction;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Actions;
@@ -95,7 +98,25 @@ class JadwalKoleksiCalenderWidget extends FullCalendarWidget
     {
         return [
             EditAction::make()
-                ->label('Edit Distribusi')
+            ->label('Atur Koleksi')
+            ->form([
+                Forms\Components\Select::make('area_id')
+                    ->options(Area::all()->pluck('nama_area', 'id'))
+                    ->native(false),
+                Forms\Components\Select::make('kolektor_id')
+                    ->label('Kolektor')
+                    ->native(false)
+                    ->options(Profile::where('group', 'kolektor')->pluck('nama', 'id')->toArray())
+            ])
+            ->action(
+                function (DistribusiKencleng $record, $data) 
+                {
+                    $record->update([
+                        'area_id' => $data['area_id'],
+                        'kolektor_id' => $data['kolektor_id'],
+                    ]);
+                }
+            ),
         ];
     }
 
