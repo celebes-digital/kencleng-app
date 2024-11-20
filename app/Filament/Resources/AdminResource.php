@@ -17,13 +17,13 @@ class AdminResource extends Resource
 {
     protected static ?string $model = Admin::class;
 
+    // Just naming admin to internal for the sake of this example
     protected static ?int    $navigationSort    = 2;
     protected static ?string $navigationGroup   = 'Setting';
-    protected static ?string $label             = 'admin';
+    protected static ?string $label             = 'internal';
     protected static ?string $navigationIcon    = 'heroicon-o-inbox-stack';
-    protected static ?string $slug              = 'admin';
-    protected static ?string $breadcumb         = 'admin';
-
+    protected static ?string $slug              = 'internal';
+    protected static ?string $breadcumb         = 'internal';
 
     public static function form(Form $form): Form
     {
