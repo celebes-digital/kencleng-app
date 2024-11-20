@@ -25,7 +25,7 @@ class Konfirmasi
 
     public static function canAccess(): bool
     {
-        return Auth::user()->is_admin;
+        return Auth::user()->admin->level === 'admin';
     }
     
     protected static string $view               = 'filament.pages.koleksi.konfirmasi';
