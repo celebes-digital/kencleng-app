@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Enums\StatusDistribusi;
+use App\Models\Scopes\CabangScope;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
+#[ScopedBy(CabangScope::class)]
 class DistribusiKencleng extends Model
 {
     use HasFactory;
