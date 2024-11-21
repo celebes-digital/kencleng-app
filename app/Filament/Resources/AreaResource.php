@@ -27,19 +27,18 @@ class AreaResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('cabang_id')
-                    ->hidden(fn () => Auth::user()->admin?->level === 'manajer')
+                    ->disabled(fn () => Auth::user()->admin?->level === 'manajer')
+                    ->default(function () {
+                        $user = Auth::user();
+                        return $user->admin?->level === 'manajer' ? $user->admin?->cabang_id : null;
+                    })
+                    ->dehydrated()
                     ->native(false)
                     ->relationship('cabang', 'nama_cabang')
                     ->required(),
                 Forms\Components\TextInput::make('nama_area')
                     ->required()
                     ->maxLength(255)
-                    ->live()
-                    ->afterStateUpdated(function ($set) {
-                        if (Auth::user()->admin?->level === 'manajer') {
-                            $set('cabang_id', Auth::user()->admin->cabang_id);
-                        }
-                    }),
             ]);
     }
 
