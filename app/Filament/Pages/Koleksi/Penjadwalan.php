@@ -105,7 +105,7 @@ class Penjadwalan extends Page implements Tables\Contracts\HasTable
                     function (DistribusiKencleng $record, $data) 
                     {
                         $record->update([
-                            'area_id' => $data['area'],
+                            'area_id' => $data['area_id'],
                         ]);
                     }
                 ),
