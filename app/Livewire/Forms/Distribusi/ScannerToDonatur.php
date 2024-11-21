@@ -114,7 +114,7 @@ class ScannerToDonatur
             ->defaultSort('tgl_distribusi', 'desc');
     }
 
-    public function save()
+    public function saveAction()
     {
         try 
         {
