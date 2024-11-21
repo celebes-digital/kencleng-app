@@ -44,9 +44,9 @@
 </style>
 @endpush
 
-@push('scripts')
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-@endpush
+@assets
+<script src="https://unpkg.com/html5-qrcode"></script>
+@endassets
 
 @script
 <script>
