@@ -56,14 +56,13 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
                     {
                         $kencleng = Kencleng::where('no_kencleng', $state)->first();
 
-                        dd($kencleng->distribusiKenclengs()->latest);
-
                         Notification::make()
                             ->title('Kencleng ' . $kencleng->no_kencleng  . ' ditemukan')
                             ->success()
                             ->send();
 
                         $set('kencleng_id', $kencleng->id);
+                        $set('no_kencleng', $kencleng->no_kencleng);
                     }
                 ),
                 Forms\Components\Fieldset::make('')
@@ -132,13 +131,12 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
 
             $distribusiKencleng = DistribusiKencleng::where('kencleng_id', $data['kencleng_id'])
                                     ->where('status', 'diisi')
-                                    ->latest();
+                                    ->orderBy('tgl_distribusi', 'desc')
+                                    ->first();
 
             if ( empty($distribusiKencleng) ) {
-                return throw new Halt('Status kencleng tidak valid');
+                return throw new Halt('Kencleng yang dapat dikoleksi adalah kencleng dengan status diisi');
             }
-
-            dd($distribusiKencleng);
 
             $distribusiKencleng->update([
                 'tgl_pengambilan'   => now(),
@@ -150,6 +148,7 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
                 DistribusiKencleng::create([
                     'kencleng_id'           => $distribusiKencleng['kencleng_id'],
                     'donatur_id'            => $distribusiKencleng['donatur_id'],
+                    'distributor_id'        => $distribusiKencleng['distibutor_id'],
                     'cabang_id'             => $distribusiKencleng['cabang_id'],
                     'tgl_distribusi'        => now(),
                     'tgl_aktivasi'          => now(),
@@ -164,7 +163,8 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
                 DistribusiKencleng::create([
                     'kencleng_id'           => $distribusiKencleng['kencleng_id'],
                     'donatur_id'            => $distribusiKencleng['donatur_id'],
-                    'donatur_id'            => $distribusiKencleng['cabang_id'],
+                    'distributor_id'        => $distribusiKencleng['distibutor_id'],
+                    'cabang_id'             => $distribusiKencleng['cabang_id'],
                     'tgl_distribusi'        => now(),
                     'status'                => 'distribusi',
                     'tgl_batas_pengambilan' => now()->addMonth(),
