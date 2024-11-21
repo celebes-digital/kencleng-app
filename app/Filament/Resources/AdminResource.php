@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AdminResource extends Resource
 {
@@ -48,8 +49,7 @@ class AdminResource extends Resource
 
                         return $option;
                     })
-                    ->disableOptionWhen(fn ($value) => $value === 'principal' && Auth::user()->admin->level !== 'superadmin')
-                    ->live(onBlur: true)
+                    ->preload()
                     ->required(),
                 Forms\Components\TextInput::make('telepon')
                     ->tel()
@@ -67,11 +67,15 @@ class AdminResource extends Resource
                         ->default(true),
                     Forms\Components\TextInput::make('email')
                         ->email()
-                        ->unique('users', 'email')
+                        ->unique('users', 'email', ignoreRecord: true)
                         ->required()
                         ->maxLength(255),
                     Forms\Components\TextInput::make('password')
-                        ->required(),
+                        ->password()
+                        ->revealable()
+                        ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                        ->dehydrated(fn ($state) => filled($state))
+                        ->required(fn (string $context) => $context === 'create'),
                     Forms\Components\Toggle::make('is_active')
                         ->default(true)
                         ->inline(false),
