@@ -6,7 +6,7 @@ use Livewire\Component;
 use App\Enums\StatusKencleng;
 
 use App\Models;
-
+use App\Models\Profile;
 use Filament\Forms;
 use Filament\Tables;
 
@@ -39,21 +39,12 @@ class ScannerToDistributor
             ->schema([
                 Forms\Components\Select::make('distributor_id')
                     ->label('Distributor')
-                    ->placeholder('Pilih Distributor')
-                    ->searchable()
+                    ->placeholder('Carikan berdasarkan nama atau NIK')
+                    ->searchable(['nama', 'nik'])
                     ->searchPrompt('Masukkan minimal 3 karakter')
-                    ->noSearchResultsMessage(fn (): string => "Donatur tidak ditemukan")
-                    ->getSearchResultsUsing(
-                        function (string $search): array {
-                            if((strlen($search) < 3)) return [];
-
-                            return Models\Profile::where('nama', 'like', "%{$search}%")
-                                ->limit(7)
-                                ->pluck('nama', 'id')
-                                ->toArray();
-                        }
-                    )
-                    ->getOptionLabelUsing(fn($value): ?string => Models\Profile::find($value)?->nama)
+                    ->noSearchResultsMessage(fn (): string => "Tidak ditemukan")
+                    ->options(Profile::all()->pluck('nama', 'id'))
+                    ->optionsLimit(10)
                     ->columnSpan(2)
                     ->required(),
 
@@ -61,8 +52,8 @@ class ScannerToDistributor
                     ->label('ID Kencleng')
                     ->placeholder('Scan QR Code Kencleng')
                     ->searchable()
-                    ->searchPrompt('Scanning QR Code kencleng')
-                    ->noSearchResultsMessage('Kencleng tidak tersedia')
+                    ->searchPrompt('Scanning QR atau masukkan minimal 3 karakter')
+                    ->noSearchResultsMessage('Kencleng tidak tersedia atau sedang distribusi')
                     ->getSearchResultsUsing(
                         function (string $search): array {
                             if ((strlen($search) < 3)) return [];
@@ -128,6 +119,8 @@ class ScannerToDistributor
                 'tgl_distribusi'    => now(),
                 'status'            => 'distribusi',
             ]);
+
+            $query = $query->kencleng()->update(['status' => StatusKencleng::SEDANGDISTRIBUSI]);
 
             if (!$query) throw new Halt('Gagal menyimpan data');
 
