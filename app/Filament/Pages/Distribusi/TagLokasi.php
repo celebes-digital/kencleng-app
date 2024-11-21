@@ -181,12 +181,13 @@ class TagLokasi extends Page implements HasForms
                                                             ?? $this->data['donatur_id'];
 
             $distribusiKencleng->save();
-            
+
+            $this->form->fill([]);
+
             Notification::make()
             ->success()
             ->title('Lokasi Kencleng berhasil ditandai')
             ->send();
-
         } catch (Halt $e) {
             return;
         }
