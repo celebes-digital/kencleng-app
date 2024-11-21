@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class AreaResource extends Resource
 {
@@ -26,12 +27,19 @@ class AreaResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('cabang_id')
+                    ->hidden(fn () => Auth::user()->admin?->level === 'manajer')
                     ->native(false)
                     ->relationship('cabang', 'nama_cabang')
                     ->required(),
                 Forms\Components\TextInput::make('nama_area')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->live()
+                    ->afterStateUpdated(function ($set) {
+                        if (Auth::user()->admin?->level === 'manajer') {
+                            $set('cabang_id', Auth::user()->admin->cabang_id);
+                        }
+                    }),
             ]);
     }
 
