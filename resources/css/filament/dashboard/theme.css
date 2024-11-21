@@ -1,3 +1,34 @@
 @import '/vendor/filament/filament/resources/css/theme.css';
 
 @config 'tailwind.config.js';
+
+.fi-simple-layout {
+    position: relative;
+    @apply grid grid-cols-1 lg:grid-cols-2 bg-cover;
+    background-image: url('/public/kencleng-img.jpg');
+}
+
+.fi-simple-layout::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(0px);
+    z-index: 1;
+}
+
+.fi-simple-layout > * {
+    position: relative;
+    z-index: 2;
+}
+
+.fi-simple-main-ctn {
+    @apply col-start-2
+}
+
+.fi-simple-main {
+    @apply border-white/50 border-2 bg-white backdrop-blur-md !rounded-lg bg-opacity-50;
+}
