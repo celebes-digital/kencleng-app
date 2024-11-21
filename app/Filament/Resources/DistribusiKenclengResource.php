@@ -220,8 +220,10 @@ class DistribusiKenclengResource extends Resource
                             . $record->geo_long,
                         true
                     ),
-                Tables\Actions\EditAction::make()
-                    ->iconButton(),
+                // There is no one can interrupt the process
+                // because the process is done by the system
+                // Tables\Actions\EditAction::make()
+                //     ->iconButton(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

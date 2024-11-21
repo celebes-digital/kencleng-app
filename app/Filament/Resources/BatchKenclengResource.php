@@ -58,12 +58,6 @@ class BatchKenclengResource extends Resource
                     ->alignCenter()
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('')
-                    ->label('Total di Distributor')
-                    ->state(fn (BatchKencleng $record) => $record->kenclengs->where('status', 1)->count())
-                    ->alignCenter()
-                    ->numeric()
-                    ->sortable(),
                 // Tables\Columns\TextColumn::make('created_at')
                 //     ->dateTime()
                 //     ->label('Dibuat')
