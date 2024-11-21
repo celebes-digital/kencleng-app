@@ -3,7 +3,7 @@
 namespace App\Filament\Pages\Koleksi;
 
 use App\Enums\StatusDistribusi;
-
+use App\Enums\StatusKencleng;
 use App\Models\DistribusiKencleng;
 use App\Models\Infaq;
 
@@ -73,14 +73,14 @@ class Konfirmasi
                 ->modalSubmitActionLabel('Konfirmasi')
                 ->form(fn($record) => [
                     Forms\Components\TextInput::make('kolektor')
-                        ->hidden($record->kolektor ? false : true)
-                        ->default($record->kolektor?->nama)
+                        ->hidden($record?->kolektor ? false : true)
+                        ->default($record?->kolektor?->nama)
                         ->disabled(),
                     Forms\Components\TextInput::make('donatur')
-                        ->default($record->donatur->nama)
+                        ->default($record?->donatur->nama)
                         ->disabled(),
                     Forms\Components\TextInput::make('donasi')
-                        ->hidden($record->kolektor ? false : true)
+                        ->hidden($record?->kolektor ? false : true)
                         ->default(Number::currency($record->jumlah ?? 0, 'IDR', 'id'))
                         ->placeholder('Tidak ada')
                         ->prefixIcon('heroicon-o-banknotes')
@@ -94,7 +94,19 @@ class Konfirmasi
                     Forms\Components\Textarea::make('uraian')
                         ->label('Keterangan Tambahan')
                         ->autosize()
-                        ->rows(3)
+                        ->rows(3),
+                    Forms\Components\Radio::make('status')
+                        ->label('Status')
+                        ->hidden($record?->status === 'kembali' ? true : false)
+                        ->default('lanjut_tetap')
+                        ->options([
+                            'berhenti'          => 'Berhenti',
+                            'lanjut_tetap'      => 'Lanjut Tetap',
+                            'lanjut_pindah'     => 'Lanjut Pindah',
+                        ])
+                        ->inline()
+                        ->inlineLabel(false)
+                        ->required(),
                 ])
                 ->action(
                     function (DistribusiKencleng $record, $data) 
@@ -108,8 +120,43 @@ class Konfirmasi
                         ]);
 
                         $record->update([
-                            'status' => 'diterima',
+                            'status'            => 'diterima',
+                            'tgl_pengambilan'   => $record->tgl_pengambilan ?? now(),
+                            'jumlah'            => $record->jumlah ?? $data['jumlah_donasi'],
                         ]);
+
+                        if ($data['status'] == 'lanjut_tetap') {
+                            DistribusiKencleng::create([
+                                'kencleng_id'           => $record['kencleng_id'],
+                                'donatur_id'            => $record['donatur_id'],
+                                'distributor_id'        => $record['distibutor_id'],
+                                'cabang_id'             => $record['cabang_id'],
+                                'tgl_distribusi'        => now(),
+                                'tgl_aktivasi'          => now(),
+                                'geo_lat'               => $record['latitude'],
+                                'geo_long'              => $record['longitude'],
+                                'status'                => 'diisi',
+                                'tgl_batas_pengambilan' => now()->addMonth(),
+                            ]);
+                        }
+
+                        if ($data['status'] == 'lanjut_pindah') {
+                            DistribusiKencleng::create([
+                                'kencleng_id'           => $record['kencleng_id'],
+                                'donatur_id'            => $record['donatur_id'],
+                                'distributor_id'        => $record['distibutor_id'],
+                                'cabang_id'             => $record['cabang_id'],
+                                'tgl_distribusi'        => now(),
+                                'status'                => 'distribusi',
+                                'tgl_batas_pengambilan' => now()->addMonth(),
+                            ]);
+                        }
+
+                        if ($data['status'] == 'berhenti') {
+                            $record->kencleng()->update([
+                                'status' => StatusKencleng::TERSEDIA,
+                            ]);
+                        }
                     }
                 ),
             ]);
