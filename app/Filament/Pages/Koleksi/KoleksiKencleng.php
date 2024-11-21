@@ -150,6 +150,7 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
                 DistribusiKencleng::create([
                     'kencleng_id'           => $distribusiKencleng['kencleng_id'],
                     'donatur_id'            => $distribusiKencleng['donatur_id'],
+                    'cabang_id'             => $distribusiKencleng['cabang_id'],
                     'tgl_distribusi'        => now(),
                     'tgl_aktivasi'          => now(),
                     'geo_lat'               => $this->data['latitude'],
@@ -163,6 +164,7 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
                 DistribusiKencleng::create([
                     'kencleng_id'           => $distribusiKencleng['kencleng_id'],
                     'donatur_id'            => $distribusiKencleng['donatur_id'],
+                    'donatur_id'            => $distribusiKencleng['cabang_id'],
                     'tgl_distribusi'        => now(),
                     'status'                => 'distribusi',
                     'tgl_batas_pengambilan' => now()->addMonth(),

@@ -127,6 +127,7 @@ class JadwalKoleksi
             DistribusiKencleng::create([
                 'kencleng_id'           => $record['kencleng_id'],
                 'donatur_id'            => $record['donatur_id'],
+                'donatur_id'            => $record['cabang_id'],
                 'tgl_distribusi'        => now(),
                 'tgl_aktivasi'          => now(),
                 'geo_lat'               => $record['latitude'],
@@ -140,6 +141,7 @@ class JadwalKoleksi
             DistribusiKencleng::create([
                 'kencleng_id'           => $record['kencleng_id'],
                 'donatur_id'            => $record['donatur_id'],
+                'donatur_id'            => $record['cabang_id'],
                 'tgl_distribusi'        => now(),
                 'status'                => 'distribusi',
                 'tgl_batas_pengambilan' => now()->addMonth(),
