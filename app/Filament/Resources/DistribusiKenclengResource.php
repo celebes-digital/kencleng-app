@@ -125,20 +125,24 @@ class DistribusiKenclengResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('area.nama_area')
                     ->label('Area')
+                    ->placeholder('Beludm ada')
                     ->hidden(fn($livewire) => $livewire->activeTab === 'Distribusi')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('donatur.nama')
                     ->label('Donatur')
+                    ->placeholder('Belum ada')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('kolektor.nama')
                     ->label('Kolektor')
+                    ->placeholder('Belum ada')
                     ->hidden(fn($livewire) => $livewire->activeTab === 'Distribusi')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('distributor.nama')
                     ->label('Distributor')
+                    ->placeholder('Belum ada')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('geo_lat')
