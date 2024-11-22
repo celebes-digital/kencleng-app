@@ -76,7 +76,15 @@ class Penjadwalan extends Page implements Tables\Contracts\HasTable
                         Select::make('kolektor_id')
                         ->label('Kolektor')
                         ->native(false)
-                        ->options(Profile::where('group', 'kolektor')->pluck('nama', 'id')->toArray())
+                        ->searchable()
+                        ->options(function ($record) {
+                            $listKolektor = Profile::where('group', '!=', 'donatur')->pluck('nama', 'id')->toArray();
+
+                            $donatur = Profile::find($record->donatur_id);
+                            $listKolektor = [$donatur->id => $donatur->nama . ' (Donatur)'] + $listKolektor;
+                            
+                            return $listKolektor;
+                        })
                     ]
                 )
                 ->action(
