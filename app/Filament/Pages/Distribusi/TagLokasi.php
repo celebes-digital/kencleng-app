@@ -86,6 +86,7 @@ class TagLokasi extends Page implements HasForms
 
                             Forms\Components\Select::make('donatur_id')
                                 ->label('Donatur')
+                                ->hidden(fn() => Auth::user()->profile->group === 'donatur')
                                 ->options(Profile::all()->pluck('nama', 'id'))
                                 ->searchable()
                                 ->columnSpanFull()
