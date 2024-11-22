@@ -25,7 +25,7 @@ class JadwalKoleksi
     {
         $user = Auth::user();
 
-        return !$user->is_admin;
+        return !$user->is_admin && $user->profile->group !== 'donatur';
     }
 
     protected static ?int    $navigationSort    = 3;
