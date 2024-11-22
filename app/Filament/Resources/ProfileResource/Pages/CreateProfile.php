@@ -144,6 +144,7 @@ class CreateProfile extends CreateRecord
                                             ->where('district_id', $get('kabupaten'))
                                             ->pluck('name', 'id'))
                                         ->searchable()
+                                        ->live()
                                         ->createOptionForm([
                                             Forms\Components\TextInput::make('name')
                                                 ->required(),
