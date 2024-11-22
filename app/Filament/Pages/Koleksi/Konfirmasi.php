@@ -96,7 +96,7 @@ class Konfirmasi
                         ->rows(3),
                     Forms\Components\Radio::make('status')
                         ->label('Status')
-                        ->hidden($record?->status === 'kembali' ? true : false)
+                        ->hidden($record?->status === StatusDistribusi::KEMBALI ? true : false)
                         ->default('lanjut_tetap')
                         ->options([
                             'berhenti'          => 'Berhenti',
@@ -124,37 +124,43 @@ class Konfirmasi
                             'jumlah'            => $record->jumlah ?? $data['jumlah_donasi'],
                         ]);
 
-                        if ($data['status'] == 'lanjut_tetap') {
-                            DistribusiKencleng::create([
-                                'kencleng_id'           => $record['kencleng_id'],
-                                'donatur_id'            => $record['donatur_id'],
-                                'distributor_id'        => $record['distibutor_id'],
-                                'cabang_id'             => $record['cabang_id'],
-                                'tgl_distribusi'        => now(),
-                                'tgl_aktivasi'          => now(),
-                                'geo_lat'               => $record['latitude'],
-                                'geo_long'              => $record['longitude'],
-                                'status'                => 'diisi',
-                                'tgl_batas_pengambilan' => now()->addMonth(),
-                            ]);
-                        }
-
-                        if ($data['status'] == 'lanjut_pindah') {
-                            DistribusiKencleng::create([
-                                'kencleng_id'           => $record['kencleng_id'],
-                                'donatur_id'            => $record['donatur_id'],
-                                'distributor_id'        => $record['distibutor_id'],
-                                'cabang_id'             => $record['cabang_id'],
-                                'tgl_distribusi'        => now(),
-                                'status'                => 'distribusi',
-                                'tgl_batas_pengambilan' => now()->addMonth(),
-                            ]);
-                        }
-
-                        if ($data['status'] == 'berhenti') {
-                            $record->kencleng()->update([
-                                'status' => StatusKencleng::TERSEDIA,
-                            ]);
+                        // Jika donatur kolek langsung ke aqtif
+                        if ($record?->status !== StatusDistribusi::KEMBALI) {
+                            switch ($data['status']) {
+                                // Jika donatur masih lanjut dan ditempat yang sama
+                                case 'lanjut_tetap':
+                                    DistribusiKencleng::create([
+                                        'kencleng_id'           => $record['kencleng_id'],
+                                        'donatur_id'            => $record['donatur_id'],
+                                        'distributor_id'        => $record['distibutor_id'],
+                                        'cabang_id'             => $record['cabang_id'],
+                                        'tgl_distribusi'        => now(),
+                                        'tgl_aktivasi'          => now(),
+                                        'geo_lat'               => $record['latitude'],
+                                        'geo_long'              => $record['longitude'],
+                                        'status'                => 'diisi',
+                                        'tgl_batas_pengambilan' => now()->addMonth(),
+                                    ]);
+                                    break;
+                                // Jika donatur masih lanjut dan pindah tempat
+                                case 'lanjut_pindah':
+                                    DistribusiKencleng::create([
+                                        'kencleng_id'           => $record['kencleng_id'],
+                                        'donatur_id'            => $record['donatur_id'],
+                                        'distributor_id'        => $record['distibutor_id'],
+                                        'cabang_id'             => $record['cabang_id'],
+                                        'tgl_distribusi'        => now(),
+                                        'status'                => 'distribusi',
+                                        'tgl_batas_pengambilan' => now()->addMonth(),
+                                    ]);
+                                    break;
+                                // Jika donatur berhenti
+                                case 'berhenti':
+                                    $record->kencleng()->update([
+                                        'status' => StatusKencleng::TERSEDIA,
+                                    ]);
+                                    break;
+                            }
                         }
                     }
                 ),
