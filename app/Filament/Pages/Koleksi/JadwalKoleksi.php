@@ -38,17 +38,54 @@ class JadwalKoleksi
     public function table(Table $table): Table
     {
         return $table
-            ->query(DistribusiKencleng::query())
+            ->query(function () {
+                $user = Auth::user()->profile;
+
+                return DistribusiKencleng::query()
+                    ->where('kolektor_id', $user->id)
+                    ->where('status', StatusDistribusi::DIISI);
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('kencleng.no_kencleng')
                     ->label('ID Kencleng'),
                 Tables\Columns\TextColumn::make('donatur.nama')
                     ->label('Donatur'),
+                Tables\Columns\TextColumn::make('area.nama_area')
+                    ->label('Area'),
+                Tables\Columns\TextColumn::make('tgl_batas_pengambilan')
+                    ->label('Jadwal')
+                    ->date('d F Y'),
+                Tables\Columns\TextColumn::make('donatur.no_hp')
+                    ->label('HP Donatur'),
                 Tables\Columns\TextColumn::make('donatur.no_wa')
                     ->label('WA Donatur'),
+                Tables\Columns\TextColumn::make('donatur.alamat')
+                    ->label('Alamat'),
             ])
             ->filters([])
             ->actions([
+                Tables\Actions\Action::make('lokasi')
+                ->iconButton()
+                ->tooltip('Lihat Lokasi')
+                ->icon('heroicon-o-map-pin')
+                ->color(
+                    fn($record)
+                    => $record->geo_lat !== null
+                        ? 'info'
+                        : 'gray'
+                )
+                ->disabled(
+                    fn($record)
+                    => $record->geo_lat === null
+                )
+                ->url(
+                    fn($record)
+                    => "https://www.google.com/maps/search/?api=1&query="
+                        . $record->geo_lat
+                        . ","
+                        . $record->geo_long,
+                    true
+                ),
                 Action::make('koleksi')
                 ->label('Koleksi')
                 ->button()
@@ -89,36 +126,13 @@ class JadwalKoleksi
                         $this->konfirmasiDonasiAction($record, $data);
                     }
                 ),
-
-                Tables\Actions\Action::make('lokasi')
-                ->iconButton()
-                ->tooltip('Lihat Lokasi')
-                ->icon('heroicon-o-map-pin')
-                ->color(
-                    fn($record)
-                    => $record->geo_lat !== null
-                        ? 'info'
-                        : 'gray'
-                )
-                ->disabled(
-                    fn($record)
-                    => $record->geo_lat === null
-                )
-                ->url(
-                    fn($record)
-                    => "https://www.google.com/maps/search/?api=1&query="
-                    . $record->geo_lat
-                        . ","
-                        . $record->geo_long,
-                    true
-                ),
             ]);
     }
 
     public function konfirmasiDonasiAction($record, $data)
     {
         $record->update([
-            'tgl_pengembalian'  => now(),
+            'tgl_pengambilan'   => now(),
             'jumlah'            => $data['jumlah'],
             'status'            => 'kembali',
         ]);
