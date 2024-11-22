@@ -18,15 +18,14 @@ class StatsTopDonaturOverview extends ChartWidget
 
     protected function getData(): array
     {
-        $data = Infaq::query()
-                ->whereNotNull('distribusi_id')
-                ->join('distribusi_kenclengs', 'infaqs.distribusi_id', '=', 'distribusi_kenclengs.id')
-                ->join('profiles', 'distribusi_kenclengs.donatur_id', '=', 'profiles.id')
-                ->groupBy('distribusi_kenclengs.donatur_id')
-                ->select('profiles.nama', DB::raw('sum(infaqs.jumlah_donasi) as total_donasi'))
-                ->orderBy('total_donasi', 'desc')
-                ->limit(7)
-                ->get();
+        $data = Infaq::whereNotNull('distribusi_id')
+            ->join('distribusi_kenclengs', 'infaqs.distribusi_id', '=', 'distribusi_kenclengs.id')
+            ->join('profiles', 'distribusi_kenclengs.donatur_id', '=', 'profiles.id')
+            ->groupBy('profiles.nama')
+            ->select('profiles.nama', DB::raw('SUM(infaqs.jumlah_donasi) as total_donasi'))
+            ->orderByDesc('total_donasi')
+            ->limit(7)
+            ->get();
 
         return
         [
