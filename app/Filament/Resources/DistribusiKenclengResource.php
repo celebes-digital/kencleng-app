@@ -22,6 +22,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Split;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Number;
 
 class DistribusiKenclengResource extends Resource
@@ -110,9 +112,21 @@ class DistribusiKenclengResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $user = Auth::user();
+
+                if(!$user->is_admin) {
+                    $query->where('distributor_id', $user->profile->id);
+                }
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('kencleng.no_kencleng')
-                    ->label('No. Kencleng')
+                    ->label('ID Kencleng')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('area.nama_area')
+                    ->label('Area')
+                    ->hidden(fn($livewire) => $livewire->activeTab === 'Distribusi')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('donatur.nama')
                     ->label('Donatur')
@@ -120,6 +134,7 @@ class DistribusiKenclengResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('kolektor.nama')
                     ->label('Kolektor')
+                    ->hidden(fn($livewire) => $livewire->activeTab === 'Distribusi')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('distributor.nama')
@@ -127,10 +142,12 @@ class DistribusiKenclengResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('geo_lat')
+                    ->label('Latitude')
                     ->numeric()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('geo_long')
+                    ->label('Longitude')
                     ->numeric()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
@@ -138,8 +155,24 @@ class DistribusiKenclengResource extends Resource
                     ->hidden(fn ($livewire) => $livewire->activeTab !== 'Distribusi')
                     ->date()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('tgl_aktivasi')
+                    ->hidden(fn ($livewire) => $livewire->activeTab !== 'Sedang Diisi')
+                    ->date('d F Y, H:i')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('tgl_pengambilan')
-                    ->date()
+                    ->label('Tanggal Pengambilan')
+                    ->hidden(fn($livewire) => $livewire->activeTab !== 'Kembali')
+                    ->date('d F Y, H:i')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('tgl_batas_pengambilan')
+                    ->label('Tanggal Pengambilan')
+                    ->hidden(fn($livewire) => $livewire->activeTab !== 'Sedang Diisi')
+                    ->date('d F Y')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('jumlah')
+                    ->hidden(fn ($livewire) => $livewire->activeTab !== 'Diterima')
+                    ->prefix('IDR ')
+                    ->numeric(thousandsSeparator: '.')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Terakhir diubah')
@@ -200,6 +233,9 @@ class DistribusiKenclengResource extends Resource
                     ),
                 Tables\Actions\Action::make('lokasi')
                     ->iconButton()
+                    ->hidden(
+                        fn($livewire)
+                        => $livewire->activeTab === 'Distribusi')
                     ->tooltip('Lihat Lokasi')
                     ->icon('heroicon-o-map-pin')
                     ->color(
