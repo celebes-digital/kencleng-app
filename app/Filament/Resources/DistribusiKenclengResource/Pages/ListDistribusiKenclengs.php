@@ -8,6 +8,7 @@ use App\Models\DistribusiKencleng;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Facades\Auth;
 
 class ListDistribusiKenclengs extends ListRecords
 {
@@ -22,6 +23,10 @@ class ListDistribusiKenclengs extends ListRecords
 
     public function getTabs(): array
     {
+        $user = Auth::user();
+
+        if(!$user->is_admin) return [];
+
         return [
             'All'           => Tab::make()
                                     ->badgeColor('primary')
