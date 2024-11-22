@@ -43,8 +43,7 @@ class Konfirmasi
         return $table
             ->query(
                 DistribusiKencleng::where('status', StatusDistribusi::KEMBALI)
-                ->orWhere('status', StatusDistribusi::DIISI)
-                ->whereNull('kolektor_id'))
+                ->orWhere('status', StatusDistribusi::DIISI))
             ->columns([
                 Tables\Columns\TextColumn::make('kencleng.no_kencleng')
                     ->label('No. Kencleng')
@@ -73,14 +72,14 @@ class Konfirmasi
                 ->modalSubmitActionLabel('Konfirmasi')
                 ->form(fn($record) => [
                     Forms\Components\TextInput::make('kolektor')
-                        ->hidden($record?->kolektor ? false : true)
+                        ->hidden($record->status === StatusDistribusi::KEMBALI ? false : true)
                         ->default($record?->kolektor?->nama)
                         ->disabled(),
                     Forms\Components\TextInput::make('donatur')
                         ->default($record?->donatur->nama)
                         ->disabled(),
                     Forms\Components\TextInput::make('donasi')
-                        ->hidden($record?->kolektor ? false : true)
+                        ->hidden($record->status === StatusDistribusi::KEMBALI ? false : true)
                         ->default(Number::currency($record->jumlah ?? 0, 'IDR', 'id'))
                         ->placeholder('Tidak ada')
                         ->prefixIcon('heroicon-o-banknotes')
