@@ -3,14 +3,13 @@
 namespace App\Filament\Pages\Koleksi;
 
 use App\Enums\StatusDistribusi;
-use App\Models\Area;
 use App\Models\DistribusiKencleng;
 use App\Models\Profile;
-
 use Filament\Pages\Page;
 use Filament\Tables;
 use Filament\Forms\Components\Select;
-
+use Filament\Tables\Filters\TernaryFilter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class Penjadwalan extends Page implements Tables\Contracts\HasTable
@@ -37,18 +36,16 @@ class Penjadwalan extends Page implements Tables\Contracts\HasTable
     {
         return $table
             ->query(
-                DistribusiKencleng::where('status', StatusDistribusi::DIISI))
+                DistribusiKencleng::where('status', '!=', StatusDistribusi::DISTRIBUSI)
+                ->orderBy('tgl_batas_pengambilan', 'desc'))
                 // ->where('tgl_batas_pengambilan', '<=', now()->addDays(7)))
+            
             ->columns([
                 Tables\Columns\TextColumn::make('kencleng.no_kencleng')
                     ->label('ID Kencleng')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('donatur.nama')
                     ->label('Donatur')
-                    ->sortable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('kolektor.nama')
-                    ->label('Kolektor')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('donatur.no_wa')
@@ -63,11 +60,59 @@ class Penjadwalan extends Page implements Tables\Contracts\HasTable
                 Tables\Columns\TextColumn::make('tgl_batas_pengambilan')
                     ->label('Jadwal')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('tgl_batas_pengambilan')
+                    ->label('Jadwal')
+                    ->sortable()
+                    ->badge()
+                    ->color(function ($record) {
+                        $daysRemaining = (int) now()->diffInDays($record->tgl_batas_pengambilan, false);
+
+                        if ($daysRemaining > 10 || $record->kolektor_id !== null)
+                        return 'success';
+                        if ($daysRemaining <= 3) {
+                            return 'danger';
+                        } elseif ($daysRemaining <= 10) {
+                            return 'warning';
+                        }
+                    })
+                    ->formatStateUsing(function ($record) {
+                        $daysRemaining = floor(now()->diffInDays($record->tgl_batas_pengambilan, false));
+                        if ($daysRemaining > 0) {
+                            return "{$daysRemaining} hari lagi";
+                        } elseif ($daysRemaining == 0) {
+                            return "Hari ini";
+                        } else {
+                            return date('d M Y', strtotime($record->tgl_batas_pengambilan));
+                        }
+                    }),
+                Tables\Columns\TextColumn::make('kolektor.nama')
+                    ->label('Kolektor')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('kolektor_id')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn($record) => $record->kolektor_id ? 'success' : 'danger')
+                    ->formatStateUsing(fn($record) => $record?->kolektor_id ? 'Sudah Ditentukan' : 'Belum Ditentukan')
+                    ->sortable(),
             ])
-            ->filters([])
+            ->filters([
+                TernaryFilter::make('kolektor_id')
+                ->native(false)
+                ->label('Status Penentuan')
+                ->placeholder('Semua')
+                ->trueLabel('Sudah ditentukan')
+                ->falseLabel('Belum ditentukan')
+                ->queries(
+                    true: fn(Builder $query) => $query->whereNotNull('kolektor_id'),
+                    false: fn(Builder $query) => $query->whereNull('kolektor_id')->orderBy('tgl_batas_pengambilan', 'asc'),
+                    blank: fn(Builder $query) => $query, // In this example, we do not want to filter the query when it is blank.
+                )
+            ])
             ->actions([
                 Tables\Actions\Action::make('pilihKolektor')
                 ->button()
+                ->disabled(fn($record) => $record->status !== StatusDistribusi::DIISI)
                 ->icon('heroicon-o-forward')
                 ->color('primary')
                 ->modalSubmitActionLabel('Jadwalkan')
@@ -95,28 +140,28 @@ class Penjadwalan extends Page implements Tables\Contracts\HasTable
                         ]);
                     }
                 ),
-                Tables\Actions\Action::make('aturArea')
-                ->button()
-                ->icon('heroicon-o-map')
-                ->color('primary')
-                ->modalSubmitActionLabel('Atur Area')
-                ->form(
-                    fn() => [
-                        Select::make('area_id')
-                        ->label('Area')
-                        ->native(false)
-                        ->relationship('area')
-                        ->options(Area::all()->pluck('nama_area', 'id')->toArray())
-                    ]
-                )
-                ->action(
-                    function (DistribusiKencleng $record, $data) 
-                    {
-                        $record->update([
-                            'area_id' => $data['area_id'],
-                        ]);
-                    }
-                ),
+                // Tables\Actions\Action::make('aturArea')
+                // ->button()
+                // ->icon('heroicon-o-map')
+                // ->color('primary')
+                // ->modalSubmitActionLabel('Atur Area')
+                // ->form(
+                //     fn() => [
+                //         Select::make('area_id')
+                //         ->label('Area')
+                //         ->native(false)
+                //         ->relationship('area')
+                //         ->options(Area::all()->pluck('nama_area', 'id')->toArray())
+                //     ]
+                // )
+                // ->action(
+                //     function (DistribusiKencleng $record, $data) 
+                //     {
+                //         $record->update([
+                //             'area_id' => $data['area_id'],
+                //         ]);
+                //     }
+                // ),
             ]);
     }
 }
