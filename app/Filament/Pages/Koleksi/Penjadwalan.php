@@ -27,18 +27,18 @@ class Penjadwalan extends Page implements Tables\Contracts\HasTable
 
     protected static ?string $navigationGroup   = 'Koleksi';
     protected static ?int    $navigationSort    = 1;
-    protected static ?string $navigationLabel   = 'Penjadwalan';
-    protected static ?string $modelLabel        = 'Penjadwalan';
-    protected static ?string $title             = 'Penjadwalan';
-    protected static ?string $slug              = 'koleksi/penjadwalan';
+    protected static ?string $navigationLabel   = 'Penentuan Kolektor';
+    protected static ?string $modelLabel        = 'Penentuan Kolektor';
+    protected static ?string $title             = 'Penetuan Kolektor';
+    protected static ?string $slug              = 'koleksi/kolektor';
     protected static ?string $navigationIcon    = 'heroicon-o-document-text';
 
     public function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->query(
-                DistribusiKencleng::where('status', StatusDistribusi::DIISI)
-                ->where('tgl_batas_pengambilan', '<=', now()->addDays(7)))
+                DistribusiKencleng::where('status', StatusDistribusi::DIISI))
+                // ->where('tgl_batas_pengambilan', '<=', now()->addDays(7)))
             ->columns([
                 Tables\Columns\TextColumn::make('kencleng.no_kencleng')
                     ->label('ID Kencleng')
