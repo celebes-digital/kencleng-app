@@ -42,8 +42,7 @@ class Konfirmasi
     {
         return $table
             ->query(
-                DistribusiKencleng::where('status', StatusDistribusi::KEMBALI)
-                ->orWhere('status', StatusDistribusi::DIISI))
+                DistribusiKencleng::where('status', '!=', StatusDistribusi::DISTRIBUSI))
             ->columns([
                 Tables\Columns\TextColumn::make('kencleng.no_kencleng')
                     ->label('No. Kencleng')
@@ -61,13 +60,26 @@ class Konfirmasi
                     ->sortable(),
                 Tables\Columns\TextColumn::make('jumlah')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn($record) => match ($record->status) {
+                        StatusDistribusi::DITERIMA => 'success',
+                        default => 'danger',
+                    })
+                    ->formatStateUsing(fn($record) => match ($record->status) {
+                        StatusDistribusi::DITERIMA => 'Diterima',
+                        default => 'Belum Diterima',
+                    })
+                    ->sortable(),
             ])
             ->defaultSort('updated_at', 'desc')
             ->filters([])
             ->actions([
                 Tables\Actions\Action::make('konfirmasi')
                 ->button()
-                ->color('primary')
+                ->disabled(fn($record) => $record->status === StatusDistribusi::DITERIMA ? true : false)
+                ->color(fn($record) => $record->status === StatusDistribusi::DITERIMA ? 'gray' : 'primary')
                 ->icon('heroicon-o-finger-print')
                 ->modalSubmitActionLabel('Konfirmasi')
                 ->form(fn($record) => [
