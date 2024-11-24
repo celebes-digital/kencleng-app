@@ -114,7 +114,7 @@ class Penjadwalan extends Page implements Tables\Contracts\HasTable
                 ->button()
                 ->disabled(fn($record) => $record->status !== StatusDistribusi::DIISI)
                 ->icon('heroicon-o-forward')
-                ->color('primary')
+                ->color(fn($record) => $record->status !== StatusDistribusi::DIISI ? 'gray' : 'primary')
                 ->modalSubmitActionLabel('Jadwalkan')
                 ->form(
                     fn() => [
