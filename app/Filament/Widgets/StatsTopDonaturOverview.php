@@ -3,17 +3,33 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Infaq;
+use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class StatsTopDonaturOverview extends ChartWidget
 {
-    protected static ?string $heading = 'Top 7 donatur';
+    protected static ?string $heading = '';
 
     public static function canView(): bool
     {
         return Auth::user()->is_admin;
+    }
+
+    protected function getOptions(): array|RawJs|null
+    {
+        return [
+            'plugins' => [
+                'title' => [
+                    'display' => true,
+                    'text' => 'Top 10 Donatur',
+                    'font' => [
+                        'size' => 16,
+                    ],
+                ]
+            ],
+        ];
     }
 
     protected function getData(): array
@@ -24,7 +40,7 @@ class StatsTopDonaturOverview extends ChartWidget
             ->groupBy('profiles.nama')
             ->select('profiles.nama', DB::raw('SUM(infaqs.jumlah_donasi) as total_donasi'))
             ->orderByDesc('total_donasi')
-            ->limit(7)
+            ->limit(10)
             ->get();
 
         return
@@ -32,7 +48,7 @@ class StatsTopDonaturOverview extends ChartWidget
             'datasets' => [
                 [
                     'axis'  => 'y',
-                    'label' => 'Top 7 Donatur',
+                    'label' => 'Top 10 Donatur',
                     'data'  => $data->map(fn($data) => $data->total_donasi)->toArray(),
                     'backgroundColor'   
                             => [
