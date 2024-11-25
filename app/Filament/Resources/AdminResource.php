@@ -38,17 +38,28 @@ class AdminResource extends Resource
                     ->native(false)
                     ->options(
                     function() {
+                        $userLevel = Auth::user()->admin->level;
+
                         $option = [
-                            'admin' => 'Admin',
-                            'manajer' => 'Manager',
+                            'manajer'       => 'Manager',
+                            'admin'         => 'Admin Area',
+                            'supervisor'    => 'Supervisor',
                         ];
 
-                        if (Auth::user()->admin->level === 'superadmin') {
-                            $option['principal'] = 'Principal';
+                        if($userLevel === 'superadmin' || $userLevel === 'principal') {
+                            $option = array(
+                                'direktur' => 'Direktur',
+                                'admin_wilayah' => 'Admin Wilayah',
+                            ) + $option;
+                        }
+
+                        if ($userLevel === 'superadmin') {
+                            $option = array('principal' => 'Principal') + $option;
                         }
 
                         return $option;
                     })
+                    ->live()
                     ->preload()
                     ->required(),
                 Forms\Components\TextInput::make('telepon')
@@ -56,10 +67,32 @@ class AdminResource extends Resource
                     ->maxLength(255),
                 Forms\Components\Select::make('cabang_id')
                     ->native(false)
+                    ->hidden(
+                        fn ($get) => $get('level') !== 'manajer' || $get('level') === 'admin')
                     ->relationship('cabang', 'nama_cabang')
                     ->required(
                         function ($get) {
-                            return $get('level') !== 'principal';
+                            return $get('level') === 'manajer' || $get('level') === 'admin';
+                        }
+                    ),
+                Forms\Components\Select::make('wilayah_id')
+                    ->native(false)
+                    ->hidden(
+                        fn ($get) => $get('level') !== 'admin_wilayah' || $get('level') === 'direktur')
+                    ->relationship('wilayah', 'nama_wilayah')
+                    ->required(
+                        function ($get) {
+                            return $get('level') === 'admin_wilayah';
+                        }
+                    ),
+                Forms\Components\Select::make('area_id')
+                    ->native(false)
+                    ->hidden(
+                        fn ($get) => $get('level') !== 'supervisor')
+                    ->relationship('area', 'nama_area')
+                    ->required(
+                        function ($get) {
+                            return $get('level') === 'supervisor';
                         }
                     ),
                 Forms\Components\Group::make([
