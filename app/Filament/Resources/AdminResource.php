@@ -43,10 +43,10 @@ class AdminResource extends Resource
                         $option = [
                             'manajer'       => 'Manajer',
                             'admin'         => 'Admin Cabang',
-                            'supervisor'    => 'Supervisor',
+                            'supervisor'    => 'Supervisor'
                         ];
 
-                        if($userLevel === 'superadmin' || $userLevel === 'principal') {
+                        if(in_array($userLevel, ['superadmin', 'principal'])) {
                             $option = array(
                                 'direktur' => 'Direktur',
                                 'admin_wilayah' => 'Admin Wilayah',
@@ -130,11 +130,11 @@ class AdminResource extends Resource
                     $query->where('level', '!=', 'superadmin')->where('level', '!=', 'principal');
                 }
 
-                if( $userLevel !== 'principal' ) {
+                if( $userLevel !== 'superadmin' && $userLevel !== 'principal' ) {
                     $query->where('level', '!=', 'direktur')->where('level', '!=', 'admin_wilayah');
                 }
 
-                if( $userLevel !== 'direktur' && $userLevel !== 'admin_wilayah' ) {
+                if( $userLevel !== 'superadmin' && $userLevel !== 'principal' && $userLevel !== 'direktur' && $userLevel !== 'admin_wilayah' ) {
                     $query->where('level', '!=', 'manajer');
                 }
             })
