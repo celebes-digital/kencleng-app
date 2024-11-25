@@ -20,7 +20,7 @@ class AdminResource extends Resource
     protected static ?string $model = Admin::class;
 
     // Just naming admin to internal for the sake of this example
-    protected static ?int    $navigationSort    = 2;
+    protected static ?int    $navigationSort    = 1;
     protected static ?string $navigationGroup   = 'Setting';
     protected static ?string $label             = 'internal';
     protected static ?string $navigationIcon    = 'heroicon-o-inbox-stack';

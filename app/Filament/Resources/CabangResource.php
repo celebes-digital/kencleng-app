@@ -12,12 +12,13 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class CabangResource extends Resource
 {
     protected static ?string $model = Cabang::class;
 
-    protected static ?int    $navigationSort    = 1;
+    protected static ?int    $navigationSort    = 3;
     protected static ?string $navigationGroup   = 'Setting';
     protected static ?string $label             = 'cabang';
     protected static ?string $navigationIcon    = 'heroicon-o-inbox-stack';
@@ -28,16 +29,18 @@ class CabangResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('wilayah_id')
+                    ->disabled(fn() => Auth::user()->admin?->level === 'manajer')
+                    ->default(function () {
+                        $user = Auth::user();
+                        return $user->admin?->level === 'manajer' ? $user->admin?->cabang_id : null;
+                    })
+                    ->dehydrated()
+                    ->native(false)
+                    ->relationship('wilayah', 'nama_wilayah')
+                    ->required(),
                 Forms\Components\TextInput::make('nama_cabang')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('alamat')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('telepon')
-                    ->tel()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
                     ->maxLength(255),
             ]);
     }
@@ -48,20 +51,16 @@ class CabangResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('nama_cabang')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('alamat')
+                Tables\Columns\TextColumn::make('wilayah.nama_wilayah')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('telepon')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('created_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('updated_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
@@ -87,8 +86,8 @@ class CabangResource extends Resource
     {
         return [
             'index' => Pages\ListCabangs::route('/'),
-            'create' => Pages\CreateCabang::route('/create'),
-            'edit' => Pages\EditCabang::route('/{record}/edit'),
+            // 'create' => Pages\CreateCabang::route('/create'),
+            // 'edit' => Pages\EditCabang::route('/{record}/edit'),
         ];
     }
 }

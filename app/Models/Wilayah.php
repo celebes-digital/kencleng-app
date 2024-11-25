@@ -10,4 +10,9 @@ class Wilayah extends Model
     use HasFactory;
 
     protected $fillable = ['nama_wilayah'];
+
+    public function cabangs()
+    {
+        return $this->hasMany(Cabang::class);
+    }
 }

@@ -15,7 +15,7 @@ class AreaResource extends Resource
 {
     protected static ?string $model = Area::class;
 
-    protected static ?int    $navigationSort    = 3;
+    protected static ?int    $navigationSort    = 4;
     protected static ?string $navigationGroup   = 'Setting';
     protected static ?string $label             = 'area';
     protected static ?string $navigationIcon    = 'heroicon-o-inbox-stack';

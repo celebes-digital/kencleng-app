@@ -11,13 +11,16 @@ class Cabang extends Model
 
     protected $fillable = [
         'nama_cabang',
-        'alamat',
-        'telepon',
-        'email',
+        'wilayah_id',
     ];
 
     public function areas()
     {
         return $this->hasMany(Area::class);
+    }
+
+    public function wilayah()
+    {
+        return $this->belongsTo(Wilayah::class);
     }
 }

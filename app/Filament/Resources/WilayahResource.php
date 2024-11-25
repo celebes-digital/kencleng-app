@@ -17,7 +17,7 @@ class WilayahResource extends Resource
 {
     protected static ?string $model = Wilayah::class;
 
-    protected static ?int    $navigationSort    = 1;
+    protected static ?int    $navigationSort    = 2;
     protected static ?string $navigationGroup   = 'Setting';
     protected static ?string $label             = 'wilayah';
     protected static ?string $navigationIcon    = 'heroicon-o-inbox-stack';
