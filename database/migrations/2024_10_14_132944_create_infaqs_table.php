@@ -15,7 +15,10 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('distribusi_id')->constrained('distribusi_kenclengs')->cascadeOnDelete();
+
+            $table->foreignId('area_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('cabang_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('wilayah_id')->nullable()->constrained()->onDelete('set null');
 
             $table->date('tgl_transaksi');
             $table->integer('jumlah_donasi');

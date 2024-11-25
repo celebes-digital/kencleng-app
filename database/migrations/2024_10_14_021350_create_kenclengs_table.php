@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('kenclengs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('batch_kencleng_id')->constrained('batch_kenclengs');
+
+            $table->foreignId('batch_kencleng_id')->nullable()->constrained('batch_kenclengs');
+
             $table->char('no_kencleng', 10);
             $table->string('qr_image', 100);
             $table->boolean('status')->default(0);

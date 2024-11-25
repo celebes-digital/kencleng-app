@@ -27,7 +27,8 @@ return new class extends Migration
             $table->string('telepon')->nullable();
 
             /** 
-             * User ID must be set to nullable because that is default behaviour from filament, set the belongs to relationship to null
+             * User ID must be set to nullable because that is default behaviour from filament, 
+             * set the belongs to relationship to null
              * https://filamentphp.com/docs/3.x/forms/advanced#saving-data-to-a-belongsto-relationship
              * This use when make admin (admin resource form)
             */

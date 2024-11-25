@@ -28,6 +28,7 @@ return new class extends Migration
 
             $table->foreignId('area_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('cabang_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('wilayah_id')->nullable()->constrained()->onDelete('set null');
 
             $table->foreign('donatur_id')
                     ->references('id')
