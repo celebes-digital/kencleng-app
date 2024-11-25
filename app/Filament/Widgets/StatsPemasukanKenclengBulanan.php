@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Infaq;
+use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
@@ -10,11 +11,26 @@ use Illuminate\Support\Facades\Auth;
 
 class StatsPemasukanKenclengBulanan extends ChartWidget
 {
-    protected static ?string $heading = 'Statistik Pemasukan Kencleng Bulanan';
+    protected static ?string $heading = '';
 
     public static function canView(): bool
     {
         return Auth::user()->is_admin;
+    }
+
+    protected function getOptions(): array|RawJs|null
+    {
+        return [
+            'plugins' => [
+                'title' => [
+                    'display' => true,
+                    'text' => 'Perolehan Kencleng Bulanan',
+                    'font' => [
+                        'size' => 16,
+                    ],
+                ]
+            ],
+        ];
     }
 
     protected function getData(): array
