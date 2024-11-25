@@ -14,11 +14,39 @@ class Infaq extends Model
         'tgl_transaksi',
         'jumlah_donasi',
         'uraian',
-        'sumber_dana'
+        'sumber_dana',
+        'area_id',
+        'cabang_id',
+        'wilayah_id',
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($model) {
+            $distribusi = DistribusiKencleng::find($model->distribusi_id);
+            $model->area_id = $distribusi->area_id ?? null;
+            $model->cabang_id = $distribusi->cabang_id ?? null;
+            $model->wilayah_id = $distribusi->wilayah_id ?? null;
+        });
+    }
 
     public function distribusi()
     {
         return $this->belongsTo(DistribusiKencleng::class, 'distribusi_id');
+    }
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
+
+    public function cabang()
+    {
+        return $this->belongsTo(Cabang::class);
+    }
+
+    public function wilayah()
+    {
+        return $this->belongsTo(Wilayah::class);
     }
 }
