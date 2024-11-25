@@ -28,10 +28,16 @@ class Profile extends Model
         'foto_ktp',
         'group',
         'user_id',
+        'area_id',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function area(): BelongsTo
+    {
+        return $this->belongsTo(Area::class);
     }
 }

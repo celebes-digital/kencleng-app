@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ProfileResource\Pages;
 
 use App\Filament\Resources\ProfileResource;
+use App\Models\Area;
 use App\Models\District;
 use App\Models\Province;
 use App\Models\Subdistrict;
@@ -21,6 +22,7 @@ use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Illuminate\Support\Facades\Auth;
 
 class CreateProfile extends CreateRecord
 {
@@ -37,6 +39,14 @@ class CreateProfile extends CreateRecord
                         ->schema([
                             Forms\Components\Fieldset::make('Data Pribadi')
                                 ->schema([
+                                    Forms\Components\Select::make('area_id')
+                                        ->label('Area')
+                                        ->native(false)
+                                        ->options(
+                                            Area::where('cabang_id', Auth::user()->admin->cabang_id)
+                                            ->pluck('nama_area', 'id')->toArray())
+                                        ->required()
+                                        ->columnSpanFull(),
                                     Forms\Components\Select::make('group')
                                         ->placeholder('Pilih group')
                                         ->options([
