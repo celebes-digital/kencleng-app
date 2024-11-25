@@ -19,6 +19,7 @@ return new class extends Migration
             $table->char('no_kencleng', 10);
             $table->string('qr_image', 100);
             $table->boolean('status')->default(0);
+
             $table->timestamps();
         });
     }

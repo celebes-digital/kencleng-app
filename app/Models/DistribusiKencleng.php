@@ -27,8 +27,9 @@ class DistribusiKencleng extends Model
         'tgl_pengambilan',
         'jumlah',
         'status',
-        'cabang_id',
         'area_id',
+        'cabang_id',
+        'wilayah_id'
     ];
 
     protected $casts = [
@@ -38,8 +39,19 @@ class DistribusiKencleng extends Model
     protected static function booted(): void
     {
         static::creating(function ($model) {
-            $user = Auth::user();
-            $model->cabang_id = $user->is_admin ? $user->admin->cabang_id : null;
+            if ($model->donatur_id) {
+                $donatur            = Profile::find($model->donatur_id);
+                $model->area_id     = $donatur->area_id;
+                $model->cabang_id   = $donatur->cabang_id;
+                $model->wilayah_id  = $donatur->wilayah_id;
+            }
+
+            if ($model->distributor_id) {
+                $distributor        = Profile::find($model->distributor_id);
+                $model->area_id     = $distributor->area_id;
+                $model->cabang_id   = $distributor->cabang_id;
+                $model->wilayah_id  = $distributor->wilayah_id;
+            }
         });
     }
 
@@ -63,13 +75,18 @@ class DistribusiKencleng extends Model
         return $this->belongsTo(Profile::class, 'distributor_id');
     }
 
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
+    }
+
     public function cabang()
     {
         return $this->belongsTo(Cabang::class);
     }
 
-    public function area()
+    public function wilayah()
     {
-        return $this->belongsTo(Area::class);
+        return $this->belongsTo(Wilayah::class);
     }
 }
