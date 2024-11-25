@@ -12,7 +12,7 @@ class ProfilePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->is_admin && $user->admin->level !== 'manajer';
+        return $user->is_admin && $user->admin->level === 'admin';
     }
 
     /**
@@ -20,7 +20,7 @@ class ProfilePolicy
      */
     public function view(User $user, Profile $profile): bool
     {
-        return $user->is_admin && $user->admin->level !== 'manajer';
+        return $user->is_admin && $user->admin->level === 'admin';
     }
 
     /**
@@ -28,7 +28,7 @@ class ProfilePolicy
      */
     public function create(User $user): bool
     {
-        return $user->is_admin && $user->admin->level !== 'manajer';
+        return $user->is_admin && $user->admin->level === 'admin';
     }
 
     /**
@@ -36,7 +36,7 @@ class ProfilePolicy
      */
     public function update(User $user, Profile $profile): bool
     {
-        return $user->is_admin && $user->admin->level !== 'manajer';
+        return $user->is_admin && $user->admin->level === 'admin';
     }
 
     /**
@@ -44,7 +44,7 @@ class ProfilePolicy
      */
     public function delete(User $user, Profile $profile): bool
     {
-        return $user->is_admin && $user->admin->level !== 'manajer';
+        return $user->is_admin && $user->admin->level === 'admin';
     }
 
     /**
@@ -52,7 +52,7 @@ class ProfilePolicy
      */
     public function restore(User $user, Profile $profile): bool
     {
-        return $user->is_admin && $user->admin->level !== 'manajer';
+        return $user->is_admin && $user->admin->level === 'admin';
     }
 
     /**
@@ -60,6 +60,6 @@ class ProfilePolicy
      */
     public function forceDelete(User $user, Profile $profile): bool
     {
-        return $user->is_admin && $user->admin->level !== 'manajer';
+        return $user->is_admin && $user->admin->level === 'admin';
     }
 }
