@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('cabangs', function (Blueprint $table) {
             $table->id();
 
+            $table->foreignId('wilayah_id')->nullable()->constrained('wilayahs')->onDelete('set null');
+
             $table->string('nama_cabang');
             $table->string('alamat')->nullable();
             $table->string('telepon')->nullable();

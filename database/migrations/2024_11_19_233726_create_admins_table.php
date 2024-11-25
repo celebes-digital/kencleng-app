@@ -15,7 +15,15 @@ return new class extends Migration
             $table->id();
 
             $table->char('nama', 50);
-            $table->enum('level', ['admin', 'manajer', 'principal', 'superadmin']);
+            $table->enum('level', [
+                'superadmin',
+                'principal',
+                'direktur',
+                'admin_wilayah',
+                'manajer',
+                'admin',
+                'supervisor'
+            ]);
             $table->string('telepon')->nullable();
 
             /** 
@@ -24,7 +32,10 @@ return new class extends Migration
              * This use when make admin (admin resource form)
             */
             $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
+
+            $table->foreignId('area_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('cabang_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('wilayah_id')->nullable()->constrained()->onDelete('set null');
 
             $table->timestamps();
         });
