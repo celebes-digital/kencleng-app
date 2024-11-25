@@ -5,7 +5,7 @@
 .fi-simple-layout {
     position: relative;
     @apply grid grid-cols-1 lg:grid-cols-2 bg-cover;
-    background-image: url('/public/kencleng-img.jpg');
+    background-image: url('/public/kencleng-img-cmp.webp');
 }
 
 .fi-simple-layout::before {
