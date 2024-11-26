@@ -17,7 +17,7 @@ class AreaScope implements Scope
         $user = Auth::user()?->admin;
 
         if ($user?->level === 'supervisor') {
-            $builder->where('area_id', $user?->area_id);
+            $builder->where($model->getTable() . '.area_id', $user?->area_id);
         }
     }
 }

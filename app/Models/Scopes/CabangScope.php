@@ -17,7 +17,7 @@ class CabangScope implements Scope
         $admin = Auth::user()?->admin;
 
         if ($admin?->level === 'admin' || $admin?->level === 'manajer') {
-            $builder->where('cabang_id', $admin?->cabang_id);
+            $builder->where($model->getTable() . '.cabang_id', $admin?->cabang_id);
         }
     }
 }

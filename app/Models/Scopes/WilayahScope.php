@@ -17,7 +17,7 @@ class WilayahScope implements Scope
         $admin = Auth::user()?->admin;
 
         if ($admin?->level === 'direktur' || $admin?->level === 'admin_wilayah') {
-            $builder->where('wilayah_id', $admin?->wilayah_id);
+            $builder->where($model->getTable() . '.wilayah_id', $admin?->wilayah_id);
         }
     }
 }
