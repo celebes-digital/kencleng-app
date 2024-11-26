@@ -145,19 +145,31 @@ class AdminResource extends Resource
                 Tables\Columns\TextColumn::make('user.email')
                     ->label('Email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('telepon'),
-                Tables\Columns\TextColumn::make('cabang.nama_cabang')
-                    ->label('Cabang')
+                Tables\Columns\TextColumn::make('telepon')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('wilayah.nama_wilayah')
+                    ->label('Wilayah')
+                    ->placeholder('-')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('cabang.nama_cabang')
+                    ->label('Cabang')
+                    ->placeholder('-')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('area.nama_area')
+                    ->label('Area')
+                    ->placeholder('-')
+                    ->searchable()
+                    ->sortable(),
+                // Tables\Columns\TextColumn::make('created_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('updated_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
