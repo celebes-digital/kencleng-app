@@ -87,12 +87,18 @@ class Penjadwalan extends Page implements Tables\Contracts\HasTable
                     }),
                 Tables\Columns\TextColumn::make('kolektor.nama')
                     ->label('Kolektor')
+                    ->placeholder('Belum ada')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('kolektor_id')
                     ->label('Status')
                     ->badge()
+                    ->default('Belum Ditentukan')
                     ->color(fn($record) => $record->kolektor_id ? 'success' : 'danger')
+                    // ->formatStateUsing(fn($record) => match ($record->kolektor_id) {
+                    //      => 'Sudah Ditentukan',
+                    //     default => 'Belum Ditentukan',
+                    // })
                     ->formatStateUsing(fn($record) => $record?->kolektor_id ? 'Sudah Ditentukan' : 'Belum Ditentukan')
                     ->sortable(),
             ])
