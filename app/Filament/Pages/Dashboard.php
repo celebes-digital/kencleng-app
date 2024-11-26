@@ -14,8 +14,6 @@ class Dashboard extends \Filament\Pages\Dashboard
     protected static ?string $label             = 'Dashboard';
     protected static ?string $navigationIcon    = 'heroicon-o-home';
 
-
-
     public function getWidgets(): array
     {
         return [

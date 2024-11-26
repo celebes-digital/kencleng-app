@@ -3,6 +3,9 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Infaq;
+use App\Models\Scopes\AreaScope;
+use App\Models\Scopes\CabangScope;
+use App\Models\Scopes\WilayahScope;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Auth;
@@ -34,14 +37,30 @@ class StatsTopDonaturOverview extends ChartWidget
 
     protected function getData(): array
     {
-        $data = Infaq::whereNotNull('distribusi_id')
+        $admin = Auth::user()?->admin;
+
+        $query = Infaq::withoutGlobalScope(WilayahScope::class)
+            ->withoutGlobalScope(CabangScope::class)
+            ->withoutGlobalScope(AreaScope::class)
+            ->whereNotNull('distribusi_id')
             ->join('distribusi_kenclengs', 'infaqs.distribusi_id', '=', 'distribusi_kenclengs.id')
             ->join('profiles', 'distribusi_kenclengs.donatur_id', '=', 'profiles.id')
             ->groupBy('profiles.nama')
-            ->select('profiles.nama', DB::raw('SUM(infaqs.jumlah_donasi) as total_donasi'))
-            ->orderByDesc('total_donasi')
-            ->limit(10)
-            ->get();
+            ->select('profiles.nama', DB::raw('SUM(infaqs.jumlah_donasi) as total_donasi'));
+        
+        if ( $admin->level === 'supervisor' ) {
+            $query->where('distribusi_kenclengs.area_id', $admin->area_id);
+        }
+
+        if (in_array($admin->level, ['admin', 'manajer'])) {
+            $query->where('distribusi_kenclengs.cabang_id', $admin->cabang_id);
+        }
+
+        if (in_array($admin->level, ['direktur', 'admin_wilayah'])) {
+            $query->where('distribusi_kenclengs.wilayah_id', $admin->wilayah_id);
+        }
+
+        $data = $query->orderBy('total_donasi', 'desc')->limit(10)->get();
 
         return
         [
