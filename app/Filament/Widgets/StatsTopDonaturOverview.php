@@ -23,12 +23,16 @@ class StatsTopDonaturOverview extends ChartWidget
     protected function getOptions(): array|RawJs|null
     {
         return [
-            'plugins' => [
-                'title' => [
-                    'display' => true,
-                    'text' => 'Top 10 Donatur',
-                    'font' => [
-                        'size' => 16,
+            'indexAxis' => 'y',
+            'plugins'   => 
+            [
+                'title' => 
+                [
+                    'display'   => true,
+                    'text'      => 'Top 10 Donatur',
+                    'font'      => 
+                    [
+                        'size'  => 16,
                     ],
                 ]
             ],
@@ -91,6 +95,4 @@ class StatsTopDonaturOverview extends ChartWidget
     {
         return 'bar';
     }
-
-    protected static ?array $options = ['indexAxis' => 'y',];
 }
