@@ -8,26 +8,11 @@
     <title>Kencleng Label</title>
 </head>
 
-<body>
-    <div style="text-align: center; width: 100%;">
-        <div style="display: inline-block; width: 50%;">
-            <h2>Batch 1 ({{count($data)}} Kencleng)</h2>
-        </div>
-    </div>
-    <div class="margin-top" style="margin-top: 10px;">
-        <table class="products" style="width: 100%; border-collapse: collapse;">
-            @foreach($data as $item)
-            @if ($loop->first || $loop->iteration % 7 == 0)
-            <tr class="items" style="border: 1px solid black;">
-                @endif
-                <td style="border: 1px solid black; width: 16.66%; height: 3cm; text-align: center; vertical-align: middle;">
-                    <img src="{{ public_path('storage/' . $item['qr_image']) }}" alt="{{ $item['no_kencleng'] }}" style="width: 3cm; height: 3cm;" />
-                </td>
-                @if ($loop->iteration % 6 == 0)
-            </tr>
-            @endif
-            @endforeach
-        </table>
+<body style="margin: 24px 24px; padding-top: 12px;">
+    <div style="text-align: start;">
+        @foreach ($data as $item)
+            <img src="{{ public_path('storage/' . $item['qr_image']) }}" alt="{{ $item['no_kencleng'] }}" style="width: 3cm; height: 3cm; border-width: 1px; border-color: #000; display: inline-block; break-after: page;" />
+        @endforeach
     </div>
 </body>
 <style>

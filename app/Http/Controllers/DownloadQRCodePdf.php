@@ -14,7 +14,7 @@ class DownloadQRCodePdf extends Controller
         $data = Kencleng::where('batch_kencleng_id', $id)->get()->toArray();
 
 
-        $pdf = Pdf::loadView('pdf', ['data' => $data])->setPaper('a4');
+        $pdf = Pdf::loadView('pdf', ['data' => $data])->setPaper('a3');
         return $pdf->download('qrcode.pdf');
     }
 }
