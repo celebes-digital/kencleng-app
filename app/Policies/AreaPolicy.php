@@ -13,7 +13,7 @@ class AreaPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->is_admin && $user->admin?->level !== 'admin';
+        return $user->is_admin && $user->admin?->level !== 'admin' && $user->admin?->level !== 'supervisor';
     }
 
     /**
@@ -21,7 +21,7 @@ class AreaPolicy
      */
     public function view(User $user, Area $area): bool
     {
-        return $user->is_admin && $user->admin?->level !== 'admin';
+        return $user->is_admin && $user->admin?->level !== 'admin'  && $user->admin?->level !== 'supervisor';
     }
 
     /**
@@ -29,7 +29,7 @@ class AreaPolicy
      */
     public function create(User $user): bool
     {
-        return $user->is_admin && $user->admin?->level !== 'admin';
+        return $user->is_admin && $user->admin?->level !== 'admin'  && $user->admin?->level !== 'supervisor';
     }
 
     /**
@@ -37,7 +37,7 @@ class AreaPolicy
      */
     public function update(User $user, Area $area): bool
     {
-        return $user->is_admin && $user->admin?->level !== 'admin';
+        return $user->is_admin && $user->admin?->level !== 'admin'  && $user->admin?->level !== 'supervisor';
     }
 
     /**
@@ -45,7 +45,7 @@ class AreaPolicy
      */
     public function delete(User $user, Area $area): bool
     {
-        return $user->is_admin && $user->admin?->level !== 'admin';
+        return $user->is_admin && $user->admin?->level !== 'admin'  && $user->admin?->level !== 'supervisor';
     }
 
     /**
@@ -53,7 +53,7 @@ class AreaPolicy
      */
     public function restore(User $user, Area $area): bool
     {
-        return $user->is_admin && $user->admin?->level !== 'admin';
+        return $user->is_admin && $user->admin?->level !== 'admin'  && $user->admin?->level !== 'supervisor';
     }
 
     /**
@@ -61,6 +61,6 @@ class AreaPolicy
      */
     public function forceDelete(User $user, Area $area): bool
     {
-        return $user->is_admin && $user->admin?->level !== 'admin';
+        return $user->is_admin && $user->admin?->level !== 'admin'  && $user->admin?->level !== 'supervisor';
     }
 }
