@@ -12,7 +12,7 @@ class ProfilePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->is_admin && $user->admin->level === 'admin';
+        return $user->is_admin && ($user->admin->level === 'admin' || $user->admin->level === 'supervisor' || $user->admin->level === 'principal');
     }
 
     /**
@@ -20,7 +20,7 @@ class ProfilePolicy
      */
     public function view(User $user, Profile $profile): bool
     {
-        return $user->is_admin && $user->admin->level === 'admin';
+        return $user->is_admin && ($user->admin->level === 'admin' || $user->admin->level === 'supervisor');
     }
 
     /**
