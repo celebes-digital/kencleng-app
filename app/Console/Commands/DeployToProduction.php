@@ -31,7 +31,7 @@ class DeployToProduction extends Command
             $this->info(
                 ($supportsEmoji ? '🚀🚀🚀 ' : '[START]') 
                 . ' Starting deployment to production...' 
-                . $supportsEmoji ?? ' 🚀🚀🚀'
+                . $supportsEmoji ? ' 🚀🚀🚀' : ''
             );
 
             $commands = [
@@ -62,7 +62,7 @@ class DeployToProduction extends Command
             $this->info(
                 ($supportsEmoji ? '🔥🔥🔥 ' : '[SUCCESS]') 
                 . ' KEEP ON FIGHTING TILL THE END!' 
-                . $supportsEmoji ?? '🔥🔥🔥 '
+                . $supportsEmoji ? '🔥🔥🔥' : ''
             );
 
         } catch (\Exception $e) {
