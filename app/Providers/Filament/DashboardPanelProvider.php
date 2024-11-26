@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\AvatarProviders\BoringAvatarProvider;
 use App\Filament\Pages\EditProfile;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
@@ -43,6 +44,7 @@ class DashboardPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/dashboard/theme.css')
             ->brandName('Kencleng Jariyah')
             ->defaultThemeMode(ThemeMode::Light)
+            ->defaultAvatarProvider(BoringAvatarProvider::class)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
