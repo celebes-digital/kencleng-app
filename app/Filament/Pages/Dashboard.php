@@ -2,11 +2,10 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Widgets\NotAdmin\KenclengTerbaru;
-use App\Filament\Widgets\NotAdmin\TopRaihanPengguna;
+use App\Filament\Widgets\MonthlyStatistik\RaihanPengguna;
 use App\Filament\Widgets\StatsDashbordOverview;
 use App\Filament\Widgets\StatsPemasukanKenclengBulanan;
-use App\Filament\Widgets\StatsTopDonaturOverview;
+use App\Filament\Widgets\TableWidgets\KenclengTerbaru;
 use App\Filament\Widgets\TopStatistik\RaihanDistribusi;
 use App\Filament\Widgets\TopStatistik\RaihanDonasi;
 use App\Filament\Widgets\TopStatistik\RaihanKoleksi;
@@ -26,6 +25,7 @@ class Dashboard extends \Filament\Pages\Dashboard
             RaihanDonasi::class,
             RaihanDistribusi::class,
             RaihanKoleksi::class,
+            RaihanPengguna::class,
             KenclengTerbaru::class,
         ];
     }
