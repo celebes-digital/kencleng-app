@@ -6,6 +6,7 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentColor;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Blade;
@@ -27,6 +28,11 @@ class AppServiceProvider extends ServiceProvider
             PanelsRenderHook::USER_MENU_PROFILE_BEFORE,
             fn(): string => Blade::render('filament.components.user-role'),
         );
+
+        FilamentIcon::register([
+            'panels::sidebar.collapse-button' => view('icons.collapse'),
+            'panels::sidebar.expand-button' => view('icons.expand'),
+        ]);
     }
 
     /**
