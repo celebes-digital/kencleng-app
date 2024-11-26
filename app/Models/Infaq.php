@@ -2,9 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+#[
+    ScopedBy(Scopes\CabangScope::class), 
+    ScopedBy(Scopes\WilayahScope::class), 
+    ScopedBy(Scopes\AreaScope::class)
+]
 class Infaq extends Model
 {
     use HasFactory;
