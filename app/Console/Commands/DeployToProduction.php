@@ -28,7 +28,11 @@ class DeployToProduction extends Command
         try {
             $supportsEmoji = $this->supportsEmoji();
 
-            $this->info(($supportsEmoji ? '🚀' : '[START]') . ' Starting deployment to production...');
+            $this->info(
+                ($supportsEmoji ? '🚀🚀🚀 ' : '[START]') 
+                . ' Starting deployment to production...' 
+                . $supportsEmoji ?? ' 🚀🚀🚀'
+            );
 
             $commands = [
                 'cache:clear',
@@ -50,10 +54,17 @@ class DeployToProduction extends Command
             //     throw new \RuntimeException('Failed to optimize composer autoloader');
             // }
 
-            $this->info(($supportsEmoji ? '✨' : '[OPTIMIZE]') . ' Optimizing Filament...');
+            $this->info(($supportsEmoji ? '✨✨✨ ' : '[OPTIMIZE]') . ' Optimizing Filament...');
             $this->call('filament:optimize');
 
-            $this->info(($supportsEmoji ? '🎉' : '[SUCCESS]') . ' Deployment ready for your production!');
+            $this->info(($supportsEmoji ? '🎉🎉🎉 ' : '[SUCCESS]') . ' Deployment ready for your production!');
+
+            $this->info(
+                ($supportsEmoji ? '🔥🔥🔥 ' : '[SUCCESS]') 
+                . ' KEEP ON FIGHTING TILL THE END!' 
+                . $supportsEmoji ?? '🔥🔥🔥 '
+            );
+
         } catch (\Exception $e) {
             $this->error(($supportsEmoji ? '❌' : '[ERROR]') . ' Deployment failed: ' . $e->getMessage());
             return Command::FAILURE;
