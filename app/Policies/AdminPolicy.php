@@ -13,7 +13,7 @@ class AdminPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->is_admin && ($user->admin?->level !== 'admin' || $user->admin?->level === 'supervisor');
+        return $user->is_admin && ($user->admin?->level !== 'admin' && $user->admin?->level !== 'supervisor');
     }
 
     /**
@@ -21,7 +21,7 @@ class AdminPolicy
      */
     public function view(User $user, Admin $admin): bool
     {
-        return $user->is_admin && ($user->admin?->level !== 'admin' || $user->admin?->level === 'supervisor');
+        return $user->is_admin && ($user->admin?->level !== 'admin' && $user->admin?->level !== 'supervisor');
     }
 
     /**
@@ -29,7 +29,7 @@ class AdminPolicy
      */
     public function create(User $user): bool
     {
-        return $user->is_admin && ($user->admin?->level !== 'admin' || $user->admin?->level === 'supervisor');
+        return $user->is_admin && ($user->admin?->level !== 'admin' && $user->admin?->level !== 'supervisor');
     }
 
     /**
@@ -37,7 +37,7 @@ class AdminPolicy
      */
     public function update(User $user, Admin $admin): bool
     {
-        return $user->is_admin && ($user->admin?->level !== 'admin' || $user->admin?->level === 'supervisor');
+        return $user->is_admin && ($user->admin?->level !== 'admin' && $user->admin?->level !== 'supervisor');
     }
 
     /**
@@ -45,7 +45,7 @@ class AdminPolicy
      */
     public function delete(User $user, Admin $admin): bool
     {
-        return $user->is_admin && ($user->admin?->level !== 'admin' || $user->admin?->level === 'supervisor');
+        return $user->is_admin && ($user->admin?->level !== 'admin' && $user->admin?->level !== 'supervisor');
     }
 
     /**
@@ -53,7 +53,7 @@ class AdminPolicy
      */
     public function restore(User $user, Admin $admin): bool
     {
-        return $user->is_admin && ($user->admin?->level !== 'admin' || $user->admin?->level === 'supervisor');
+        return $user->is_admin && ($user->admin?->level !== 'admin' && $user->admin?->level !== 'supervisor');
     }
 
     /**
@@ -61,6 +61,6 @@ class AdminPolicy
      */
     public function forceDelete(User $user, Admin $admin): bool
     {
-        return $user->is_admin && ($user->admin?->level !== 'admin' || $user->admin?->level === 'supervisor');
+        return $user->is_admin && ($user->admin?->level !== 'admin' && $user->admin?->level !== 'supervisor');
     }
 }
