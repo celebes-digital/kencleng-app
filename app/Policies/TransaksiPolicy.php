@@ -29,7 +29,7 @@ class TransaksiPolicy
      */
     public function create(User $user): bool
     {
-        return $user->is_admin;
+        return $user->is_admin && ($user->admin->level === 'admin' || $user->admin->level === 'manajer');
     }
 
     /**
@@ -37,7 +37,7 @@ class TransaksiPolicy
      */
     public function update(User $user, Transaksi $transaksi): bool
     {
-        return $user->is_admin;
+        return $user->is_admin && ($user->admin->level === 'admin' || $user->admin->level === 'manajer');
     }
 
     /**
@@ -45,7 +45,7 @@ class TransaksiPolicy
      */
     public function delete(User $user, Transaksi $transaksi): bool
     {
-        return $user->is_admin;
+        return $user->is_admin && $user->admin->level === 'manajer';
     }
 
     /**
@@ -53,7 +53,7 @@ class TransaksiPolicy
      */
     public function restore(User $user, Transaksi $transaksi): bool
     {
-        return $user->is_admin;
+        return $user->is_admin && ($user->admin->level === 'admin' || $user->admin->level === 'manajer');
     }
 
     /**
@@ -61,6 +61,6 @@ class TransaksiPolicy
      */
     public function forceDelete(User $user, Transaksi $transaksi): bool
     {
-        return $user->is_admin;
+        return $user->is_admin && ($user->admin->level === 'admin' || $user->admin->level === 'manajer');
     }
 }
