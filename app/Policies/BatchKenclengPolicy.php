@@ -29,7 +29,7 @@ class BatchKenclengPolicy
      */
     public function create(User $user): bool
     {
-        return $user->is_admin;
+        return $user->is_admin && $user->admin?->level === 'admin' && $user->admin?->level === 'principal';
     }
 
     /**
@@ -37,7 +37,7 @@ class BatchKenclengPolicy
      */
     public function update(User $user, BatchKencleng $batchKencleng): bool
     {
-        return $user->is_admin;
+        return $user->is_admin && $user->admin?->level ==='admin' && $user->admin?->level === 'principal';
     }
 
     /**
@@ -45,7 +45,7 @@ class BatchKenclengPolicy
      */
     public function delete(User $user, BatchKencleng $batchKencleng): bool
     {
-        return $user->is_admin;
+        return $user->is_admin && $user->admin?->level ==='admin' && $user->admin?->level === 'principal';
     }
 
     /**
@@ -53,7 +53,7 @@ class BatchKenclengPolicy
      */
     public function restore(User $user, BatchKencleng $batchKencleng): bool
     {
-        return $user->is_admin;
+        return $user->is_admin && $user->admin?->level ==='admin' && $user->admin?->level === 'principal';
     }
 
     /**
@@ -61,6 +61,6 @@ class BatchKenclengPolicy
      */
     public function forceDelete(User $user, BatchKencleng $batchKencleng): bool
     {
-        return $user->is_admin;
+        return $user->is_admin && $user->admin?->level ==='admin' && $user->admin?->level === 'principal';
     }
 }
