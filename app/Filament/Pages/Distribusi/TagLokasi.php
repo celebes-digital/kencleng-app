@@ -181,6 +181,10 @@ class TagLokasi extends Page implements HasForms
             $distribusiKencleng->donatur_id             = $distribusiKencleng->donatur_id 
                                                             ?? $this->data['donatur_id'];
 
+            if (Auth::user()->profile->group === 'donatur') {
+                $distribusiKencleng->donatur_id = Auth::user()->profile->id;
+            }
+
             $distribusiKencleng->save();
 
             $this->form->fill([]);
