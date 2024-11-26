@@ -29,22 +29,33 @@ class RiwayatKencleng extends ViewRecord
                     ->get()
                     ->flatMap(function ($distribusi) {
                         $activities = [];
-                        if ($distribusi->tgl_pengambilan) {
-                            $activities[] = [
-                                'title' => 'Pengembalian dari donatur ' . $distribusi->donatur->nama,
-                                'description' => 'Dikolektor oleh ' . $distribusi->kolektor->nama,
-                                'created_at' => $distribusi->tgl_pengambilan,
-                                'status' => 'pengembalian',
+
+                        if ( $distribusi->tgl_pengambilan ) 
+                        {
+                            $activities[] = 
+                            [
+                                'title'         => 'Pengembalian dari donatur ' . $distribusi->donatur->nama,
+                                'description'   => 'Dikolektor ' 
+                                                    . ($distribusi->kolektor->nama ?? 'sendiri oleh donatur') 
+                                                    . ' sejumlah ' 
+                                                    . $distribusi->jumlah,
+                                'created_at'    => $distribusi->tgl_pengambilan,
+                                'status'        => 'pengembalian',
                             ];
                         }
-                        if ($distribusi->tgl_distribusi) {
+
+                        if ( $distribusi->tgl_distribusi ) 
+                        {
                             $activities[] = [
-                                'title' => 'Distribusi ke donatur ' . $distribusi->donatur->nama,
-                                'description' => 'Didistribusikan oleh ' . $distribusi->distributor->nama,
-                                'created_at' => $distribusi->tgl_distribusi,
-                                'status' => 'distribusi',
+                                'title'         => 'Distribusi ke donatur ' . $distribusi->donatur->nama,
+                                'description'   => $distribusi->distributor 
+                                                    ? 'Didistribusikan oleh ' . $distribusi->distributor->nama 
+                                                    : 'Diambil sendiri oleh donatur',
+                                'created_at'    => $distribusi->tgl_distribusi,
+                                'status'        => 'distribusi',
                             ];
                         }
+
                         return $activities;
                     })
                     ->toArray(),
@@ -53,7 +64,8 @@ class RiwayatKencleng extends ViewRecord
                 ActivitySection::make('activities')
                     ->label('Aktivitas Kencleng')
                     ->description('Riwayat aktivitas distribusi kencleng.')
-                    ->schema([
+                    ->schema(
+                    [
                         ActivityTitle::make('title')
                             ->placeholder('No title is set')
                             ->allowHtml(),
