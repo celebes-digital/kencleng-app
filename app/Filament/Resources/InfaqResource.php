@@ -52,10 +52,12 @@ class InfaqResource extends Resource
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('tgl_transaksi')
-                    ->date()
+                    ->label('Tanggal Diterima')
+                    ->dateTime('d F Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('jumlah_donasi')
                     ->numeric()
+                    ->prefix('Rp')
                     ->sortable(),
                 // Tables\Columns\TextColumn::make('uraian')
                 //     ->searchable(),

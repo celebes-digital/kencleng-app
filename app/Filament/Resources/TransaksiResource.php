@@ -45,24 +45,27 @@ class TransaksiResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('tgl_transaksi')
-                    ->date()
+                    ->label('Tanggal Transaksi')
+                    ->date('d F Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('jumlah')
                     ->numeric()
+                    ->prefix('Rp.')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('uraian')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('sumber_dana')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('created_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('updated_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('updated_at', 'desc')
             ->filters([
                 //
             ])
