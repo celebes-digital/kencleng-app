@@ -41,7 +41,7 @@ class RaihanDonasi extends ChartWidget
         $data = $query
             ->select('profiles.nama', DB::raw('SUM(distribusi_kenclengs.jumlah) as total_donasi'))
             ->join('profiles', 'distribusi_kenclengs.donatur_id', '=', 'profiles.id')
-            ->groupBy('donatur_id')
+            ->groupBy('donatur_id', 'profiles.nama')
             ->orderBy('total_donasi', 'desc')
             ->limit(10)
             ->get();

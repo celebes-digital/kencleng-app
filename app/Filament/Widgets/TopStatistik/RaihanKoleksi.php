@@ -39,7 +39,7 @@ class RaihanKoleksi extends ChartWidget
         $data = $query
             ->select('profiles.nama', DB::raw('COUNT(*) as total_koleksi'))
             ->join('profiles', 'distribusi_kenclengs.kolektor_id', '=', 'profiles.id')
-            ->groupBy('kolektor_id')
+            ->groupBy('kolektor_id', 'profiles.nama')
             ->orderBy('total_koleksi', 'desc')
             ->limit(10)
             ->get();
