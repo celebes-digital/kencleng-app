@@ -43,7 +43,7 @@ class ScannerToDistributor
                     ->searchable(['nama', 'nik'])
                     ->searchPrompt('Masukkan minimal 3 karakter')
                     ->noSearchResultsMessage(fn (): string => "Tidak ditemukan")
-                    ->options(Profile::all()->pluck('nama', 'id'))
+                    ->options(Profile::where('group', '!=', 'donatur')->pluck('nama', 'id'))
                     ->optionsLimit(10)
                     ->columnSpan(2)
                     ->required(),
