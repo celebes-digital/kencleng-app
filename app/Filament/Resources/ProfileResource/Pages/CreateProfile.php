@@ -134,6 +134,7 @@ class CreateProfile extends CreateRecord
                                         ->required(),
 
                                     Forms\Components\Select::make('kabupaten')
+                                        ->label('Kabupaten/Kota')
                                         ->options(fn (Get $get): Collection => District::query()
                                             ->where('province_id', $get('provinsi'))
                                             ->pluck('name', 'id'))
@@ -178,6 +179,7 @@ class CreateProfile extends CreateRecord
                             Forms\Components\Fieldset::make('Dokumen')
                                 ->schema([
                                     Forms\Components\FileUpload::make('foto')
+                                        ->label('Foto Profil')
                                         ->image()
                                         ->disk('public')
                                         ->directory('foto')
