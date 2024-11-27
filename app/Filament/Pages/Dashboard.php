@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets\MonthlyStatistik\RaihanPengguna;
+use App\Filament\Widgets\OverviewRaihanPengguna;
 use App\Filament\Widgets\StatsDashbordOverview;
 use App\Filament\Widgets\StatsPemasukanKenclengBulanan;
 use App\Filament\Widgets\TableWidgets\KenclengTerbaru;
@@ -22,6 +23,7 @@ class Dashboard extends \Filament\Pages\Dashboard
         return [
             StatsDashbordOverview::class,
             StatsPemasukanKenclengBulanan::class,
+            OverviewRaihanPengguna::class,
             RaihanDonasi::class,
             RaihanDistribusi::class,
             RaihanKoleksi::class,
