@@ -30,6 +30,7 @@ class DistribusiKencleng extends Model
         'tgl_pengambilan',
         'jumlah',
         'status',
+        'status_kelanjutan',
         'area_id',
         'cabang_id',
         'wilayah_id'
