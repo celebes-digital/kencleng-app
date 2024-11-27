@@ -102,6 +102,7 @@ class Penjadwalan extends Page implements Tables\Contracts\HasTable
                     ->formatStateUsing(fn($record) => $record?->kolektor_id ? 'Sudah Ditentukan' : 'Belum Ditentukan')
                     ->sortable(),
             ])
+            ->defaultSort('tgl_aktivasi', 'desc')
             ->filters([
                 TernaryFilter::make('kolektor_id')
                 ->native(false)
