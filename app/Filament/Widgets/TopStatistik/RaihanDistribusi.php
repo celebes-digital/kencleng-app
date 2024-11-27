@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets\TopStatistik;
 
+use App\Enums\StatusDistribusi;
 use App\Models\DistribusiKencleng;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
@@ -37,6 +38,7 @@ class RaihanDistribusi extends ChartWidget
         $query = DistribusiKencleng::query();
 
         $data = $query
+            ->where('status', StatusDistribusi::DITERIMA)
             ->select('profiles.nama', DB::raw('COUNT(*) as total_distribusi'))
             ->join('profiles', 'distribusi_kenclengs.distributor_id', '=', 'profiles.id')
             ->groupBy('distributor_id', 'profiles.nama')
