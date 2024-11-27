@@ -60,6 +60,8 @@ class DistribusiToDistributor extends Page
                 'cabang'    => $user->admin->cabang->nama_cabang ?? 'The Best Cabang'
             ]))
             ->modal()
+            ->modalHeading('Pendaftaran Distributor')
+            ->modalSubmitAction(false)
         ];
     }
 }
