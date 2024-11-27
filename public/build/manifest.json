@@ -1,15 +1,15 @@
 {
-  "public/kencleng-img.jpg": {
-    "file": "assets/kencleng-img-D_isHa8w.jpg",
-    "src": "public/kencleng-img.jpg"
+  "public/kencleng-img-cmp.webp": {
+    "file": "assets/kencleng-img-cmp-Y49jZhfr.webp",
+    "src": "public/kencleng-img-cmp.webp"
   },
   "resources/css/app.css": {
-    "file": "assets/app-_YZNQM98.css",
+    "file": "assets/app-CXwmvL7C.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/filament/dashboard/theme.css": {
-    "file": "assets/theme-f4BaeuTA.css",
+    "file": "assets/theme-BZ4566YX.css",
     "src": "resources/css/filament/dashboard/theme.css",
     "isEntry": true
   },
