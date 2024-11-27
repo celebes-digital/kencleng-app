@@ -84,8 +84,8 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
                         ->default('lanjut_tetap')
                         ->options([
                             'lanjut_tetap'      => 'Lanjut Tetap',
-                            'lanjut_pindah'     => 'Lanjut Pindah',
-                            'berhenti'          => 'Berhenti',
+                            // 'lanjut_pindah'     => 'Lanjut Pindah',
+                            'tidak_lanjut'      => 'Tidak Lanjut',
                         ])
                         ->inline()
                         ->inlineLabel(false)
@@ -142,34 +142,35 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
                 'tgl_pengambilan'   => now(),
                 'jumlah'            => $this->data['jumlah'],
                 'status'            => 'kembali',
+                'status_kelanjutan' => $this->data['status'],
             ]);
 
-            if( $data['status'] == 'lanjut_tetap' ) {
-                DistribusiKencleng::create([
-                    'kencleng_id'           => $distribusiKencleng['kencleng_id'],
-                    'donatur_id'            => $distribusiKencleng['donatur_id'],
-                    'distributor_id'        => $distribusiKencleng['distibutor_id'],
-                    'cabang_id'             => $distribusiKencleng['cabang_id'],
-                    'tgl_distribusi'        => now(),
-                    'tgl_aktivasi'          => now(),
-                    'geo_lat'               => $this->data['latitude'],
-                    'geo_long'              => $this->data['longitude'],
-                    'status'                => 'diisi',
-                    'tgl_batas_pengambilan' => now()->addMonth(),
-                ]);
-            }
+            // if( $data['status'] == 'lanjut_tetap' ) {
+            //     DistribusiKencleng::create([
+            //         'kencleng_id'           => $distribusiKencleng['kencleng_id'],
+            //         'donatur_id'            => $distribusiKencleng['donatur_id'],
+            //         'distributor_id'        => $distribusiKencleng['distibutor_id'],
+            //         'cabang_id'             => $distribusiKencleng['cabang_id'],
+            //         'tgl_distribusi'        => now(),
+            //         'tgl_aktivasi'          => now(),
+            //         'geo_lat'               => $this->data['latitude'],
+            //         'geo_long'              => $this->data['longitude'],
+            //         'status'                => 'diisi',
+            //         'tgl_batas_pengambilan' => now()->addMonth(),
+            //     ]);
+            // }
 
-            if($data['status'] == 'lanjut_pindah') {
-                DistribusiKencleng::create([
-                    'kencleng_id'           => $distribusiKencleng['kencleng_id'],
-                    'donatur_id'            => $distribusiKencleng['donatur_id'],
-                    'distributor_id'        => $distribusiKencleng['distibutor_id'],
-                    'cabang_id'             => $distribusiKencleng['cabang_id'],
-                    'tgl_distribusi'        => now(),
-                    'status'                => 'distribusi',
-                    'tgl_batas_pengambilan' => now()->addMonth(),
-                ]);
-            }
+            // if($data['status'] == 'lanjut_pindah') {
+            //     DistribusiKencleng::create([
+            //         'kencleng_id'           => $distribusiKencleng['kencleng_id'],
+            //         'donatur_id'            => $distribusiKencleng['donatur_id'],
+            //         'distributor_id'        => $distribusiKencleng['distibutor_id'],
+            //         'cabang_id'             => $distribusiKencleng['cabang_id'],
+            //         'tgl_distribusi'        => now(),
+            //         'status'                => 'distribusi',
+            //         'tgl_batas_pengambilan' => now()->addMonth(),
+            //     ]);
+            // }
 
             Notification::make()
                 ->success()
@@ -179,7 +180,7 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
         catch (Halt $e) 
         {
             Notification::make()
-                ->success()
+                ->danger()
                 ->title($e->getMessage() ?? 'Gagal mengkonfirmasi pengambilan kencleng')
                 ->send();
 

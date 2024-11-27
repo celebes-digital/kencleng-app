@@ -8,6 +8,7 @@ use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\IconPosition;
+use Filament\Support\Exceptions\Halt;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
@@ -113,8 +114,8 @@ class JadwalKoleksi
                         ->default('lanjut_tetap')
                         ->options([
                             'lanjut_tetap'      => 'Lanjut Tetap',
-                            'lanjut_pindah'     => 'Lanjut Pindah',
-                            'berhenti'          => 'Berhenti',
+                            // 'lanjut_pindah'     => 'Lanjut Pindah',
+                            'tidak_lanjut'      => 'Tidak Lanjut',
                         ])
                         ->inline()
                         ->inlineLabel(false)
@@ -131,40 +132,52 @@ class JadwalKoleksi
 
     public function konfirmasiDonasiAction($record, $data)
     {
-        $record->update([
-            'tgl_pengambilan'   => now(),
-            'jumlah'            => $data['jumlah'],
-            'status'            => 'kembali',
-        ]);
-
-        if ($data['status'] == 'lanjut_tetap') {
-            DistribusiKencleng::create([
-                'kencleng_id'           => $record['kencleng_id'],
-                'donatur_id'            => $record['donatur_id'],
-                'donatur_id'            => $record['cabang_id'],
-                'tgl_distribusi'        => now(),
-                'tgl_aktivasi'          => now(),
-                'geo_lat'               => $record['latitude'],
-                'geo_long'              => $record['longitude'],
-                'status'                => 'diisi',
-                'tgl_batas_pengambilan' => now()->addMonth(),
+        try {
+            $record->update([
+                'tgl_pengambilan'   => now(),
+                'jumlah'            => $data['jumlah'],
+                'status'            => 'kembali',
+                'status_kelanjutan' => $data['status'],
             ]);
-        }
 
-        if ($data['status'] == 'lanjut_pindah') {
-            DistribusiKencleng::create([
-                'kencleng_id'           => $record['kencleng_id'],
-                'donatur_id'            => $record['donatur_id'],
-                'donatur_id'            => $record['cabang_id'],
-                'tgl_distribusi'        => now(),
-                'status'                => 'distribusi',
-                'tgl_batas_pengambilan' => now()->addMonth(),
-            ]);
-        }
+            // if( $data['status'] == 'lanjut_tetap' ) {
+            //     DistribusiKencleng::create([
+            //         'kencleng_id'           => $distribusiKencleng['kencleng_id'],
+            //         'donatur_id'            => $distribusiKencleng['donatur_id'],
+            //         'distributor_id'        => $distribusiKencleng['distibutor_id'],
+            //         'cabang_id'             => $distribusiKencleng['cabang_id'],
+            //         'tgl_distribusi'        => now(),
+            //         'tgl_aktivasi'          => now(),
+            //         'geo_lat'               => $this->data['latitude'],
+            //         'geo_long'              => $this->data['longitude'],
+            //         'status'                => 'diisi',
+            //         'tgl_batas_pengambilan' => now()->addMonth(),
+            //     ]);
+            // }
 
-        Notification::make()
-            ->success()
-            ->title('Berhasil mengkonfirmasi pengambilan kencleng')
-            ->send();
+            // if($data['status'] == 'lanjut_pindah') {
+            //     DistribusiKencleng::create([
+            //         'kencleng_id'           => $distribusiKencleng['kencleng_id'],
+            //         'donatur_id'            => $distribusiKencleng['donatur_id'],
+            //         'distributor_id'        => $distribusiKencleng['distibutor_id'],
+            //         'cabang_id'             => $distribusiKencleng['cabang_id'],
+            //         'tgl_distribusi'        => now(),
+            //         'status'                => 'distribusi',
+            //         'tgl_batas_pengambilan' => now()->addMonth(),
+            //     ]);
+            // }
+
+            Notification::make()
+                ->success()
+                ->title('Berhasil mengkonfirmasi pengambilan kencleng')
+                ->send();
+        } catch (Halt $e) {
+            Notification::make()
+                ->danger()
+                ->title($e->getMessage() ?? 'Gagal mengkonfirmasi pengambilan kencleng')
+                ->send();
+
+            return;
+        }
     }
 }

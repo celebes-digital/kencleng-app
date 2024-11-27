@@ -108,12 +108,12 @@ class Konfirmasi
                         ->rows(3),
                     Forms\Components\Radio::make('status')
                         ->label('Status')
-                        ->hidden($record?->status === StatusDistribusi::KEMBALI ? true : false)
+                        ->hidden($record?->status_kelanjutan !== null ? true : false)
                         ->default('lanjut_tetap')
                         ->options([
-                            'berhenti'          => 'Berhenti',
                             'lanjut_tetap'      => 'Lanjut Tetap',
-                            'lanjut_pindah'     => 'Lanjut Pindah',
+                            // 'lanjut_pindah'     => 'Lanjut Pindah',
+                            'tidak_lanjut'      => 'Tidak Lanjut',
                         ])
                         ->inline()
                         ->inlineLabel(false)
@@ -136,44 +136,40 @@ class Konfirmasi
                             'jumlah'            => $record->jumlah ?? $data['jumlah_donasi'],
                         ]);
 
-                        // Jika donatur kolek langsung ke aqtif
-                        if ($record?->status !== StatusDistribusi::KEMBALI) {
-                            switch ($data['status']) {
-                                // Jika donatur masih lanjut dan ditempat yang sama
-                                case 'lanjut_tetap':
-                                    DistribusiKencleng::create([
-                                        'kencleng_id'           => $record['kencleng_id'],
-                                        'donatur_id'            => $record['donatur_id'],
-                                        'distributor_id'        => $record['distibutor_id'],
-                                        'cabang_id'             => $record['cabang_id'],
-                                        'tgl_distribusi'        => now(),
-                                        'tgl_aktivasi'          => now(),
-                                        'geo_lat'               => $record['latitude'],
-                                        'geo_long'              => $record['longitude'],
-                                        'status'                => 'diisi',
-                                        'tgl_batas_pengambilan' => now()->addMonth(),
-                                    ]);
-                                    break;
-                                // Jika donatur masih lanjut dan pindah tempat
-                                case 'lanjut_pindah':
-                                    DistribusiKencleng::create([
-                                        'kencleng_id'           => $record['kencleng_id'],
-                                        'donatur_id'            => $record['donatur_id'],
-                                        'distributor_id'        => $record['distibutor_id'],
-                                        'cabang_id'             => $record['cabang_id'],
-                                        'tgl_distribusi'        => now(),
-                                        'status'                => 'distribusi',
-                                        'tgl_batas_pengambilan' => now()->addMonth(),
-                                    ]);
-                                    break;
-                                // Jika donatur berhenti
-                                case 'berhenti':
-                                    $record->kencleng()->update([
-                                        'status' => StatusKencleng::TERSEDIA,
-                                    ]);
-                                    break;
-                            }
+                        $statusLanjut = $record->status_kelanjutan ?? $data['status'];
+
+                        if($statusLanjut === 'lanjut_tetap') {
+                            DistribusiKencleng::create([
+                                'kencleng_id'           => $record['kencleng_id'],
+                                'donatur_id'            => $record['donatur_id'],
+                                'distributor_id'        => $record['distibutor_id'],
+                                'cabang_id'             => $record['cabang_id'],
+                                'tgl_distribusi'        => now(),
+                                'tgl_aktivasi'          => now(),
+                                'geo_lat'               => $record['latitude'],
+                                'geo_long'              => $record['longitude'],
+                                'status'                => 'diisi',
+                                'tgl_batas_pengambilan' => now()->addMonth(),
+                            ]);
+                        } else {
+                            $record->kencleng()->update([
+                                'status' => StatusKencleng::TERSEDIA,
+                            ]);
                         }
+
+                        // Jika donatur masih lanjut dan pindah tempat
+                        // Sementara tidak diimplementasikan
+                        // case 'lanjut_pindah':
+                        //     DistribusiKencleng::create([
+                        //         'kencleng_id'           => $record['kencleng_id'],
+                        //         'donatur_id'            => $record['donatur_id'],
+                        //         'distributor_id'        => $record['distibutor_id'],
+                        //         'cabang_id'             => $record['cabang_id'],
+                        //         'tgl_distribusi'        => now(),
+                        //         'status'                => 'distribusi',
+                        //         'tgl_batas_pengambilan' => now()->addMonth(),
+                        //     ]);
+                        //     break;
                     }
                 ),
             ]);
