@@ -190,51 +190,51 @@ class DistribusiKenclengResource extends Resource
             ->defaultSort('updated_at', 'desc')
             ->filters([])
             ->actions([
-                Tables\Actions\Action::make('konfirmasi')
-                    ->button()
-                    ->hidden(
-                        fn($record)
-                        => $record->status->value !== 'kembali')
-                    ->color(
-                        fn($record)
-                            => $record->status->value === 'distribusi'
-                            ? 'primary'
-                            : 'gray'
-                    )
-                    ->disabled(
-                        fn($record)
-                        => $record->status->value !== 'kembali'
-                    )
-                    ->modalSubmitActionLabel('Konfirmasi')
-                    ->form(fn($record) => [
-                        TextInput::make('donasi')
-                            ->default(Number::currency($record->jumlah, 'IDR', 'id'))
-                            ->prefixIcon('heroicon-o-banknotes')
-                            ->disabled(),
-                        TextInput::make('jumlah_donasi')
-                            ->label('Jumlah Diterima')
-                            ->prefix('Rp')
-                            ->numeric()
-                            ->minValue(0)
-                            ->required(),
-                        Textarea::make('uraian')
-                            ->label('Keterangan Tambahan')
-                            ->autosize()
-                            ->rows(3)
-                    ])
-                    ->action(
-                        function (DistribusiKencleng $record, $data) {
-                            Infaq::create([
-                                'distribusi_id' => $record->id,
-                                'tgl_transaksi' => now(),
-                                'jumlah_donasi' => $data['jumlah_donasi'],
-                                'uraian'        => $data['uraian'],
-                            ]);
-                            $record->update([
-                                'status' => 'diterima',
-                            ]);
-                        }
-                    ),
+                // Tables\Actions\Action::make('konfirmasi')
+                //     ->button()
+                //     ->hidden(
+                //         fn($record)
+                //         => $record->status->value !== 'kembali')
+                //     ->color(
+                //         fn($record)
+                //             => $record->status->value === 'distribusi'
+                //             ? 'primary'
+                //             : 'gray'
+                //     )
+                //     ->disabled(
+                //         fn($record)
+                //         => $record->status->value !== 'kembali'
+                //     )
+                //     ->modalSubmitActionLabel('Konfirmasi')
+                //     ->form(fn($record) => [
+                //         TextInput::make('donasi')
+                //             ->default(Number::currency($record->jumlah, 'IDR', 'id'))
+                //             ->prefixIcon('heroicon-o-banknotes')
+                //             ->disabled(),
+                //         TextInput::make('jumlah_donasi')
+                //             ->label('Jumlah Diterima')
+                //             ->prefix('Rp')
+                //             ->numeric()
+                //             ->minValue(0)
+                //             ->required(),
+                //         Textarea::make('uraian')
+                //             ->label('Keterangan Tambahan')
+                //             ->autosize()
+                //             ->rows(3)
+                //     ])
+                //     ->action(
+                //         function (DistribusiKencleng $record, $data) {
+                //             Infaq::create([
+                //                 'distribusi_id' => $record->id,
+                //                 'tgl_transaksi' => now(),
+                //                 'jumlah_donasi' => $data['jumlah_donasi'],
+                //                 'uraian'        => $data['uraian'],
+                //             ]);
+                //             $record->update([
+                //                 'status' => 'diterima',
+                //             ]);
+                //         }
+                //     ),
                 Tables\Actions\Action::make('lokasi')
                     ->iconButton()
                     ->hidden(
