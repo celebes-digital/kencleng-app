@@ -1,20 +1,17 @@
 <?php
 
-namespace App\Filament\Pages;
+namespace App\Filament\Pages\Koleksi;
 
 use App\Filament\Widgets\JadwalKoleksiCalenderWidget;
 use Filament\Pages\Page;
 
-class JadwalKoleksi extends Page
+class KalenderKoleksi extends Page
 {
     protected static bool $shouldRegisterNavigation = false;
-    protected static string $view               = 'filament.pages.jadwal-koleksi';
+    protected static string $view               = 'filament.pages.koleksi.kalender-koleksi';
     protected static ?string $modelLabel        = 'Jadwal Koleksiki';
     protected static ?string $label             = 'Jadwal Koleksiki';
-    protected static ?string $navigationIcon    = 'heroicon-o-cube';
-    protected static ?string $slug              = 'kalender-koleksi';
-    protected static ?string $navigationGroup   = 'Jadwal';
-    protected static ?int    $navigationSort    = 1;
+    protected static ?string $slug              = 'kalender/koleksi';
 
     public static function getWidgets(): array
     {

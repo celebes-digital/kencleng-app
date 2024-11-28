@@ -18,7 +18,7 @@
     </div>
     <x-filament::icon-button
         icon="heroicon-o-calendar"
-        href="/kalender-koleksi"
+        href="/kalender/koleksi"
         tag="a"
         tooltip="Jadwal Koleksi"
         wire:navigate
