@@ -4,6 +4,7 @@
     <div wire:ignore id="reader" wire:key="qr-code-scanner-reader" class="rounded-md overflow-hidden">
         <div id="anim"></div>
     </div>
+    {{ $getAction('reset') }}
 </x-dynamic-component>
 
 @push('styles')
@@ -116,7 +117,7 @@
                         if (window.qrScanner.instance) {
                             window.qrScanner.instance.resume();
                         }
-                    }, 1000);
+                    }, 500);
                 }
 
                 if (isNiceKencleng) {
@@ -126,8 +127,11 @@
                 console.log('END: isNiceKencleng ', isNiceKencleng);
             } catch (error) {
                 console.error('Error during QR code handling:', error);
+                if (window.qrScanner.instance) {
+                    window.qrScanner.instance.resume();
+                }
             }
-        }, 1000);
+        }, 500);
     }
 
     const stopQrCodeScanner = async () => {

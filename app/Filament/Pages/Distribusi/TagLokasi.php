@@ -14,6 +14,7 @@ use Filament\Pages\Page;
 use Filament\Actions\Action;
 
 use Filament\Forms;
+use Filament\Forms\Components\Actions\Action as ActionsAction;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Concerns\InteractsWithForms;
 
@@ -59,6 +60,17 @@ class TagLokasi extends Page implements HasForms
                     ScannerQrCode::make('scanner')
                         ->label('')
                         ->live()
+                        ->registerActions([
+                            ActionsAction::make('reset')
+                                ->label('Reset')
+                                ->icon('heroicon-o-arrow-path')
+                                ->color('gray')
+                                ->button()
+                                ->action(function () {
+                                    $this->dispatch('component-mounted');
+                                    $this->form->fill([]);
+                                }),
+                        ])
                         ->afterStateUpdated(
                             function (Forms\Set $set, $state) 
                             {
