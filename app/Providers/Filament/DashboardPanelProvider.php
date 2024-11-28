@@ -41,6 +41,7 @@ class DashboardPanelProvider extends PanelProvider
             ->favicon(asset('logo-aqtif.png'))
             ->sidebarWidth(250)
             ->sidebarCollapsibleOnDesktop()
+            ->darkMode(false)
             ->viteTheme('resources/css/filament/dashboard/theme.css')
             ->brandName('Kencleng Jariyah')
             ->defaultThemeMode(ThemeMode::Light)
