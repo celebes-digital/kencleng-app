@@ -27,17 +27,28 @@ class TransaksiResource extends Resource
         return $form
             ->schema([
                 Forms\Components\DatePicker::make('tgl_transaksi')
+                    ->label('Tanggal Transaksi')
+                    ->placeholder('Pilih tanggal transaksi')
+                    ->native(false)
+                    ->displayFormat('d F Y')
                     ->required(),
+                Forms\Components\Select::make('sumber_dana')
+                    ->label('Sumber Dana')
+                    ->placeholder('Pilih sumber dana')
+                    ->options([
+                        'Kas' => 'Kas',
+                        'Bank' => 'Bank',
+                        'Piutang' => 'Piutang',
+                        'Lainnya' => 'Lainnya',
+                    ]),
                 Forms\Components\TextInput::make('jumlah')
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('uraian')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('sumber_dana')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+            ])
+            ->columns(3);
     }
 
     public static function table(Table $table): Table
