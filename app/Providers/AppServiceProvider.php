@@ -31,11 +31,6 @@ class AppServiceProvider extends ServiceProvider
             fn(): string => Blade::render('filament.components.user-info'),
         );
 
-        // FilamentView::registerRenderHook(
-        //     PanelsRenderHook::TOPBAR_AFTER,
-        //     fn(): string => Blade::render('filament.components.user-role'),
-        // );
-
         FilamentIcon::register([
             'panels::sidebar.collapse-button' => view('icons.collapse'),
             'panels::sidebar.expand-button' => view('icons.expand'),
