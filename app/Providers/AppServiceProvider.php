@@ -1,7 +1,9 @@
 <?php
 
+// GREAT CODER BUT BAD SOFWARE ENGINEER
 namespace App\Providers;
 
+use Filament\Facades\Filament;
 use Filament\Support\Assets\Js;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentAsset;
@@ -22,12 +24,17 @@ class AppServiceProvider extends ServiceProvider
         FilamentView::registerRenderHook('panels::body.end', fn(): string => Blade::render("@vite('resources/js/app.js')"));
         FilamentView::registerRenderHook(
             PanelsRenderHook::USER_MENU_BEFORE,
-            fn(): string => Blade::render('@livewire(\'jadwal-navigation-topbar\')'),
+            fn(): string => Blade::render('filament.components.jadwal-navigation-topbar'),
         );
         FilamentView::registerRenderHook(
             PanelsRenderHook::USER_MENU_PROFILE_BEFORE,
-            fn(): string => Blade::render('filament.components.user-role'),
+            fn(): string => Blade::render('filament.components.user-info'),
         );
+
+        // FilamentView::registerRenderHook(
+        //     PanelsRenderHook::TOPBAR_AFTER,
+        //     fn(): string => Blade::render('filament.components.user-role'),
+        // );
 
         FilamentIcon::register([
             'panels::sidebar.collapse-button' => view('icons.collapse'),
