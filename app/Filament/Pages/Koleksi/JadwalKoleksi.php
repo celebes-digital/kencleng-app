@@ -9,6 +9,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Exceptions\Halt;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
@@ -107,6 +108,15 @@ class JadwalKoleksi
                         ->label('Alamat'),
                         Forms\Components\TextInput::make('jumlah')
                         ->label('Jumlah')
+                        ->prefix('IDR')
+                        ->mask(RawJs::make(
+                            <<<'JS'
+                                        $money($input, ',', '.', 0);
+                                    JS
+                        ))
+                        ->stripCharacters(['.'])
+                        ->numeric()
+                        ->minValue(0)
                         ->prefix('IDR')
                         ->required(),
                         Forms\Components\Radio::make('status')

@@ -9,7 +9,7 @@ use App\Models\Infaq;
 
 use Filament\Pages\Page;
 use Filament\Forms;
-
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -98,9 +98,16 @@ class Konfirmasi
                         ->disabled(),
                     Forms\Components\TextInput::make('jumlah_donasi')
                         ->label('Jumlah Diterima')
-                        ->prefix('Rp')
+                        ->prefix('IDR')
+                        ->mask(RawJs::make(
+                            <<<'JS'
+                                            $money($input, ',', '.', 0);
+                                        JS
+                        ))
+                        ->stripCharacters(['.'])
                         ->numeric()
                         ->minValue(0)
+                        ->prefix('IDR')
                         ->required(),
                     Forms\Components\Textarea::make('uraian')
                         ->label('Keterangan Tambahan')

@@ -13,7 +13,7 @@ use Filament\Actions\Action;
 
 use Filament\Support\Exceptions\Halt;
 use Filament\Notifications\Notification;
-
+use Filament\Support\RawJs;
 use Illuminate\Support\Facades\Auth;
 
 class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
@@ -75,9 +75,15 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
                         ->columnSpanFull(),
                     Forms\Components\TextInput::make('jumlah')
                         ->label('Jumlah')
+                        ->mask(RawJs::make(
+                            <<<'JS'
+                                    $money($input, ',', '.', 0);
+                                JS
+                        ))
+                        ->stripCharacters(['.'])
                         ->numeric()
                         ->minValue(0)
-                        ->prefix('Rp')
+                        ->prefix('IDR')
                         ->required(),
                     Forms\Components\Radio::make('status')
                         ->label('Status')
