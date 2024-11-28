@@ -15,9 +15,10 @@ class ProfileResource extends Resource
 {
     protected static ?string $model = Profile::class;
 
+    protected static ?int $navigationSort       = 2;
+    protected static ?string $slug              = 'pengguna';
     protected static ?string $modelLabel        = 'Pengguna';
     protected static ?string $navigationIcon    = 'heroicon-o-users';
-    protected static ?int $navigationSort       = 2;
 
     public static function infolist(Infolist $infolist): Infolist
     {
