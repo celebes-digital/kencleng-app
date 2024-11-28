@@ -25,6 +25,7 @@ return new class extends Migration
             $table->datetime('tgl_pengambilan')->nullable();
             $table->integer('jumlah')->unsigned()->nullable();
             $table->string('status')->default('distribusi');
+            $table->enum('status_kelanjutan', ['lanjut_tetap', 'lanjut_pindah', 'tidak_lanjut'])->nullable();
 
             $table->foreignId('area_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('cabang_id')->nullable()->constrained()->onDelete('set null');
