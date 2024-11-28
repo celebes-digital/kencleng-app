@@ -41,7 +41,7 @@ class RaihanDistribusi extends ChartWidget
             ->where('status', StatusDistribusi::DITERIMA)
             ->select('profiles.nama', DB::raw('COUNT(*) as total_distribusi'))
             ->join('profiles', 'distribusi_kenclengs.distributor_id', '=', 'profiles.id')
-            ->groupBy('distributor_id', 'profiles.nama')
+            ->groupBy('distribusi_kenclengs.distributor_id', 'profiles.nama')
             ->orderBy('total_distribusi', 'desc')
             ->limit(10)
             ->get();
