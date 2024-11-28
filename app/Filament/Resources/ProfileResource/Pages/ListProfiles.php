@@ -94,18 +94,18 @@ class ListProfiles extends ListRecords
                     })
                     ->formatStateUsing(fn(string $state) => ucfirst($state))
                     ->searchable(),
-                Tables\Columns\IconColumn::make('user.is_active')
-                    ->label('Status')
-                    ->icon(fn(string $state): string => match ($state) {
-                        '1' => 'heroicon-s-check-circle',
-                        '0' => 'heroicon-s-x-circle',
-                        default => 'heroicon-s-question-mark-circle',
-                    })
-                    ->color(fn(string $state): string => match ($state) {
-                        '1' => 'success',
-                        '0' => 'danger',
-                        default => 'gray',
-                    }),
+                // Tables\Columns\IconColumn::make('user.is_active')
+                //     ->label('Status')
+                //     ->icon(fn(string $state): string => match ($state) {
+                //         '1' => 'heroicon-s-check-circle',
+                //         '0' => 'heroicon-s-x-circle',
+                //         default => 'heroicon-s-question-mark-circle',
+                //     })
+                //     ->color(fn(string $state): string => match ($state) {
+                //         '1' => 'success',
+                //         '0' => 'danger',
+                //         default => 'gray',
+                //     }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
