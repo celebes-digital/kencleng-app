@@ -36,6 +36,7 @@ class Profile extends Model
         'area_id',
         'cabang_id',
         'wilayah_id',
+        'distributor_id',
     ];
 
     protected static function booted()
@@ -64,5 +65,15 @@ class Profile extends Model
     public function wilayah(): BelongsTo
     {
         return $this->belongsTo(Wilayah::class);
+    }
+
+    public function distributor(): BelongsTo
+    {
+        return $this->belongsTo(Profile::class, 'distributor_id', 'id');
+    }
+
+    public function donaturs()
+    {
+        return $this->hasMany(Profile::class, 'id', 'distibutor_id');
     }
 }

@@ -16,6 +16,8 @@ return new class extends Migration
 
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->unsignedBigInteger('distributor_id')->nullable();
+            $table->foreign('distributor_id')->references('id')->on('profiles');
 
             $table->foreignId('area_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('cabang_id')->nullable()->constrained()->onDelete('set null');
