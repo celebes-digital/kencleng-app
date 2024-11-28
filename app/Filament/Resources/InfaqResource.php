@@ -103,7 +103,7 @@ class InfaqResource extends Resource
     {
         return [
             'index' => Pages\ListInfaqs::route('/'),
-            // 'create' => Pages\CreateInfaq::route('/create'),
+            'create' => Pages\CreateInfaq::route('/create'),
             // 'edit' => Pages\EditInfaq::route('/{record}/edit'),
         ];
     }
