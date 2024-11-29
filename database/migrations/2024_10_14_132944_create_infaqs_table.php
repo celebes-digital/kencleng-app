@@ -14,16 +14,18 @@ return new class extends Migration
         Schema::create('infaqs', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('distribusi_id')->constrained('distribusi_kenclengs')->cascadeOnDelete();
+            $table->foreignId('distribusi_id')->nullable()->constrained('distribusi_kenclengs')->cascadeOnDelete();
 
             $table->foreignId('area_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('cabang_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('wilayah_id')->nullable()->constrained()->onDelete('set null');
 
+            $table->char('nama_donatur', 100);
             $table->date('tgl_transaksi');
             $table->integer('jumlah_donasi');
             $table->string('uraian')->nullable();
             $table->string('sumber_dana')->default('Kencleng');
+            $table->string('metode_donasi')->default('Tunai');
 
             $table->timestamps();
         });

@@ -5,10 +5,13 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\InfaqResource\Pages;
 use App\Filament\Resources\InfaqResource\RelationManagers;
 use App\Models\Infaq;
+use App\Models\Profile;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
@@ -27,19 +30,74 @@ class InfaqResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\DatePicker::make('tgl_transaksi')
+                Forms\Components\Select::make('nama_donatur')
+                    ->label('Nama Donatur')
+                    ->placeholder('Pilih nama donatur')
                     ->native(false)
+                    ->searchable()
+                    ->options(function () {
+                        $options = Profile::all()->pluck('nama', 'nama')->toArray();
+
+                        $options = [
+                            'Hamba Allah' => 'Hamba Allah',
+                        ] + $options;
+
+                        return $options;
+                    }),
+                Forms\Components\DatePicker::make('tgl_transaksi')
+                    ->label('Tanggal Diterima')
+                    ->native(false)
+                    ->placeholder('Tentukan tanggal diterima')
+                    ->displayFormat('d F Y')
+                    ->default(now())
+                    ->prefixIcon('heroicon-o-calendar')
+                    ->required(),
+                Forms\Components\Select::make('sumber_dana')
+                    ->label('Sumber Dana')
+                    ->placeholder('Pilih sumber dana')
+                    ->native(false)
+                    ->options([
+                        'Kencleng'  => 'Kencleng',
+                        'Donasi'    => 'Donasi',
+                    ])
                     ->required(),
                 Forms\Components\TextInput::make('jumlah_donasi')
-                    ->required()
-                    ->numeric(),
+                    ->mask(RawJs::make(
+                        <<<'JS'
+                                $money($input, ',', '.', 0);
+                            JS
+                    ))
+                    ->stripCharacters(['.'])
+                    ->numeric()
+                    ->minValue(0)
+                    ->prefix('IDR')
+                    ->required(),
+                Forms\Components\ToggleButtons::make('metode_donasi')
+                    ->label('Metode Donasi')
+                    ->default('Tunai')
+                    ->options([
+                        'Tunai'     => 'Tunai',
+                        'Transfer'  => 'Transfer',
+                    ])
+                    ->icons([
+                        'Tunai'     => 'heroicon-o-banknotes',
+                        'Transfer'  => 'heroicon-o-credit-card',
+                    ])
+                    ->colors([
+                        'Tunai'     => 'warning',
+                        'Transfer'  => 'warning',
+                    ])
+                    ->inline()
+                    ->required(),
                 Forms\Components\TextArea::make('uraian')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('sumber_dana')
-                    ->required()
                     ->maxLength(255)
-                    ->default('Kencleng'),
+                    ->columnSpanFull(),
+            ])
+            ->columns([
+                'sm' => 2,
+                'md' => 2,
+                'lg' => 3,
+                'xl' => 3,
             ]);
     }
 
@@ -47,7 +105,7 @@ class InfaqResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('distribusi.donatur.nama')
+                Tables\Columns\TextColumn::make('nama_donatur')
                     ->label('Nama Donatur')
                     ->sortable()
                     ->searchable(),
@@ -58,6 +116,9 @@ class InfaqResource extends Resource
                 Tables\Columns\TextColumn::make('jumlah_donasi')
                     ->numeric()
                     ->prefix('Rp')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('metode_donasi')
+                    ->label('Metode Donasi')
                     ->sortable(),
                 // Tables\Columns\TextColumn::make('uraian')
                 //     ->searchable(),
@@ -94,9 +155,7 @@ class InfaqResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
