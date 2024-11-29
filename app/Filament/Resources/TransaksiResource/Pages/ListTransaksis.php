@@ -14,7 +14,8 @@ class ListTransaksis extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Tambah Transaksi'),
+                ->label('Catat Penegeluaran')
+                ->icon('heroicon-o-plus-circle'),
         ];
     }
 }

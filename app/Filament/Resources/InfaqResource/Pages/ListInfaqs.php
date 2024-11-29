@@ -13,7 +13,9 @@ class ListInfaqs extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('Catat Donasi')
+                ->icon('heroicon-o-plus-circle'),
         ];
     }
 }
