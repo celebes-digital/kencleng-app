@@ -8,6 +8,7 @@ use App\Models\Transaksi;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -35,18 +36,25 @@ class TransaksiResource extends Resource
                 Forms\Components\Select::make('sumber_dana')
                     ->label('Sumber Dana')
                     ->placeholder('Pilih sumber dana')
+                    ->native(false)
                     ->options([
-                        'Kas' => 'Kas',
-                        'Bank' => 'Bank',
-                        'Piutang' => 'Piutang',
-                        'Lainnya' => 'Lainnya',
+                        'Kencleng'  => 'Kencleng',
+                        'Donasi'    => 'Donasi',
                     ]),
                 Forms\Components\TextInput::make('jumlah')
+                    ->mask(RawJs::make(
+                        <<<'JS'
+                            $money($input, ',', '.', 0);
+                        JS
+                    ))
+                    ->stripCharacters(['.'])
+                    ->numeric()
+                    ->minValue(0)
+                    ->prefix('IDR')
+                    ->required(),
+                Forms\Components\Textarea::make('uraian')
                     ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('uraian')
-                    ->required()
-                    ->maxLength(255),
+                    ->columnSpanFull(),
             ])
             ->columns(3);
     }
@@ -100,9 +108,9 @@ class TransaksiResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTransaksis::route('/'),
-            'create' => Pages\CreateTransaksi::route('/create'),
-            'edit' => Pages\EditTransaksi::route('/{record}/edit'),
+            'index'     => Pages\ListTransaksis::route('/'),
+            'create'    => Pages\CreateTransaksi::route('/create'),
+            'edit'      => Pages\EditTransaksi::route('/{record}/edit'),
         ];
     }
 }
