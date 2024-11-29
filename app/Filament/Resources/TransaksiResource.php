@@ -69,25 +69,15 @@ class TransaksiResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('jumlah')
                     ->numeric()
-                    ->prefix('Rp.')
+                    ->prefix('IDR ')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('uraian')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('sumber_dana')
                     ->searchable(),
-                // Tables\Columns\TextColumn::make('created_at')
-                //     ->dateTime()
-                //     ->sortable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
-                // Tables\Columns\TextColumn::make('updated_at')
-                //     ->dateTime()
-                //     ->sortable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('updated_at', 'desc')
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
@@ -100,9 +90,7 @@ class TransaksiResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
