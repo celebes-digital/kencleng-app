@@ -130,6 +130,7 @@
                 if (window.qrScanner.instance) {
                     window.qrScanner.instance.resume();
                 }
+                window.location.reload();
             }
         }, 500);
     }
