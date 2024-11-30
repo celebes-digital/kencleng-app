@@ -10,7 +10,7 @@ use App\Filament\Components\ScannerQrCode;
 use Filament\Forms;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
-
+use Filament\Forms\Components\Actions\Action as ActionsAction;
 use Filament\Support\Exceptions\Halt;
 use Filament\Notifications\Notification;
 use Filament\Support\RawJs;
@@ -20,15 +20,15 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
 {
     use Forms\Concerns\InteractsWithForms;
 
-    protected static string  $view  = 'filament.pages.koleksi.koleksi-kencleng';
-
+    
     public static function canAccess(): bool
     {
         $user = Auth::user();
-
+        
         return (!$user->is_admin) && ($user->profile->group !== 'donatur');
     }
-
+    
+    protected static string  $view              = 'filament.pages.koleksi.koleksi-kencleng';
     protected static ?int    $navigationSort    = 3;
     protected static ?string $navigationGroup   = 'Koleksi';
     protected static ?string $navigationIcon    = 'heroicon-o-cube';
@@ -49,22 +49,32 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
             ->schema([
                 Forms\Components\Split::make([
                 ScannerQrCode::make('scanner')
-                ->label('')
-                ->live()
-                ->afterStateUpdated(
-                    function (Forms\Set $set, $state) 
-                    {
-                        $kencleng = Kencleng::where('no_kencleng', $state)->first();
+                    ->label('')
+                    ->live()
+                    ->registerActions([
+                        ActionsAction::make('reset')
+                            ->label('Reset')
+                            ->icon('heroicon-o-arrow-path')
+                            ->color('gray')
+                            ->button()
+                            ->action(function () {
+                                $this->dispatch('component-mounted');
+                                $this->form->fill([]);
+                            }),
+                    ])
+                    ->afterStateUpdated(
+                        function (Forms\Set $set, $state) {
+                            $kencleng = Kencleng::where('no_kencleng', $state)->first();
 
-                        Notification::make()
-                            ->title('Kencleng ' . $kencleng->no_kencleng  . ' ditemukan')
-                            ->success()
-                            ->send();
+                            Notification::make()
+                                ->title('Kencleng ' . $kencleng->no_kencleng  . ' ditemukan')
+                                ->success()
+                                ->send();
 
-                        $set('kencleng_id', $kencleng->id);
-                        $set('no_kencleng', $kencleng->no_kencleng);
-                    }
-                ),
+                            $set('no_kencleng', $kencleng->no_kencleng);
+                            $set('kencleng_id', $kencleng->id);
+                        }
+                    ),
                 Forms\Components\Fieldset::make('')
                     ->schema([
                     Forms\Components\Hidden::make('kencleng_id'),
@@ -112,7 +122,6 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
         ];
     }
 
-
     public function checkNoKencleng($noKencleng): bool
     {
         $kencleng = Kencleng::where('no_kencleng', $noKencleng)->first();
@@ -142,6 +151,10 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
 
             if ( empty($distribusiKencleng) ) {
                 return throw new Halt('Kencleng yang dapat dikoleksi adalah kencleng dengan status diisi');
+            }
+
+            if( $distribusiKencleng->kolektor_id !== Auth::user()->profile->id ) {
+                return throw new Halt('Anda tidak/belum ditugaskan untuk mengambil kencleng ini oleh admin');
             }
 
             $distribusiKencleng->update([
@@ -182,6 +195,9 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
                 ->success()
                 ->title('Berhasil mengkonfirmasi pengambilan kencleng')
                 ->send();
+
+            $this->dispatch('component-mounted');
+            $this->form->fill([]);
         } 
         catch (Halt $e) 
         {
