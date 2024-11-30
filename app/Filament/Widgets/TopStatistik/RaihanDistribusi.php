@@ -51,7 +51,7 @@ class RaihanDistribusi extends ChartWidget
                 'datasets' => [
                     [
                         'axis'              => 'y',
-                        'label'             => 'Top 10 Distributor',
+                        'label'             => 'Distribusi Kencleng',
                         'data'              => $data->map(fn($data) => $data->total_distribusi)->toArray(),
                         'backgroundColor'   => '#3B82F6',
                         'borderColor'       => '#9BD0F5',

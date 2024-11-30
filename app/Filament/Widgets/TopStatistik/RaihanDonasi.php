@@ -53,7 +53,7 @@ class RaihanDonasi extends ChartWidget
                 'datasets' => [
                     [
                         'axis'              => 'y',
-                        'label'             => 'Top 10 Donatur',
+                        'label'             => 'Pemasukan Donatur',
                         'data'              => $data->map(fn($data) => $data->total_donasi)->toArray(),
                         'backgroundColor'   => '#5AB8F0',
                         'borderColor'       => '#9BD0F5',

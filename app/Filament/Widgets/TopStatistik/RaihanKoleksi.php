@@ -51,7 +51,7 @@ class RaihanKoleksi extends ChartWidget
                 'datasets' => [
                     [
                         'axis'              => 'y',
-                        'label'             => 'Top 10 Kolektor',
+                        'label'             => 'Koleksi kencleng',
                         'data'              => $data->map(fn($data) => $data->total_koleksi)->toArray(),
                         'backgroundColor'   => '#F59E0B',
                         'borderColor'       => '#9BD0F5',
