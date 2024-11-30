@@ -3,9 +3,11 @@
 namespace App\Filament\Resources\DistribusiKenclengResource\Pages;
 
 use App\Enums\StatusDistribusi;
+use App\Filament\Pages\Distribusi\Distributor\AmbilKencleng;
 use App\Filament\Resources\DistribusiKenclengResource;
 use App\Models\DistribusiKencleng;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +19,15 @@ class ListDistribusiKenclengs extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            // Actions\CreateAction::make(),
+            Actions\Action::make('ambilKencleng')
+                ->label('Ambil Kencleng')
+                ->modal('ambilKencleng')
+                ->icon('heroicon-o-cube')
+                ->visible(
+                    fn() => 
+                    !Auth::user()->is_admin 
+                    && Auth::user()->profile?->group === 'distributor')
+                ->url(AmbilKencleng::getUrl()),
         ];
     }
 
