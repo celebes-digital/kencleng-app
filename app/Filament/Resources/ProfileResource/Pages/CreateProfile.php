@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ProfileResource\Pages;
 
 use App\Filament\Resources\ProfileResource;
+use App\Libraries\WhatsappAPI;
 use App\Models\Area;
 use App\Models\District;
 use App\Models\Province;
@@ -23,6 +24,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class CreateProfile extends CreateRecord
 {
@@ -229,7 +231,9 @@ class CreateProfile extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         if ($data['group'] === 'donatur' && $data['email'] === null) {
-            $data['email'] = $data['nik'] . '@donatur.com';
+            do {
+                $data['email'] = Str::random(10) . env('DEFAULT_EMAIL_DOMAIN', '@kencleng.id');
+            } while (User::where('email', $data['email'])->exists());
         }
 
         $user = User::create([
@@ -241,8 +245,19 @@ class CreateProfile extends CreateRecord
         $data['kabupaten']  = District::find($data['kabupaten'])->name;
         $data['kecamatan']  = Subdistrict::find($data['kecamatan'])->name;
 
-        $data['user_id'] = $user->id;
-        $profile = static::getModel()::create($data);
+        $data['user_id']    = $user->id;
+        $profile            = static::getModel()::create($data);
+
+        $whatsapp = new WhatsappAPI($data['no_wa']);
+
+        $data = [
+            'nama'      => $data['nama'],
+            'email'     => $data['email'],
+            'kelamin'   => $data['kelamin'],
+        ];
+
+        $whatsapp->getTemplateMessage('SetelahRegistrasi', $data);
+        $whatsapp->send();
 
         return $profile;
     }
