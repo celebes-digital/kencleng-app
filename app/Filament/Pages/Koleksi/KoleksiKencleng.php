@@ -6,7 +6,7 @@ use App\Models\Kencleng;
 use App\Models\DistribusiKencleng;
 
 use App\Filament\Components\ScannerQrCode;
-
+use App\Libraries\WhatsappAPI;
 use Filament\Forms;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
@@ -159,9 +159,9 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
 
             $distribusiKencleng->update([
                 'tgl_pengambilan'   => now(),
-                'jumlah'            => $this->data['jumlah'],
+                'jumlah'            => $data['jumlah'],
                 'status'            => 'kembali',
-                'status_kelanjutan' => $this->data['status'],
+                'status_kelanjutan' => $data['status'],
             ]);
 
             // if( $data['status'] == 'lanjut_tetap' ) {
@@ -198,6 +198,17 @@ class KoleksiKencleng extends Page implements Forms\Contracts\HasForms
 
             $this->dispatch('component-mounted');
             $this->form->fill([]);
+
+            $whatsapp = new WhatsappAPI($distribusiKencleng->donatur?->no_wa);
+
+            $data = [
+                'nama'      => $distribusiKencleng->donatur?->nama,
+                'kelamin'   => $distribusiKencleng->donatur?->kelamin,
+                'jumlah'    => $data['jumlah'],
+            ];
+
+            $whatsapp->getTemplateMessage('KonfirmasiKoleksiKeDonatur', $data);
+            $whatsapp->send();
         } 
         catch (Halt $e) 
         {
