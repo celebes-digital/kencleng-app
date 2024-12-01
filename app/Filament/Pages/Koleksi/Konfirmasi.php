@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Koleksi;
 
 use App\Enums\StatusDistribusi;
 use App\Enums\StatusKencleng;
+use App\Libraries\WhatsappAPI;
 use App\Models\DistribusiKencleng;
 use App\Models\Infaq;
 
@@ -101,8 +102,8 @@ class Konfirmasi
                         ->prefix('IDR')
                         ->mask(RawJs::make(
                             <<<'JS'
-                                            $money($input, ',', '.', 0);
-                                        JS
+                                $money($input, ',', '.', 0);
+                            JS
                         ))
                         ->stripCharacters(['.'])
                         ->numeric()
@@ -177,6 +178,17 @@ class Konfirmasi
                         //         'tgl_batas_pengambilan' => now()->addMonth(),
                         //     ]);
                         //     break;
+
+                        $whatsapp = new WhatsappAPI($record->donatur->no_wa);
+
+                        $data = [
+                            'nama'      => $record->donatur->nama,
+                            'kelamin'   => $record->donatur->kelamin,
+                            'jumlah'    => $data['jumlah_donasi'],
+                        ];
+
+                        $whatsapp->getTemplateMessage('KonfirmasiDiterimaKeDonatur', $data);
+                        $whatsapp->send();
                     }
                 ),
             ]);
