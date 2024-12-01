@@ -9,7 +9,7 @@ use App\Models\Kencleng;
 use App\Models\DistribusiKencleng;
 
 use App\Filament\Components\ScannerQrCode;
-
+use App\Libraries\WhatsappAPI;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
 
@@ -185,6 +185,8 @@ class TagLokasi extends Page implements HasForms
                 return;
             }
 
+            $tglBataspengambilan = now()->addMonth();
+
             $distribusiKencleng->tgl_aktivasi           = now();
             $distribusiKencleng->tgl_batas_pengambilan  = now()->addMonth();
             $distribusiKencleng->geo_lat                = $this->data['latitude'];
@@ -205,6 +207,23 @@ class TagLokasi extends Page implements HasForms
             ->success()
             ->title('Lokasi Kencleng berhasil ditandai')
             ->send();
+
+            $whatsapp = new WhatsappAPI($distribusiKencleng->donatur->no_wa);
+
+            $data = [
+                'nama'          => $distribusiKencleng->donatur->nama,
+                'kelamin'       => $distribusiKencleng->donatur->kelamin,
+                'no_kencleng'   => $distribusiKencleng->kencleng->no_kencleng,
+                'tgl_batas'     => $tglBataspengambilan->format('d F Y'),
+            ];
+
+            $whatsapp->getTemplateMessage('reminder7HariSebelumKoleksi', $data);
+            $whatsapp->setSchedule(now()->addMinutes(10)->valueOf());
+            // $whatsapp->setSchedule($tglBataspengambilan->subDays(7)->setTime(9, 0)->valueOf());
+
+            $whatsapp->getTemplateMessage('reminder3HariSebelumKoleksi', $data);
+            $whatsapp->setSchedule(now()->addMinutes(20)->valueOf());
+            // $whatsapp->setSchedule($tglBataspengambilan->subDays(3)->setTime(9, 0)->valueOf());
         } catch (Halt $e) {
             return;
         }
