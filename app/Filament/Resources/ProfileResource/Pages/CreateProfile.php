@@ -253,6 +253,7 @@ class CreateProfile extends CreateRecord
         $data = [
             'nama'      => $data['nama'],
             'email'     => $data['email'],
+            'group'     => $data['group'],
             'kelamin'   => $data['kelamin'],
         ];
 

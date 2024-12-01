@@ -13,7 +13,7 @@ class TemplatePesan
         return 
 "Assalamu'alaikum, *{$data['nama']}*. 
 
-Terima kasih telah melakukan registrasi sebagai Donatur Kencleng Jariyah
+Terima kasih telah melakukan registrasi sebagai *{$data['group']}* Kencleng Jariyah
 
 Berikut data login Anda:
 *Username: {$data['email']}*

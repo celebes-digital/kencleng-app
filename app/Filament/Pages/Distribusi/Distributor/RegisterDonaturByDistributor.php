@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Distribusi\Distributor;
 
+use App\Libraries\WhatsappAPI;
 use App\Models\District;
 use App\Models\Province;
 use App\Models\Subdistrict;
@@ -227,6 +228,18 @@ class RegisterDonaturByDistributor extends Page implements Forms\Contracts\HasFo
             ->success()
             ->title('Donatur berhasil ditambahkan')
             ->send();
+
+            $whatsapp = new WhatsappAPI($data['no_wa']);
+
+            $data = [
+                'nama'      => $data['nama'],
+                'email'     => $data['email'],
+                'group'     => 'Donatur',
+                'kelamin'   => $data['kelamin'],
+            ];
+
+            $whatsapp->getTemplateMessage('SetelahRegistrasi', $data);
+            $whatsapp->send();
 
             redirect()->to(ListDonatur::getUrl());
             $this->form->fill([]);
